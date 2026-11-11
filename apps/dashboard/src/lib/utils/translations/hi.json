@@ -231,7 +231,7 @@
     },
     "submissions": {
       "success": {
-        "grading": "ग्रेडिंग सहेजी गई और छात्र को सूचित किया गया"
+        "grading": "Review saved and student notified"
       }
     },
     "marks": {
@@ -546,8 +546,8 @@
     "heading": "व्यायाम",
     "not_submitted": "सबमिट नहीं किया गया",
     "submitted": "प्रस्तुत किया गया",
-    "in_progress": "ग्रेडिंग प्रगति पर है",
-    "graded": "श्रेणीबद्ध",
+    "in_progress": "Review in progress",
+    "graded": "Reviewed",
     "lesson": "पाठ"
   },
   "my_learning": {
@@ -609,8 +609,8 @@
     "last_seen": "आखिरी बार देखा गया",
     "a_while_ago": "कुछ देर पहले",
     "exercises": "व्यायाम",
-    "graded": "श्रेणीबद्ध",
-    "not_graded": "ग्रेड नहीं दिया गया",
+    "graded": "Reviewed",
+    "not_graded": "Not reviewed",
     "enrolled_courses": "नामांकित पाठ्यक्रम",
     "enrolled_courses_description": "सभी नामांकित पाठ्यक्रम",
     "overall_course_progress": "समग्र पाठ्यक्रम प्रगति",
@@ -845,8 +845,8 @@
       "no_courses_description": "प्रगति ट्रैक करना शुरू करने के लिए इस छात्र को नामांकित करें।",
       "no_exercises_title": "इस पाठ्यक्रम में कोई अभ्यास नहीं है",
       "no_exercises_description": "किसी पाठ में एक अभ्यास जोड़ें और प्रत्येक छात्र के प्रयास यहां दिखाई देंगे।",
-      "no_grades_title": "अभी तक किसी का मूल्यांकन नहीं हुआ है",
-      "no_grades_description": "इस छात्र द्वारा अभ्यास सबमिट करने के बाद ग्रेड दिखाई देंगे।",
+      "no_grades_title": "Nothing reviewed yet",
+      "no_grades_description": "Results appear once this student submits an exercise.",
       "load_failed_title": "इस छात्र को लोड करने में असमर्थ",
       "load_failed_description": "इस छात्र को लोड करने में कुछ गड़बड़ी हुई। कृपया पुनः प्रयास करें।",
       "retry": "पुनः प्रयास करें",
@@ -1687,7 +1687,7 @@
       "submissions": {
         "title": "प्रस्तुत अभ्यास",
         "access": {
-          "denied_title": "आप इस पाठ्यक्रम की प्रस्तुतियाँ ग्रेड नहीं कर सकते",
+          "denied_title": "You can't review submissions for this course",
           "denied_description": "किसी एडमिन से कहें कि आपको कोर्स ट्यूटर के रूप में या इस कोर्स वाली कोहॉर्ट के मेंटर के रूप में जोड़ें."
         },
         "grading_modal": {
@@ -1699,8 +1699,8 @@
           "status": "स्थिति",
           "add_comment": "टिप्पणी जोड़ें",
           "add_comment_placeholder": "एक टिप्पणी छोड़ें",
-          "grade_with_ai": "एआई के साथ ग्रेड",
-          "submit_grades": "ग्रेड जमा करें",
+          "grade_with_ai": "Review with AI",
+          "submit_grades": "Submit review",
           "accept_grade": "स्वीकार करो",
           "reject_grade": "अस्वीकार करें",
           "allocated": "यह अंक इसलिए आवंटित किया गया क्योंकि",
@@ -1718,12 +1718,12 @@
         "submission_status": {
           "submitted": "प्रस्तुत किया गया",
           "in_progress": "प्रगति पर है",
-          "graded": "श्रेणीबद्ध"
+          "graded": "Reviewed"
         },
         "workflow": {
           "awaiting_manual_hint": "मैन्युअल समीक्षा की आवश्यकता है",
-          "failed_hint": "स्वतः-ग्रेडिंग विफल. पुनः प्रयास करने के लिए इस सबमिशन को वापस सबमिट किए गए पर ले जाएं।",
-          "invalid_transition": "ग्रेडिंग वर्कफ़्लो द्वारा इस स्थिति परिवर्तन की अनुमति नहीं है"
+          "failed_hint": "Automatic review failed. Move this submission back to Submitted to retry.",
+          "invalid_transition": "This status move is not allowed by the review workflow"
         },
         "filter": {
           "student": "Student",
@@ -1910,8 +1910,8 @@
                 "attempts_count": "{count} प्रयास",
                 "attempt_label": "प्रयास {number}",
                 "date_unknown": "तारीख अज्ञात",
-                "status_awaiting_manual": "मैन्युअल ग्रेडिंग की प्रतीक्षा में",
-                "status_completed": "ग्रेड किया गया",
+                "status_awaiting_manual": "Awaiting manual review",
+                "status_completed": "Reviewed",
                 "status_pending": "लंबित",
                 "counts_as_complete": "पूर्ण माना जाएगा",
                 "passed": "पास",
@@ -1945,7 +1945,7 @@
               "due": "द्वारा देय",
               "no_description": "कोई विवरण नहीं",
               "start": "प्रारंभ करें",
-              "graded": "श्रेणीबद्ध",
+              "graded": "Reviewed",
               "pending": "लंबित",
               "submitted": "प्रस्तुत किया गया",
               "status_pending": "स्थिति: समीक्षा लंबित",
@@ -4532,12 +4532,12 @@
           "description": "न्यूज़फ़ीड पर नई पोस्ट और टिप्पणियों के बारे में पाठ्यक्रम सदस्यों को ईमेल भेजें।"
         },
         "gradingResult": {
-          "label": "ग्रेडिंग परिणाम",
-          "description": "जब उनका सबमिशन ग्रेड या अपडेट हो तो छात्रों को ईमेल भेजें।"
+          "label": "Review results",
+          "description": "Email students when their submission is reviewed or updated."
         },
         "newSubmission": {
-          "label": "ग्रेडिंग के लिए नए सबमिशन",
-          "description": "जब छात्र ग्रेडिंग की आवश्यकता वाला कार्य जमा करे तो ट्यूटर्स को ईमेल भेजें।"
+          "label": "New submissions to review",
+          "description": "Email tutors when a student submits work that needs review."
         },
         "newStudent": {
           "label": "नया छात्र शामिल होता है",
@@ -4618,7 +4618,7 @@
         "quizAssigned": "प्रश्नोत्तरी सौंपी गई",
         "sessionReminder": "लाइव सत्र अनुस्मारक",
         "sessionUpdated": "लाइव सत्र अपडेट किया गया",
-        "submissionGraded": "सबमिशन को श्रेणीबद्ध किया गया",
+        "submissionGraded": "Submission reviewed",
         "newsfeedPost": "कोर्स न्यूज़फ़ीड पोस्ट"
       },
       "descriptions": {
@@ -5264,7 +5264,7 @@
         "course_completed": "कोई विद्यार्थी कोर्स पूरा करता है",
         "course_certificate_issued": "प्रमाणपत्र अर्जित किया जाता है",
         "course_submission_created": "अभ्यास सबमिशन बनाया जाता है",
-        "course_submission_status_changed": "सबमिशन की स्थिति बदलती है, जैसे ग्रेड किए जाने पर",
+        "course_submission_status_changed": "A submission status changes, such as when it is reviewed",
         "lesson_completion_updated": "पाठ को पूर्ण चिह्नित किया जाता है या रीसेट किया जाता है",
         "exercise_completion_updated": "अभ्यास पूरा किया जाता है या रीसेट किया जाता है",
         "compliance_record_status_changed": "किसी विद्यार्थी की अनुपालन स्थिति बदलती है",
@@ -5859,7 +5859,7 @@
       "practice_again": "पुनः अभ्यास करें",
       "attempt_option": "प्रयास {attemptNumber} - {correct}/{total}",
       "attempts_select_aria": "आपके प्रयास",
-      "privacy_hint": "आपके ब्राउज़र में तुरंत ग्रेड किया गया - कुछ भी सबमिट नहीं किया गया है।",
+      "privacy_hint": "Reviewed instantly in your browser — nothing is submitted.",
       "summary_template": "आपको [[सही]] / [[कुल]] सही मिला।"
     },
     "powered_by": {
@@ -6432,7 +6432,7 @@
       "certificate": "प्रमाणपत्र सक्षम",
       "deadline": "समयसीमा {date}",
       "sequential": "पाठ क्रम में अनलॉक होते हैं",
-      "grading": "एक ट्यूटर प्रस्तुतियाँ ग्रेड करता है",
+      "grading": "A tutor reviews submissions",
       "comments_off": "पाठ टिप्पणियाँ बंद हैं",
       "lesson_download": "शिक्षार्थी पाठ डाउनलोड कर सकते हैं",
       "self_enrollment": "शिक्षार्थी स्वयं शामिल हो सकते हैं",

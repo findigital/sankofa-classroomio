@@ -231,7 +231,7 @@
     },
     "submissions": {
       "success": {
-        "grading": "Bewertung gespeichert und Schüler benachrichtigt"
+        "grading": "Review saved and student notified"
       }
     },
     "marks": {
@@ -546,8 +546,8 @@
     "heading": "Übungen",
     "not_submitted": "Nicht übermittelt",
     "submitted": "Eingereicht",
-    "in_progress": "Benotung läuft",
-    "graded": "Benotet",
+    "in_progress": "Review in progress",
+    "graded": "Reviewed",
     "lesson": "Lektion"
   },
   "my_learning": {
@@ -609,8 +609,8 @@
     "last_seen": "Zuletzt gesehen",
     "a_while_ago": "vor einiger Zeit",
     "exercises": "Übungen",
-    "graded": "Benotet",
-    "not_graded": "Nicht benotet",
+    "graded": "Reviewed",
+    "not_graded": "Not reviewed",
     "enrolled_courses": "Eingeschriebene Kurse",
     "enrolled_courses_description": "Alle eingeschriebenen Kurse",
     "overall_course_progress": "Gesamtkursfortschritt",
@@ -845,8 +845,8 @@
       "no_courses_description": "Melden Sie diesen Studierenden an, um den Fortschritt zu verfolgen.",
       "no_exercises_title": "Keine Übungen in diesem Kurs",
       "no_exercises_description": "Fügen Sie einer Lektion eine Übung hinzu. Die Versuche jedes Studierenden werden hier angezeigt.",
-      "no_grades_title": "Noch nicht bewertet",
-      "no_grades_description": "Noten werden angezeigt, sobald dieser Studierende eine Übung abgibt.",
+      "no_grades_title": "Nothing reviewed yet",
+      "no_grades_description": "Results appear once this student submits an exercise.",
       "load_failed_title": "Dieser Student konnte nicht geladen werden.",
       "load_failed_description": "Beim Laden dieses Studenten ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
       "retry": "Wiederholen",
@@ -1687,7 +1687,7 @@
       "submissions": {
         "title": "Eingereichte Übungen",
         "access": {
-          "denied_title": "Du kannst die Abgaben für diesen Kurs nicht bewerten",
+          "denied_title": "You can't review submissions for this course",
           "denied_description": "Bitte einen Admin, dich als Kurstutor hinzuzufügen oder als Mentor einer Kohorte, die diesen Kurs enthält."
         },
         "grading_modal": {
@@ -1699,8 +1699,8 @@
           "status": "Status",
           "add_comment": "Kommentar hinzufügen",
           "add_comment_placeholder": "Hinterlassen Sie einen Kommentar",
-          "grade_with_ai": "Benoten Sie mit KI",
-          "submit_grades": "Noten einreichen",
+          "grade_with_ai": "Review with AI",
+          "submit_grades": "Submit review",
           "accept_grade": "Akzeptiere",
           "reject_grade": "Ablehnen",
           "allocated": "Diese Punktzahl wurde vergeben, weil",
@@ -1718,12 +1718,12 @@
         "submission_status": {
           "submitted": "Eingereicht",
           "in_progress": "In Bearbeitung",
-          "graded": "Benotet"
+          "graded": "Reviewed"
         },
         "workflow": {
           "awaiting_manual_hint": "Muss manuell überprüft werden",
-          "failed_hint": "Die automatische Bewertung ist fehlgeschlagen. Verschieben Sie diese Übermittlung zurück zu „Gesendet“, um es erneut zu versuchen.",
-          "invalid_transition": "Diese Statusverschiebung ist im Benotungsworkflow nicht zulässig"
+          "failed_hint": "Automatic review failed. Move this submission back to Submitted to retry.",
+          "invalid_transition": "This status move is not allowed by the review workflow"
         },
         "filter": {
           "student": "Student",
@@ -1910,8 +1910,8 @@
                 "attempts_count": "{count} Versuche",
                 "attempt_label": "Versuch {number}",
                 "date_unknown": "Datum unbekannt",
-                "status_awaiting_manual": "Wartet auf manuelle Bewertung",
-                "status_completed": "Bewertet",
+                "status_awaiting_manual": "Awaiting manual review",
+                "status_completed": "Reviewed",
                 "status_pending": "Ausstehend",
                 "counts_as_complete": "Zählt als abgeschlossen",
                 "passed": "Bestanden",
@@ -1945,7 +1945,7 @@
               "due": "Fällig bis",
               "no_description": "Keine Beschreibung",
               "start": "Starten",
-              "graded": "Benotet",
+              "graded": "Reviewed",
               "pending": "Ausstehend",
               "submitted": "Eingereicht",
               "status_pending": "Status: Ausstehende Überprüfung",
@@ -4532,12 +4532,12 @@
           "description": "E-Mail an Kursmitglieder über neue Beiträge und Kommentare im Newsfeed senden."
         },
         "gradingResult": {
-          "label": "Bewertungsergebnisse",
-          "description": "E-Mail an Studenten senden, wenn ihre Abgabe bewertet oder aktualisiert wird."
+          "label": "Review results",
+          "description": "Email students when their submission is reviewed or updated."
         },
         "newSubmission": {
-          "label": "Neue Abgaben zum Bewerten",
-          "description": "E-Mail an Tutoren senden, wenn ein Student Arbeit zur Bewertung einreicht."
+          "label": "New submissions to review",
+          "description": "Email tutors when a student submits work that needs review."
         },
         "newStudent": {
           "label": "Neuer Student meldet sich an",
@@ -4618,7 +4618,7 @@
         "quizAssigned": "Quiz zugewiesen",
         "sessionReminder": "Live-Sitzungserinnerung",
         "sessionUpdated": "Live-Sitzung aktualisiert",
-        "submissionGraded": "Einreichung benotet",
+        "submissionGraded": "Submission reviewed",
         "newsfeedPost": "Kurs-Newsfeed-Beitrag"
       },
       "descriptions": {
@@ -5264,7 +5264,7 @@
         "course_completed": "Ein Student schließt einen Kurs ab",
         "course_certificate_issued": "Ein Zertifikat wird erworben",
         "course_submission_created": "Eine Übungseinreichung wird erstellt",
-        "course_submission_status_changed": "Der Status einer Einreichung ändert sich, z. B. bei der Bewertung",
+        "course_submission_status_changed": "A submission status changes, such as when it is reviewed",
         "lesson_completion_updated": "Eine Lektion wird als abgeschlossen markiert oder zurückgesetzt",
         "exercise_completion_updated": "Eine Übung wird abgeschlossen oder zurückgesetzt",
         "compliance_record_status_changed": "Der Compliance-Status eines Studenten ändert sich",
@@ -5859,7 +5859,7 @@
       "practice_again": "Übe noch einmal",
       "attempt_option": "Versuch {attemptNumber} – {correct}/{total}",
       "attempts_select_aria": "Deine Versuche",
-      "privacy_hint": "Sofort in Ihrem Browser bewertet – es wird nichts übermittelt.",
+      "privacy_hint": "Reviewed instantly in your browser — nothing is submitted.",
       "summary_template": "Du hast [[richtig]] / [[total]] richtig gemacht."
     },
     "powered_by": {
@@ -6432,7 +6432,7 @@
       "certificate": "Zertifikat aktiviert",
       "deadline": "Frist {date}",
       "sequential": "Die Lektionen werden der Reihe nach freigeschaltet",
-      "grading": "Ein Tutor bewertet die eingereichten Arbeiten",
+      "grading": "A tutor reviews submissions",
       "comments_off": "Lektionskommentare sind deaktiviert",
       "lesson_download": "Lernende können Lektionen herunterladen",
       "self_enrollment": "Lernende können selbst mitmachen",

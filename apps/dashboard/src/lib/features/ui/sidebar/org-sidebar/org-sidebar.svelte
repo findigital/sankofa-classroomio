@@ -7,6 +7,7 @@
   import NavMain from './nav-main.svelte';
   import { orgNavCountsApi } from './org-nav-counts.svelte';
   import { SidebarFooterMenu } from '../footer';
+  import SourceOffer from '$features/ui/source-offer.svelte';
   import UpgradeTrigger from './upgrade-trigger.svelte';
   import { WhatsNewCard, WhatsNewModal } from '$features/whats-new/components';
   import SidebarSkeleton from '../sidebar-skeleton.svelte';
@@ -35,6 +36,7 @@
       <WhatsNewCard />
       <UpgradeTrigger />
       <SidebarFooterMenu />
+      <SourceOffer class="px-2 py-1" />
     </Sidebar.Footer>
 
     <Sidebar.Rail />

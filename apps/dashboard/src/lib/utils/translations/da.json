@@ -231,7 +231,7 @@
     },
     "submissions": {
       "success": {
-        "grading": "Bedømmelse gemt og elev underrettet"
+        "grading": "Review saved and student notified"
       }
     },
     "marks": {
@@ -546,8 +546,8 @@
     "heading": "Øvelser",
     "not_submitted": "Ikke indsendt",
     "submitted": "Indsendt",
-    "in_progress": "Bedømmelse i gang",
-    "graded": "Bedømt",
+    "in_progress": "Review in progress",
+    "graded": "Reviewed",
     "lesson": "Lektion"
   },
   "my_learning": {
@@ -609,8 +609,8 @@
     "last_seen": "Sidst set",
     "a_while_ago": "et stykke tid siden",
     "exercises": "Øvelser",
-    "graded": "Bedømt",
-    "not_graded": "Ikke bedømt",
+    "graded": "Reviewed",
+    "not_graded": "Not reviewed",
     "enrolled_courses": "Tilmeldte kurser",
     "enrolled_courses_description": "Alle tilmeldte kurser",
     "overall_course_progress": "Samlet kursusforløb",
@@ -845,8 +845,8 @@
       "no_courses_description": "Tilmeld denne elev for at begynde at spore status.",
       "no_exercises_title": "Ingen øvelser i dette kursus",
       "no_exercises_description": "Tilføj en øvelse til en lektion, og hver elevs forsøg vises her.",
-      "no_grades_title": "Intet bedømt endnu",
-      "no_grades_description": "Karakterer vises, når denne elev afleverer en øvelse.",
+      "no_grades_title": "Nothing reviewed yet",
+      "no_grades_description": "Results appear once this student submits an exercise.",
       "load_failed_title": "Kan ikke indlæse denne elev",
       "load_failed_description": "Noget gik galt under indlæsning af denne elev. Prøv igen.",
       "retry": "Prøv igen",
@@ -1687,7 +1687,7 @@
       "submissions": {
         "title": "Indsendte øvelser",
         "access": {
-          "denied_title": "Du kan ikke bedømme afleveringer for dette kursus",
+          "denied_title": "You can't review submissions for this course",
           "denied_description": "Bed en administrator om at tilføje dig som kursustutor eller som mentor for et hold, der inkluderer dette kursus."
         },
         "grading_modal": {
@@ -1699,8 +1699,8 @@
           "status": "Status",
           "add_comment": "Tilføj kommentar",
           "add_comment_placeholder": "Efterlad en kommentar",
-          "grade_with_ai": "Bedømmelse med AI",
-          "submit_grades": "Indsend karakterer",
+          "grade_with_ai": "Review with AI",
+          "submit_grades": "Submit review",
           "accept_grade": "Accepter",
           "reject_grade": "Afvis",
           "allocated": "Tildelt denne score pga",
@@ -1718,12 +1718,12 @@
         "submission_status": {
           "submitted": "Indsendt",
           "in_progress": "Igangværende",
-          "graded": "Bedømt"
+          "graded": "Reviewed"
         },
         "workflow": {
           "awaiting_manual_hint": "Trænger til manuel gennemgang",
-          "failed_hint": "Automatisk bedømmelse mislykkedes. Flyt denne indsendelse tilbage til Indsendt for at prøve igen.",
-          "invalid_transition": "Denne statusflytning er ikke tilladt af bedømmelsesarbejdsgangen"
+          "failed_hint": "Automatic review failed. Move this submission back to Submitted to retry.",
+          "invalid_transition": "This status move is not allowed by the review workflow"
         },
         "filter": {
           "student": "Student",
@@ -1910,8 +1910,8 @@
                 "attempts_count": "{count} forsøg",
                 "attempt_label": "Forsøg {number}",
                 "date_unknown": "Dato ukendt",
-                "status_awaiting_manual": "Afventer manuel bedømmelse",
-                "status_completed": "Bedømt",
+                "status_awaiting_manual": "Awaiting manual review",
+                "status_completed": "Reviewed",
                 "status_pending": "Afventer",
                 "counts_as_complete": "Tæller som gennemført",
                 "passed": "Bestået",
@@ -1945,7 +1945,7 @@
               "due": "Forfalder pr",
               "no_description": "Ingen beskrivelse",
               "start": "Start",
-              "graded": "Bedømt",
+              "graded": "Reviewed",
               "pending": "Afventer",
               "submitted": "Indsendt",
               "status_pending": "Status: Afventer gennemgang",
@@ -4532,12 +4532,12 @@
           "description": "Send e-mail til kursusmedlemmer om nye opslag og kommentarer på nyhedsfeedet."
         },
         "gradingResult": {
-          "label": "Bedømmelsesresultater",
-          "description": "Send e-mail til studerende, når deres aflevering er bedømt eller opdateret."
+          "label": "Review results",
+          "description": "Email students when their submission is reviewed or updated."
         },
         "newSubmission": {
-          "label": "Nye afleveringer til bedømmelse",
-          "description": "Send e-mail til undervisere, når en studerende afleverer arbejde, der skal bedømmes."
+          "label": "New submissions to review",
+          "description": "Email tutors when a student submits work that needs review."
         },
         "newStudent": {
           "label": "Ny studerende tilmelder sig",
@@ -4618,7 +4618,7 @@
         "quizAssigned": "Quiz tildelt",
         "sessionReminder": "Live session påmindelse",
         "sessionUpdated": "Live session opdateret",
-        "submissionGraded": "Indsendelse bedømt",
+        "submissionGraded": "Submission reviewed",
         "newsfeedPost": "Kursus nyhedsfeed indlæg"
       },
       "descriptions": {
@@ -5264,7 +5264,7 @@
         "course_completed": "En studerende gennemfører et kursus",
         "course_certificate_issued": "Et certifikat opnås",
         "course_submission_created": "En opgaveaflevering oprettes",
-        "course_submission_status_changed": "Status for en aflevering ændres, f.eks. når den bedømmes",
+        "course_submission_status_changed": "A submission status changes, such as when it is reviewed",
         "lesson_completion_updated": "En lektion markeres som fuldført eller nulstilles",
         "exercise_completion_updated": "En opgave fuldføres eller nulstilles",
         "compliance_record_status_changed": "En studerendes overholdelsesstatus ændres",
@@ -5859,7 +5859,7 @@
       "practice_again": "Øv igen",
       "attempt_option": "Forsøg {attemptNumber} - {correct}/{total}",
       "attempts_select_aria": "Dine forsøg",
-      "privacy_hint": "Bedømmes øjeblikkeligt i din browser - intet indsendes.",
+      "privacy_hint": "Reviewed instantly in your browser — nothing is submitted.",
       "summary_template": "Du fik [[korrekt]] / [[total]] korrekt."
     },
     "powered_by": {
@@ -6432,7 +6432,7 @@
       "certificate": "Certifikat aktiveret",
       "deadline": "Frist {date}",
       "sequential": "Lektionerne låses op i rækkefølge",
-      "grading": "En vejleder bedømmer afleveringer",
+      "grading": "A tutor reviews submissions",
       "comments_off": "Lektionens kommentarer er slået fra",
       "lesson_download": "Elever kan downloade lektioner",
       "self_enrollment": "Eleverne kan selv være med",

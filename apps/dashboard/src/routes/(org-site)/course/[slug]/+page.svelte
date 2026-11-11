@@ -2,7 +2,6 @@
   import { page } from '$app/state';
 
   import { CourseLandingPage } from '$features/ui';
-  import { PoweredBy } from '$features/ui';
   import { appBrandName } from '$lib/utils/functions/brand';
 
   let { data } = $props();
@@ -37,6 +36,5 @@
 </svelte:head>
 
 {#if data.course}
-  <PoweredBy />
   <CourseLandingPage courseData={data.course} org={data.org} themeComponent={data.themeComponent} />
 {/if}

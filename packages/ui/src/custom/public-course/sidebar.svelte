@@ -7,7 +7,7 @@
   import { cn } from '../../tools';
   import PoweredBy from './powered-by.svelte';
   import SidebarRow from './sidebar-row.svelte';
-  import type { PublicCourseSidebarItem, PublicCourseSidebarSection } from './types';
+  import type { PublicCourseSidebarItem, PublicCourseSidebarSection, PublicCourseSourceOffer } from './types';
 
   interface Props {
     sections: PublicCourseSidebarSection[];
@@ -26,6 +26,7 @@
     orgSlug?: string | null;
     poweredByLabel?: string;
     poweredByBrand?: string;
+    sourceOffer?: PublicCourseSourceOffer | null;
     class?: string;
   }
 
@@ -42,8 +43,22 @@
     orgSlug = null,
     poweredByLabel = 'Powered by',
     poweredByBrand = 'ClassroomIO',
+    sourceOffer = null,
     class: className
   }: Props = $props();
+
+  const sourceOfferHref = $derived.by(() => {
+    if (!sourceOffer?.href) return '';
+
+    try {
+      const url = new URL(sourceOffer.href);
+      if (url.protocol === 'https:' || url.protocol === 'http:') return url.href;
+    } catch {
+      return '';
+    }
+
+    return '';
+  });
 
   let expandedSectionIds = $state<Set<string>>(new Set());
   let trackedCollapseSignature = $state<string | null>(null);
@@ -162,7 +177,13 @@
     </Tooltip.Provider>
   </nav>
 
-  {#if showPoweredBy}
+  {#if sourceOfferHref && sourceOffer}
+    <p class="ui:px-3 ui:py-3 ui:text-center ui:text-xs">
+      <a class="ui:text-muted-foreground ui:underline" href={sourceOfferHref} rel="noopener noreferrer" target="_blank">
+        {sourceOffer.label}
+      </a>
+    </p>
+  {:else if showPoweredBy}
     <PoweredBy {courseSlug} {orgSlug} label={poweredByLabel} brand={poweredByBrand} />
   {/if}
 </div>

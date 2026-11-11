@@ -210,7 +210,7 @@ const EXERCISE_QUESTION_FIXTURES: ExerciseQuestionModel[] = [
 export const EXERCISE_FIXTURE: PublicExerciseViewData = {
   kind: 'exercise',
   title: 'Foundations quiz',
-  description: 'A short check-in on the foundations we just covered. Graded instantly in your browser.',
+  description: 'A short check-in on the foundations we just covered. Reviewed instantly in your browser.',
   sectionTitle: 'Foundations',
   isUnlocked: true,
   questions: EXERCISE_QUESTION_FIXTURES

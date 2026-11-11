@@ -113,10 +113,10 @@
   {#if isGraded(exercise)}
     <Badge variant="success">
       <CircleCheckIcon />
-      Graded
+      Reviewed
     </Badge>
   {:else if exercise.isCompleted}
-    <Badge variant="secondary">Awaiting grade</Badge>
+    <Badge variant="secondary">Awaiting review</Badge>
   {:else}
     <Badge variant="outline">Not submitted</Badge>
   {/if}
