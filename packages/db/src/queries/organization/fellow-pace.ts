@@ -415,7 +415,13 @@ export async function listPaceFilters(
       .select({ id: schema.course.id, title: schema.course.title })
       .from(schema.course)
       .innerJoin(schema.group, eq(schema.course.groupId, schema.group.id))
-      .where(and(eq(schema.group.organizationId, organizationId), eq(schema.course.isTemplate, false)))
+      .where(
+        and(
+          eq(schema.group.organizationId, organizationId),
+          eq(schema.course.isTemplate, false),
+          eq(schema.course.isPublished, true)
+        )
+      )
       .orderBy(asc(schema.course.title));
     const cohorts = await dbClient
       .select({ id: schema.cohort.id, name: schema.cohort.name })

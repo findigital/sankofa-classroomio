@@ -109,139 +109,143 @@
   </Page.Header>
 
   <Page.Body>
-    {#if $currentOrg.roleId === ROLE.STUDENT}
-      <p>{$t('pace.forbidden')}</p>
-    {:else}
-      <div class="mb-4 grid gap-3 md:grid-cols-3">
-        <Select.Root type="single" value={cohortId} onValueChange={handleCohortChange}>
-          <Select.Trigger class="w-full" data-testid="pace-cohort-filter">
-            {cohortId === 'all'
-              ? $t('pace.filters.all_cohorts')
-              : (paceApi.cohorts.find((cohort) => cohort.id === cohortId)?.name ?? $t('pace.filters.all_cohorts'))}
-          </Select.Trigger>
-          <Select.Content>
-            <Select.Item value="all">{$t('pace.filters.all_cohorts')}</Select.Item>
-            {#each paceApi.cohorts as cohort (cohort.id)}
-              <Select.Item value={cohort.id}>{cohort.name}</Select.Item>
-            {/each}
-          </Select.Content>
-        </Select.Root>
-
-        <Select.Root type="single" value={courseId} onValueChange={handleCourseChange}>
-          <Select.Trigger class="w-full" data-testid="pace-course-filter">
-            {courseId === 'all'
-              ? $t('pace.filters.all_courses')
-              : (paceApi.courses.find((course) => course.id === courseId)?.title ?? $t('pace.filters.all_courses'))}
-          </Select.Trigger>
-          <Select.Content>
-            <Select.Item value="all">{$t('pace.filters.all_courses')}</Select.Item>
-            {#each paceApi.courses as course (course.id)}
-              <Select.Item value={course.id}>{course.title}</Select.Item>
-            {/each}
-          </Select.Content>
-        </Select.Root>
-
-        <NumberField
-          integer
-          min={1}
-          max={365}
-          label={$t('pace.filters.quiet_days')}
-          testId="pace-quiet-days"
-          bind:value={quietDays}
-          onValueChange={handleQuietDays}
-        />
-      </div>
-
-      {#if paceApi.fellows === null}
-        <div class="space-y-2">
-          {#each [0, 1, 2, 3, 4] as index (index)}
-            <Skeleton class="h-12 w-full" />
-          {/each}
-        </div>
-      {:else if paceApi.fellows.length === 0}
-        <p>{$t('pace.empty')}</p>
+    {#snippet child()}
+      {#if $currentOrg.roleId === ROLE.STUDENT}
+        <p>{$t('pace.forbidden')}</p>
       {:else}
-        <div class="overflow-x-auto">
-          <Table.Root>
-            <Table.Header>
-              <Table.Row>
-                <Table.Head>{$t('pace.columns.fellow')}</Table.Head>
-                <Table.Head>{$t('pace.columns.mentors')}</Table.Head>
-                <Table.Head>{$t('pace.columns.last_activity')}</Table.Head>
-                <Table.Head>{$t('pace.columns.lessons')}</Table.Head>
-                <Table.Head>{$t('pace.columns.exercises')}</Table.Head>
-                <Table.Head>{$t('pace.columns.overdue')}</Table.Head>
-                <Table.Head>{$t('pace.columns.flags')}</Table.Head>
-                <Table.Head>{$t('pace.columns.minor')}</Table.Head>
-                {#if $currentOrg.roleId === ROLE.ADMIN}
-                  <Table.Head></Table.Head>
-                {/if}
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              {#each paceApi.fellows as fellow (fellow.memberId)}
-                {@const activity = paceActivityAge(fellow.lastActivityAt)}
+        <div class="mb-4 grid gap-3 md:grid-cols-3">
+          <Select.Root type="single" value={cohortId} onValueChange={handleCohortChange}>
+            <Select.Trigger class="w-full" data-testid="pace-cohort-filter">
+              {cohortId === 'all'
+                ? $t('pace.filters.all_cohorts')
+                : (paceApi.cohorts.find((cohort) => cohort.id === cohortId)?.name ?? $t('pace.filters.all_cohorts'))}
+            </Select.Trigger>
+            <Select.Content>
+              <Select.Item value="all">{$t('pace.filters.all_cohorts')}</Select.Item>
+              {#each paceApi.cohorts as cohort (cohort.id)}
+                <Select.Item value={cohort.id}>{cohort.name}</Select.Item>
+              {/each}
+            </Select.Content>
+          </Select.Root>
+
+          <Select.Root type="single" value={courseId} onValueChange={handleCourseChange}>
+            <Select.Trigger class="w-full" data-testid="pace-course-filter">
+              {courseId === 'all'
+                ? $t('pace.filters.all_courses')
+                : (paceApi.courses.find((course) => course.id === courseId)?.title ?? $t('pace.filters.all_courses'))}
+            </Select.Trigger>
+            <Select.Content>
+              <Select.Item value="all">{$t('pace.filters.all_courses')}</Select.Item>
+              {#each paceApi.courses as course (course.id)}
+                <Select.Item value={course.id}>{course.title}</Select.Item>
+              {/each}
+            </Select.Content>
+          </Select.Root>
+
+          <NumberField
+            integer
+            min={1}
+            max={365}
+            label={$t('pace.filters.quiet_days')}
+            testId="pace-quiet-days"
+            bind:value={quietDays}
+            onValueChange={handleQuietDays}
+          />
+        </div>
+
+        {#if paceApi.fellows === null}
+          <div class="space-y-2">
+            {#each [0, 1, 2, 3, 4] as index (index)}
+              <Skeleton class="h-12 w-full" />
+            {/each}
+          </div>
+        {:else if paceApi.fellows.length === 0}
+          <p>{$t('pace.empty')}</p>
+        {:else}
+          <div class="overflow-x-auto">
+            <Table.Root>
+              <Table.Header>
                 <Table.Row>
-                  <Table.Cell>
-                    <p class="font-medium">{fellow.name}</p>
-                    <p class="ui:text-muted-foreground text-sm">{fellow.email}</p>
-                  </Table.Cell>
-                  <Table.Cell>
-                    {fellow.mentors.length > 0
-                      ? fellow.mentors.map((mentor) => mentor.name).join(', ')
-                      : $t('pace.mentors.unassigned')}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {#if activity.kind === 'never'}
-                      {$t('pace.last_activity_never')}
-                    {:else if activity.kind === 'today'}
-                      {$t('pace.last_activity_today')}
-                    {:else}
-                      {$t('pace.last_activity_days', { days: activity.days })}
-                    {/if}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {$t('pace.ratio', { completed: fellow.lessonsCompleted, required: fellow.lessonsRequired })}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {$t('pace.ratio', { completed: fellow.exercisesCompleted, required: fellow.exercisesRequired })}
-                  </Table.Cell>
-                  <Table.Cell>
-                    <p>{fellow.overdueCount}</p>
-                    {#each fellow.overdueItems.slice(0, 3) as item (item.exerciseId)}
-                      <p class="ui:text-muted-foreground text-sm">{item.title}</p>
-                    {/each}
-                  </Table.Cell>
-                  <Table.Cell>
-                    <div class="flex flex-wrap gap-1">
-                      {#if fellow.flags.length === 0}
-                        <Badge variant="success">{$t('pace.flags.on_pace')}</Badge>
-                      {/if}
-                      {#if fellow.flags.includes('gone_quiet')}
-                        <Badge variant="warning">{$t('pace.flags.gone_quiet')}</Badge>
-                      {/if}
-                      {#if fellow.flags.includes('overdue')}
-                        <Badge variant="destructive">{$t('pace.flags.overdue')}</Badge>
-                      {/if}
-                    </div>
-                  </Table.Cell>
-                  <Table.Cell>
-                    {fellow.isMinor ? $t('pace.minor_yes') : $t('pace.minor_no')}
-                  </Table.Cell>
+                  <Table.Head>{$t('pace.columns.fellow')}</Table.Head>
+                  <Table.Head>{$t('pace.columns.mentors')}</Table.Head>
+                  <Table.Head>{$t('pace.columns.last_activity')}</Table.Head>
+                  <Table.Head>{$t('pace.columns.lessons')}</Table.Head>
+                  <Table.Head>{$t('pace.columns.exercises')}</Table.Head>
+                  <Table.Head>{$t('pace.columns.overdue')}</Table.Head>
+                  <Table.Head>{$t('pace.columns.flags')}</Table.Head>
+                  <Table.Head>{$t('pace.columns.minor')}</Table.Head>
                   {#if $currentOrg.roleId === ROLE.ADMIN}
-                    <Table.Cell>
-                      <Button size="sm" variant="outline" onclick={() => openSafeguarding(fellow)}>
-                        {$t('pace.safeguarding.open')}
-                      </Button>
-                    </Table.Cell>
+                    <Table.Head></Table.Head>
                   {/if}
                 </Table.Row>
-              {/each}
-            </Table.Body>
-          </Table.Root>
-        </div>
+              </Table.Header>
+              <Table.Body>
+                {#each paceApi.fellows as fellow (fellow.memberId)}
+                  {@const activity = paceActivityAge(fellow.lastActivityAt)}
+                  <Table.Row>
+                    <Table.Cell>
+                      <p class="font-medium">{fellow.name}</p>
+                      {#if fellow.email}
+                        <p class="ui:text-muted-foreground text-sm">{fellow.email}</p>
+                      {/if}
+                    </Table.Cell>
+                    <Table.Cell>
+                      {fellow.mentors.length > 0
+                        ? fellow.mentors.map((mentor) => mentor.name).join(', ')
+                        : $t('pace.mentors.unassigned')}
+                    </Table.Cell>
+                    <Table.Cell>
+                      {#if activity.kind === 'never'}
+                        {$t('pace.last_activity_never')}
+                      {:else if activity.kind === 'today'}
+                        {$t('pace.last_activity_today')}
+                      {:else}
+                        {$t('pace.last_activity_days', { days: activity.days })}
+                      {/if}
+                    </Table.Cell>
+                    <Table.Cell>
+                      {$t('pace.ratio', { completed: fellow.lessonsCompleted, required: fellow.lessonsRequired })}
+                    </Table.Cell>
+                    <Table.Cell>
+                      {$t('pace.ratio', { completed: fellow.exercisesCompleted, required: fellow.exercisesRequired })}
+                    </Table.Cell>
+                    <Table.Cell>
+                      <p>{fellow.overdueCount}</p>
+                      {#each fellow.overdueItems.slice(0, 3) as item (item.exerciseId)}
+                        <p class="ui:text-muted-foreground text-sm">{item.title}</p>
+                      {/each}
+                    </Table.Cell>
+                    <Table.Cell>
+                      <div class="flex flex-wrap gap-1">
+                        {#if fellow.flags.length === 0}
+                          <Badge variant="success">{$t('pace.flags.on_pace')}</Badge>
+                        {/if}
+                        {#if fellow.flags.includes('gone_quiet')}
+                          <Badge variant="warning">{$t('pace.flags.gone_quiet')}</Badge>
+                        {/if}
+                        {#if fellow.flags.includes('overdue')}
+                          <Badge variant="destructive">{$t('pace.flags.overdue')}</Badge>
+                        {/if}
+                      </div>
+                    </Table.Cell>
+                    <Table.Cell>
+                      {fellow.isMinor ? $t('pace.minor_yes') : $t('pace.minor_no')}
+                    </Table.Cell>
+                    {#if $currentOrg.roleId === ROLE.ADMIN}
+                      <Table.Cell>
+                        <Button size="sm" variant="outline" onclick={() => openSafeguarding(fellow)}>
+                          {$t('pace.safeguarding.open')}
+                        </Button>
+                      </Table.Cell>
+                    {/if}
+                  </Table.Row>
+                {/each}
+              </Table.Body>
+            </Table.Root>
+          </div>
+        {/if}
       {/if}
-    {/if}
+    {/snippet}
   </Page.Body>
 </Page.Root>
 
