@@ -58,7 +58,8 @@ describe('getFellowPace', () => {
     expect(mocks.listFellowPace).toHaveBeenCalledWith(
       expect.objectContaining({ organizationId: ORG_ID, mentorProfileId: MENTOR_ID })
     );
-    expect(result.fellows).toEqual([assigned]);
+    expect(result.fellows).toEqual([{ ...assigned, email: null }]);
+    expect(JSON.stringify(result.fellows)).not.toContain('@example.com');
     expect(result.fellows.some((row) => row.profileId === 'fellow-b')).toBe(false);
   });
 
@@ -71,6 +72,7 @@ describe('getFellowPace', () => {
 
     expect(mocks.listFellowPace).toHaveBeenCalledWith(expect.objectContaining({ mentorProfileId: null }));
     expect(result.fellows).toEqual([assigned, unassigned]);
+    expect(result.fellows.map((row) => row.email)).toEqual([assigned.email, unassigned.email]);
   });
 
   it('rejects a student before querying', async () => {

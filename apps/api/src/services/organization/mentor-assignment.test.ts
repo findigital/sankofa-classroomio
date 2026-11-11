@@ -45,7 +45,8 @@ describe('getMentorRoster', () => {
 
     expect(mocks.listMentorRoster).toHaveBeenCalledWith(ORG_ID, MENTOR_ID);
     expect(mocks.listActiveStudents).not.toHaveBeenCalled();
-    expect(result.fellows).toEqual([assigned]);
+    expect(result.fellows).toEqual([{ ...assigned, email: null }]);
+    expect(JSON.stringify(result)).not.toContain('assigned@example.com');
     expect(result.mentors).toHaveLength(1);
   });
 });

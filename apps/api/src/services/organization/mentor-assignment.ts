@@ -20,7 +20,11 @@ export async function getMentorRoster(organizationId: string, viewer: PaceViewer
   }
 
   if (viewer.roleId === ROLE.TUTOR) {
-    const mentors = await listMentorRoster(organizationId, viewer.profileId);
+    const roster = await listMentorRoster(organizationId, viewer.profileId);
+    const mentors = roster.map((mentor) => ({
+      ...mentor,
+      fellows: mentor.fellows.map((fellow) => ({ ...fellow, email: null }))
+    }));
 
     return { mentors, fellows: mentors.flatMap((mentor) => mentor.fellows) };
   }

@@ -59,7 +59,9 @@ export async function getFellowPace(organizationId: string, viewer: PaceViewer, 
     mentorProfileId,
     quietDays
   });
-  const fellows: FellowPaceFellow[] = fellowsVisibleToViewer(rows, viewer);
+  const visible = fellowsVisibleToViewer(rows, viewer);
+  const fellows: FellowPaceFellow[] =
+    viewer.roleId === ROLE.TUTOR ? visible.map((fellow) => ({ ...fellow, email: null })) : visible;
   const filters = await listPaceFilters(organizationId);
 
   return { quietDays, fellows, courses: filters.courses, cohorts: filters.cohorts };
