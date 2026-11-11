@@ -48,6 +48,13 @@ export function extractNameAndEmail(str: string): FromData | undefined {
   }
 }
 
+export function buildOrgEmailFromName(orgName: string): string {
+  const suffix = process.env.EMAIL_VIA_SUFFIX?.trim();
+  const displayName = suffix ? `${orgName} (via ${suffix})` : orgName;
+
+  return buildEmailFromName(displayName);
+}
+
 export function buildEmailFromName(name?: string): string {
   if (!name) {
     return EMAIL_FROM;

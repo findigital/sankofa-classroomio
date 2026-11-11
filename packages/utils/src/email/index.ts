@@ -26,18 +26,18 @@ const STUDENT_EMAIL_SUBMISSION_STATUSES: Record<
   EmailLocale,
   { submitted: string; inProgress: string; graded: string; updated: string }
 > = {
-  en: { submitted: 'Submitted', inProgress: 'In progress', graded: 'Graded', updated: 'Updated' },
-  hi: { submitted: 'सबमिट किया गया', inProgress: 'प्रगति में', graded: 'मूल्यांकित', updated: 'अपडेट किया गया' },
-  fr: { submitted: 'Envoyé', inProgress: 'En cours', graded: 'Évalué', updated: 'Mis à jour' },
-  pt: { submitted: 'Enviado', inProgress: 'Em andamento', graded: 'Avaliado', updated: 'Atualizado' },
-  de: { submitted: 'Eingereicht', inProgress: 'In Bearbeitung', graded: 'Bewertet', updated: 'Aktualisiert' },
-  vi: { submitted: 'Đã nộp', inProgress: 'Đang thực hiện', graded: 'Đã chấm', updated: 'Đã cập nhật' },
-  ru: { submitted: 'Отправлено', inProgress: 'В процессе', graded: 'Проверено', updated: 'Обновлено' },
-  es: { submitted: 'Enviado', inProgress: 'En curso', graded: 'Calificado', updated: 'Actualizado' },
-  pl: { submitted: 'Wysłano', inProgress: 'W trakcie', graded: 'Oceniono', updated: 'Zaktualizowano' },
-  da: { submitted: 'Indsendt', inProgress: 'I gang', graded: 'Bedømt', updated: 'Opdateret' },
-  tr: { submitted: 'Gönderildi', inProgress: 'Devam ediyor', graded: 'Değerlendirildi', updated: 'Güncellendi' },
-  it: { submitted: 'Inviato', inProgress: 'In corso', graded: 'Valutato', updated: 'Aggiornato' }
+  en: { submitted: 'Submitted', inProgress: 'In progress', graded: 'Reviewed', updated: 'Updated' },
+  hi: { submitted: 'सबमिट किया गया', inProgress: 'प्रगति में', graded: 'Reviewed', updated: 'अपडेट किया गया' },
+  fr: { submitted: 'Envoyé', inProgress: 'En cours', graded: 'Reviewed', updated: 'Mis à jour' },
+  pt: { submitted: 'Enviado', inProgress: 'Em andamento', graded: 'Reviewed', updated: 'Atualizado' },
+  de: { submitted: 'Eingereicht', inProgress: 'In Bearbeitung', graded: 'Reviewed', updated: 'Aktualisiert' },
+  vi: { submitted: 'Đã nộp', inProgress: 'Đang thực hiện', graded: 'Reviewed', updated: 'Đã cập nhật' },
+  ru: { submitted: 'Отправлено', inProgress: 'В процессе', graded: 'Reviewed', updated: 'Обновлено' },
+  es: { submitted: 'Enviado', inProgress: 'En curso', graded: 'Reviewed', updated: 'Actualizado' },
+  pl: { submitted: 'Wysłano', inProgress: 'W trakcie', graded: 'Reviewed', updated: 'Zaktualizowano' },
+  da: { submitted: 'Indsendt', inProgress: 'I gang', graded: 'Reviewed', updated: 'Opdateret' },
+  tr: { submitted: 'Gönderildi', inProgress: 'Devam ediyor', graded: 'Reviewed', updated: 'Güncellendi' },
+  it: { submitted: 'Inviato', inProgress: 'In corso', graded: 'Reviewed', updated: 'Aggiornato' }
 };
 
 export function getStudentEmailSubmissionStatusLabel(statusId: number, locale: EmailLocale): string {

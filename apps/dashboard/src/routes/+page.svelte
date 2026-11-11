@@ -7,21 +7,24 @@
   import FrownIcon from '@lucide/svelte/icons/frown';
   import { Empty } from '@cio/ui/custom/empty';
   import { SimpleLogoNav } from '@cio/ui/custom/simple-logo-nav';
-  import { buildOrgLandingPageProps, normalizeLandingPageSettings } from '$features/org/utils/landing-page';
+  import {
+    buildOrgLandingPageProps,
+    normalizeLandingPageSettings,
+    withCatalogLockedLabels
+  } from '$features/org/utils/landing-page';
   import { user, profile } from '$lib/utils/store/user';
   import { t } from '$lib/utils/functions/translations';
   import { resolveOrgLandingAuthAction } from '$features/org/utils/org-landing-auth-action';
   import { resolveOrgLandingLearnerAccount } from '$features/org/utils/org-landing-learner-account';
+  import { appBrandName, defaultDocumentTitle, supportEmail } from '$lib/utils/functions/brand';
+  import SourceOffer from '$features/ui/source-offer.svelte';
 
   let { data } = $props();
 
   const hasSetupError = $derived(!appInitApi.loading && !!appInitApi.error);
 
-  const pageTitle = $derived(
-    data.isOrgSite && data.org
-      ? data.org.name
-      : 'ClassroomIO - One Platform for Customer, Partner, and Employee Training'
-  );
+  const pageTitle = $derived(data.isOrgSite && data.org ? data.org.name : defaultDocumentTitle());
+  const helpAddress = $derived(supportEmail());
 
   const authAction = $derived(
     resolveOrgLandingAuthAction({
@@ -47,7 +50,7 @@
   const landingPageProps = $derived.by(() => {
     if (!data.isOrgSite || !data.org) return null;
 
-    return buildOrgLandingPageProps(
+    const props = buildOrgLandingPageProps(
       data.org,
       normalizeLandingPageSettings(data.org.landingpage),
       data.courses,
@@ -55,6 +58,8 @@
       authAction,
       { learnerAccount }
     );
+
+    return withCatalogLockedLabels(props, data.catalogLocked);
   });
 
   onMount(() => {
@@ -76,6 +81,7 @@
 {#if data.isOrgSite && data.org}
   {#if ThemeComponent && landingPageProps}
     <ThemeComponent {...landingPageProps} />
+    <SourceOffer />
   {/if}
 {:else if hasSetupError}
   <Empty
@@ -85,16 +91,20 @@
     variant="page"
     layout="full-page"
     showLogo={true}
+    logoName={appBrandName()}
+    logoHref="/"
   >
     <p class="my-2 text-red-500">{appInitApi.error}</p>
     <div class="flex gap-2">
       <Button variant="secondary" onclick={() => window.location.reload()}>Reload Page</Button>
-      <Button variant="default" href="https://classroomio.com/contact">Contact Us</Button>
+      {#if helpAddress}
+        <Button variant="default" href={`mailto:${helpAddress}`}>Contact Us</Button>
+      {/if}
     </div>
   </Empty>
 {:else}
   <div class="m-2 flex h-screen w-screen flex-col items-center justify-center font-sans sm:m-0">
-    <SimpleLogoNav />
+    <SimpleLogoNav name={appBrandName()} href="/" />
     <Block.Loader
       blockText={false}
       title={$t('common.loading_states.opening_academy.title')}

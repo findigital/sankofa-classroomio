@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { WebhooksAutomationPage } from '$features/automation/pages';
   import { t } from '$lib/utils/functions/translations';
   import * as Page from '@cio/ui/base/page';
@@ -7,7 +8,7 @@
   import { WEBHOOKS_DOCS_URL } from '$features/automation/utils/automation-utils';
 </script>
 
-<svelte:head><title>{t.get('automation.tabs.webhooks')} - ClassroomIO</title></svelte:head>
+<svelte:head><title>{t.get('automation.tabs.webhooks')} - {appBrandName()}</title></svelte:head>
 <Page.Header>
   <Page.HeaderContent>
     <Page.Title>{$t('automation.tabs.webhooks')}</Page.Title>

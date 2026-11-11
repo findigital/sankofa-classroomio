@@ -12,6 +12,7 @@
   } from '$features/oauth/utils/oauth-scopes';
   import { t } from '$lib/utils/functions/translations';
   import * as Avatar from '@cio/ui/base/avatar';
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { Button } from '@cio/ui/base/button';
   import * as Select from '@cio/ui/base/select';
   import CheckIcon from '@lucide/svelte/icons/check';
@@ -184,7 +185,7 @@
   });
 </script>
 
-<svelte:head><title>{$t('oauth.consent.page_title')}</title></svelte:head>
+<svelte:head><title>{$t('oauth.consent.page_title', { brand: appBrandName() })}</title></svelte:head>
 
 <AuthUI showOnlyContent showLogo isLoading={oauthApi.isLoading || !isReady} handleSubmit={() => respond(true)}>
   {#if isReady && !isValidRequest}
@@ -216,7 +217,7 @@
   {:else if isReady}
     <div class="flex flex-col gap-6">
       <div class="space-y-1 text-center">
-        <h1 class="text-2xl font-normal">{$t('oauth.consent.title', { client: clientName })}</h1>
+        <h1 class="text-2xl font-normal">{$t('oauth.consent.title', { client: clientName, brand: appBrandName() })}</h1>
         <p class="ui:text-muted-foreground text-sm">
           {$t('oauth.consent.subtitle', { client: clientName })}
         </p>

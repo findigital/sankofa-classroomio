@@ -12,7 +12,12 @@
   import EditableLandingSection from '../editable-section.svelte';
   import LandingThemeScope from '../landing-theme-scope.svelte';
   import { Button } from '../../../base/button';
-  import { getCourseTypeLandingMeta, defaultLessonsLabel, defaultExercisesLabel } from '../landing-page-utils';
+  import {
+    defaultExercisesLabel,
+    defaultLessonsLabel,
+    getCourseTypeLandingMeta,
+    landingCoursePriceLabel
+  } from '../landing-page-utils';
 
   let {
     orgName,
@@ -41,10 +46,9 @@
   const resolvedLessonsLabel = $derived(labels?.lessonsLabel ?? defaultLessonsLabel);
   const resolvedExercisesLabel = $derived(labels?.exercisesLabel ?? defaultExercisesLabel);
 
-  function formatCost(cost?: number, currency = 'USD'): string {
-    if (!cost) return labels?.freeLabel ?? 'Free';
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(cost);
-  }
+  const featuredPrice = $derived(
+    featured ? landingCoursePriceLabel(featured, labels, { maximumFractionDigits: 0 }) : null
+  );
 
   function courseHref(course: CourseItem): string | undefined {
     if (disableCourseLinks) return undefined;
@@ -148,9 +152,9 @@
                     >
                       {labels?.startCourseLabel ?? 'Start this course'}
                     </Button>
-                    <span class="ui:text-base ui:font-medium ui:opacity-95">
-                      {featured.price || formatCost(featured.cost, featured.currency)}
-                    </span>
+                    {#if featuredPrice}
+                      <span class="ui:text-base ui:font-medium ui:opacity-95">{featuredPrice}</span>
+                    {/if}
                   </div>
                 </div>
 

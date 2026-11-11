@@ -64,25 +64,28 @@
       {labels?.pricingEyebrow ?? 'Enrol'}
     </span>
 
-    <div class="ui:mt-3.5 ui:flex ui:items-baseline ui:gap-3">
-      {#if isFree}
-        <span
-          class="ui:text-[40px] ui:leading-none ui:text-[var(--landing-fg)] ui:[font-weight:var(--landing-heading-weight)] ui:[letter-spacing:var(--landing-heading-tracking)]"
-        >
-          {labels?.freeLabel ?? 'Free'}
-        </span>
-      {:else}
-        <span
-          class="ui:text-[40px] ui:leading-none ui:text-[var(--landing-fg)] ui:[font-weight:var(--landing-heading-weight)] ui:[letter-spacing:var(--landing-heading-tracking)]"
-        >
-          {formattedDisplayAmount}
-        </span>
-        {#if discountedAmount !== null}
-          <span class="ui:text-[15px] ui:text-[var(--landing-fg-faint)] ui:line-through">{formattedOriginalAmount}</span
+    {#if !labels?.hidePrice}
+      <div class="ui:mt-3.5 ui:flex ui:items-baseline ui:gap-3">
+        {#if isFree}
+          <span
+            class="ui:text-[40px] ui:leading-none ui:text-[var(--landing-fg)] ui:[font-weight:var(--landing-heading-weight)] ui:[letter-spacing:var(--landing-heading-tracking)]"
           >
+            {labels?.freeLabel ?? 'Free'}
+          </span>
+        {:else}
+          <span
+            class="ui:text-[40px] ui:leading-none ui:text-[var(--landing-fg)] ui:[font-weight:var(--landing-heading-weight)] ui:[letter-spacing:var(--landing-heading-tracking)]"
+          >
+            {formattedDisplayAmount}
+          </span>
+          {#if discountedAmount !== null}
+            <span class="ui:text-[15px] ui:text-[var(--landing-fg-faint)] ui:line-through"
+              >{formattedOriginalAmount}</span
+            >
+          {/if}
         {/if}
-      {/if}
-    </div>
+      </div>
+    {/if}
 
     <div class="ui:mt-6">
       <LandingButton

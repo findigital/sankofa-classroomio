@@ -163,6 +163,8 @@ SMTP_PORT=
 SMTP_USER=
 SMTP_PASSWORD=
 SMTP_SENDER=
+# SUPPORT_EMAIL=
+# EMAIL_VIA_SUFFIX=
 
 # Optional uploaded-video transcription and OpenAI-backed AI course generation
 OPENAI_API_KEY=
@@ -192,7 +194,7 @@ PRIVATE_SERVER_KEY="${{cio-api.PRIVATE_SERVER_KEY}}"   # same value as cio-api
 ALLOWED_EXTERNAL_DOMAINS="https://fonts.googleapis.com"
 ```
 
-Optional: add `PUBLIC_APP_TITLE`, `PUBLIC_APP_DESCRIPTION`, `PUBLIC_OG_IMAGE_URL` for custom branding. You can also use per-directive CSP vars (`CSP_SCRIPT_SRC_DOMAINS`, `CSP_MEDIA_SRC_DOMAINS`, etc.) instead of `ALLOWED_EXTERNAL_DOMAINS` for finer control.
+Optional branding on the dashboard: `PUBLIC_APP_NAME`, `PUBLIC_APP_TITLE`, `PUBLIC_APP_DESCRIPTION`, `PUBLIC_OG_IMAGE_URL`, `PUBLIC_SUPPORT_EMAIL`, `PUBLIC_TWITTER_HANDLE`, and `PUBLIC_SOURCE_URL` (the in-app source-code link; defaults to this repository). On the API and jobs services, `SUPPORT_EMAIL` sets the password-reset help address and default reply-to, and `EMAIL_VIA_SUFFIX` appends `(via suffix)` to organization From names. You can also use per-directive CSP vars (`CSP_SCRIPT_SRC_DOMAINS`, `CSP_MEDIA_SRC_DOMAINS`, etc.) instead of `ALLOWED_EXTERNAL_DOMAINS` for finer control.
 
 **Upload size limits** (optional): add the same `UPLOAD_MAX_*_MB` values to **cio-api** and **cio-dashboard** (e.g. `UPLOAD_MAX_DOCUMENT_MB=50`). See [Configuration → Upload file size limits](/self-hosted/configuration/storage#upload-file-size-limits).
 

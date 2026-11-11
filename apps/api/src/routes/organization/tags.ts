@@ -13,6 +13,7 @@ import {
   createOrganizationTagGroup,
   getPublicOrganizationTagGroups,
   getOrganizationTagGroups,
+  deleteOrganizationTag,
   updateOrganizationTag,
   updateOrganizationTagGroup
 } from '@api/services/tag';
@@ -177,4 +178,21 @@ export const tagsRouter = new Hono()
         return handleError(c, error, 'Failed to update tag');
       }
     }
-  );
+  )
+  .delete('/:tagId', authMiddleware, orgAdminMiddleware, zValidator('param', ZTagParam), async (c) => {
+    try {
+      const orgId = c.req.header('cio-org-id')!;
+      const { tagId } = c.req.valid('param');
+      const tag = await deleteOrganizationTag(orgId, tagId);
+
+      return c.json(
+        {
+          success: true,
+          data: tag
+        },
+        200
+      );
+    } catch (error) {
+      return handleError(c, error, 'Failed to delete tag');
+    }
+  });

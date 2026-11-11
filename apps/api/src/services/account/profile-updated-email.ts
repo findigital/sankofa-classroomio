@@ -1,4 +1,4 @@
-import { buildEmailBranding, buildEmailFromName } from '@cio/email';
+import { buildEmailBranding, buildOrgEmailFromName } from '@cio/email';
 import { getAppBaseUrl, getDashboardBaseUrl } from '@cio/core/config/dashboard-url';
 import { getOrganizationById, getOrganizationByProfileId } from '@cio/db/queries/organization';
 import { ROLE } from '@cio/utils/constants';
@@ -41,7 +41,7 @@ export async function sendProfileUpdatedEmail(
         loginUrl: isStudent && org ? getDashboardBaseUrl(org) : getAppBaseUrl(),
         branding: buildEmailBranding(org)
       },
-      from: org?.name ? buildEmailFromName(`${org.name} (via ClassroomIO.com)`) : undefined
+      from: org?.name ? buildOrgEmailFromName(org.name) : undefined
     });
   } catch (error) {
     console.error('sendProfileUpdatedEmail error:', error);

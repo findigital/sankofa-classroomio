@@ -14,6 +14,7 @@ import {
   getPublicLessonMarkdownSource,
   getPublicCourseTreeBySlug,
   type PublicCourseItemContent,
+  type PublicCourseReadOptions,
   type PublicCourseTree
 } from '@cio/db/queries/course';
 import { formatLessonMarkdownDocument } from '@api/utils/html-to-markdown';
@@ -24,9 +25,12 @@ import { getExerciseSectionsByExerciseId } from '@cio/db/queries/exercise/exerci
  * Anonymous-safe: fetch the full tree for a published public course by slug.
  * Callers should return 404 when this resolves to `null`.
  */
-export async function getPublicCourseTreeService(courseSlug: string): Promise<PublicCourseTree | null> {
+export async function getPublicCourseTreeService(
+  courseSlug: string,
+  options?: PublicCourseReadOptions
+): Promise<PublicCourseTree | null> {
   try {
-    return await getPublicCourseTreeBySlug(courseSlug);
+    return await getPublicCourseTreeBySlug(courseSlug, options);
   } catch (error) {
     if (error instanceof AppError) throw error;
     throw new AppError('Failed to load public course', ErrorCodes.COURSE_FETCH_FAILED, 500);
@@ -82,9 +86,14 @@ export interface PublicExerciseQuestion {
  * UUID cannot mint a cookie. They have to know a public course slug +
  * lesson slug whose video actually exposes the asset.
  */
-export async function issuePublicHlsCookieService(courseSlug: string, itemSlug: string, requestedAssetId?: string) {
+export async function issuePublicHlsCookieService(
+  courseSlug: string,
+  itemSlug: string,
+  requestedAssetId?: string,
+  options?: PublicCourseReadOptions
+) {
   try {
-    const item = await getPublicCourseItemQuery(courseSlug, itemSlug);
+    const item = await getPublicCourseItemQuery(courseSlug, itemSlug, options);
     if (!item || item.kind !== 'lesson') {
       throw new AppError('Public lesson not found', ErrorCodes.NOT_FOUND, 404);
     }
@@ -199,10 +208,11 @@ async function resolvePublicVideo(
 
 export async function getPublicCourseItemService(
   courseSlug: string,
-  itemSlug: string
+  itemSlug: string,
+  options?: PublicCourseReadOptions
 ): Promise<PublicItemResponse | null> {
   try {
-    const baseItem = await getPublicCourseItemQuery(courseSlug, itemSlug);
+    const baseItem = await getPublicCourseItemQuery(courseSlug, itemSlug, options);
     if (!baseItem) return null;
 
     if (baseItem.kind === 'lesson') {
@@ -309,9 +319,13 @@ export async function resolvePublicCourseBySlug(courseSlug: string) {
  * opted the course in. Returns `null` when the lesson is missing, locked,
  * not a lesson, or `metadata.allowMarkdownExport` is not true — callers 404.
  */
-export async function getPublicLessonMarkdownService(courseSlug: string, itemSlug: string): Promise<string | null> {
+export async function getPublicLessonMarkdownService(
+  courseSlug: string,
+  itemSlug: string,
+  options?: PublicCourseReadOptions
+): Promise<string | null> {
   try {
-    const source = await getPublicLessonMarkdownSource(courseSlug, itemSlug);
+    const source = await getPublicLessonMarkdownSource(courseSlug, itemSlug, options);
 
     if (!source) return null;
     if (!source.allowMarkdownExport) return null;

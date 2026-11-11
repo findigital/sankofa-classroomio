@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { UserAnalyticsPage } from '$features/audience/pages';
   import { BackButton } from '@cio/ui';
   import { ExportMenu } from '$features/ui';
@@ -25,7 +26,7 @@
 </script>
 
 <svelte:head>
-  <title>{t.get('audience.user_analytics.title')} - ClassroomIO</title>
+  <title>{t.get('audience.user_analytics.title')} - {appBrandName()}</title>
 </svelte:head>
 
 <Page.Root class="w-full md:max-w-5xl lg:mx-auto">

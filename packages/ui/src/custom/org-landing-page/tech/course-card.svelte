@@ -2,7 +2,8 @@
   import type { CourseItem, OrgLandingPageLabels } from '../types';
   import ArrowRightIcon from '@lucide/svelte/icons/arrow-right';
   import ClockIcon from '@lucide/svelte/icons/clock';
-  import { getCourseTypeLandingMeta } from '../landing-page-utils';
+  import { getCourseTypeLandingMeta, landingCoursePriceLabel } from '../landing-page-utils';
+  import CourseTagPills from '../course-tag-pills.svelte';
 
   interface Props {
     course: CourseItem;
@@ -13,16 +14,12 @@
   let { course, disableCourseLinks = false, labels }: Props = $props();
 
   const courseTypeMeta = $derived(getCourseTypeLandingMeta(course));
+  const priceLabel = $derived(landingCoursePriceLabel(course, labels));
 
   const href = $derived.by(() => {
     if (disableCourseLinks) return undefined;
     return course.link || (course.slug ? `/course/${course.slug}` : undefined);
   });
-
-  function formatCurrency(cost?: number, currency = 'USD') {
-    if (!cost) return labels?.freeLabel ?? 'Free';
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(cost);
-  }
 </script>
 
 <a
@@ -43,15 +40,16 @@
   <h3 class="ui:text-xl ui:font-bold ui:tracking-tight ui:leading-tight ui:mb-3 ui:m-0">
     {course.title}
   </h3>
-  <p class="ui:text-sm ui:text-[var(--landing-fg-muted)] ui:leading-relaxed ui:line-clamp-3 ui:flex-1 ui:m-0 ui:mb-5">
+  <p class="ui:text-sm ui:text-[var(--landing-fg-muted)] ui:leading-relaxed ui:line-clamp-3 ui:flex-1 ui:m-0 ui:mb-3">
     {course.description}
   </p>
+  <div class="ui:mb-4">
+    <CourseTagPills tags={course.tags} />
+  </div>
   <div
     class="ui:flex ui:items-center ui:justify-between ui:pt-4 ui:border-t ui:border-dashed ui:border-[var(--landing-border)]"
   >
-    <span class="ui:font-mono ui:text-sm ui:font-bold">
-      {course.price || formatCurrency(course.cost, course.currency)}
-    </span>
+    {#if priceLabel}<span class="ui:font-mono ui:text-sm ui:font-bold">{priceLabel}</span>{/if}
     <span
       class="ui:inline-flex ui:items-center ui:gap-1 ui:font-mono ui:text-xs ui:text-[var(--landing-accent)] ui:font-bold"
       aria-hidden="true"

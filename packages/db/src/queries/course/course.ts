@@ -133,7 +133,7 @@ export const getPublishedCoursesBySiteName = async (
           .leftJoin(schema.lesson, eq(schema.course.id, schema.lesson.courseId))
           .where(and(...conditions))
           .groupBy(schema.course.id)
-          .orderBy(asc(schema.course.displayOrder), desc(schema.course.createdAt))
+          .orderBy(sql`${schema.course.displayOrder} asc nulls last`, desc(schema.course.createdAt))
           .limit(limit)
           .offset(offset ?? 0)
       : await db
@@ -148,7 +148,7 @@ export const getPublishedCoursesBySiteName = async (
           .leftJoin(schema.lesson, eq(schema.course.id, schema.lesson.courseId))
           .where(and(...conditions))
           .groupBy(schema.course.id)
-          .orderBy(asc(schema.course.displayOrder), desc(schema.course.createdAt));
+          .orderBy(sql`${schema.course.displayOrder} asc nulls last`, desc(schema.course.createdAt));
 
     return result.map((row) => ({
       ...withResolvedCourseBannerImage(row.course),
@@ -162,6 +162,39 @@ export const getPublishedCoursesBySiteName = async (
     );
   }
 };
+
+export async function countPublishedCourseTypesBySiteName(
+  siteName: string
+): Promise<Array<{ type: string; count: number }>> {
+  try {
+    const rows = await db
+      .select({
+        type: schema.course.type,
+        count: sql<number>`count(*)::int`
+      })
+      .from(schema.course)
+      .innerJoin(schema.group, eq(schema.course.groupId, schema.group.id))
+      .innerJoin(schema.organization, eq(schema.group.organizationId, schema.organization.id))
+      .where(
+        and(
+          eq(schema.organization.siteName, siteName),
+          eq(schema.course.status, 'ACTIVE'),
+          eq(schema.course.isPublished, true),
+          eq(schema.course.isTemplate, false)
+        )
+      )
+      .groupBy(schema.course.type);
+
+    return rows.flatMap((row) => {
+      if (!row.type) return [];
+
+      return [{ type: row.type, count: Number(row.count) }];
+    });
+  } catch (error) {
+    console.error('countPublishedCourseTypesBySiteName error:', error);
+    throw new Error(`Failed to count published course types for "${siteName}"`);
+  }
+}
 
 export const countPublishedCoursesBySiteName = async (
   siteName: string,
@@ -1246,7 +1279,7 @@ export const getEnrolledCourses = async ({
         )
       )
       .groupBy(schema.course.id, schema.groupmember.id, schema.courseCompletionRecord.id)
-      .orderBy(desc(schema.course.createdAt));
+      .orderBy(sql`${schema.course.displayOrder} asc nulls last`, desc(schema.course.createdAt));
 
     const liveCourseIds = result.filter((row) => row.course.type === 'LIVE_CLASS').map((row) => row.course.id);
     const upcomingByCourse = await getUpcomingSessionsForCourseIds(liveCourseIds, { includeRunning: true });
@@ -1781,5 +1814,42 @@ export async function updateCourseSlug(courseId: string, slug: string): Promise<
   } catch (error) {
     console.error('updateCourseSlug error:', error);
     throw new Error(`Failed to update course slug: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+}
+
+const CATALOG_ORDER_LIMIT = 500;
+
+export type CatalogOrderCourse = {
+  id: string;
+  title: string | null;
+  isPublished: boolean | null;
+  displayOrder: number | null;
+  createdAt: string | null;
+};
+
+export async function listOrgCoursesForCatalogOrder(orgId: string): Promise<CatalogOrderCourse[]> {
+  try {
+    return await db
+      .select({
+        id: schema.course.id,
+        title: schema.course.title,
+        isPublished: schema.course.isPublished,
+        displayOrder: schema.course.displayOrder,
+        createdAt: schema.course.createdAt
+      })
+      .from(schema.course)
+      .innerJoin(schema.group, eq(schema.course.groupId, schema.group.id))
+      .where(
+        and(
+          eq(schema.group.organizationId, orgId),
+          eq(schema.course.status, 'ACTIVE'),
+          eq(schema.course.isTemplate, false)
+        )
+      )
+      .orderBy(sql`${schema.course.displayOrder} asc nulls last`, desc(schema.course.createdAt))
+      .limit(CATALOG_ORDER_LIMIT);
+  } catch (error) {
+    console.error('listOrgCoursesForCatalogOrder error:', error);
+    throw new Error('Failed to list courses for catalog order');
   }
 }

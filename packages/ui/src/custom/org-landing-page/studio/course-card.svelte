@@ -1,7 +1,8 @@
 <script lang="ts">
   import type { CourseItem, OrgLandingPageLabels } from '../types';
   import ArrowRightIcon from '@lucide/svelte/icons/arrow-right';
-  import { getCourseTypeLandingMeta } from '../landing-page-utils';
+  import { getCourseTypeLandingMeta, landingCoursePriceLabel } from '../landing-page-utils';
+  import CourseTagPills from '../course-tag-pills.svelte';
 
   interface Props {
     course: CourseItem;
@@ -12,16 +13,12 @@
   let { course, disableCourseLinks = false, labels }: Props = $props();
 
   const courseTypeMeta = $derived(getCourseTypeLandingMeta(course));
+  const priceLabel = $derived(landingCoursePriceLabel(course, labels));
 
   const href = $derived.by(() => {
     if (disableCourseLinks) return undefined;
     return course.link || (course.slug ? `/course/${course.slug}` : undefined);
   });
-
-  function formatCurrency(cost?: number, currency = 'USD') {
-    if (!cost) return labels?.freeLabel ?? 'Free';
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(cost);
-  }
 </script>
 
 <a
@@ -53,9 +50,12 @@
   </div>
   <div class="ui:p-5 ui:flex ui:items-end ui:justify-between ui:gap-3 ui:flex-1">
     <div class="ui:flex-1 ui:min-w-0">
-      <p class="ui:text-[13px] ui:text-[var(--landing-fg-muted)] ui:mb-1.5 ui:m-0">
-        {course.price || formatCurrency(course.cost, course.currency)}
-      </p>
+      {#if priceLabel}
+        <p class="ui:text-[13px] ui:text-[var(--landing-fg-muted)] ui:mb-1.5 ui:m-0">{priceLabel}</p>
+      {/if}
+      <div class="ui:mb-2">
+        <CourseTagPills tags={course.tags} />
+      </div>
       <h3 class="ui:text-base ui:font-medium ui:tracking-tight ui:leading-snug ui:m-0">
         {course.title}
       </h3>

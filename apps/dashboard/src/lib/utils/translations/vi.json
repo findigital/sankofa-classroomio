@@ -37,7 +37,8 @@
         "caption": "Đang chuẩn bị khóa học, học viên và cài đặt của bạn."
       }
     },
-    "back": "Quay lại"
+    "back": "Quay lại",
+    "source_offer": "View source code"
   },
   "validations": {
     "generic": {
@@ -230,7 +231,7 @@
     },
     "submissions": {
       "success": {
-        "grading": "Đã lưu điểm và thông báo cho học viên"
+        "grading": "Review saved and student notified"
       }
     },
     "marks": {
@@ -439,7 +440,9 @@
       "tag_updated": "Đã cập nhật thẻ",
       "course_tags_updated": "Đã cập nhật thẻ khóa học",
       "fetch_failed": "Không tải được thẻ",
-      "save_failed": "Không lưu được các thay đổi về thẻ"
+      "save_failed": "Không lưu được các thay đổi về thẻ",
+      "tag_deleted": "Tag deleted",
+      "delete_failed": "Failed to delete tag"
     },
     "error_update": "Không thể cập nhật",
     "token_auth": {
@@ -543,8 +546,8 @@
     "heading": "Bài tập",
     "not_submitted": "Chưa gửi",
     "submitted": "Đã gửi",
-    "in_progress": "Đang tiến hành chấm điểm",
-    "graded": "Đã chấm điểm",
+    "in_progress": "Review in progress",
+    "graded": "Reviewed",
     "lesson": "Bài học"
   },
   "my_learning": {
@@ -606,8 +609,8 @@
     "last_seen": "Nhìn thấy lần cuối",
     "a_while_ago": "cách đây một thời gian",
     "exercises": "Bài tập",
-    "graded": "Đã chấm điểm",
-    "not_graded": "Không được chấm điểm",
+    "graded": "Reviewed",
+    "not_graded": "Not reviewed",
     "enrolled_courses": "Các khóa học đã đăng ký",
     "enrolled_courses_description": "Tất cả các khóa học đã đăng ký",
     "overall_course_progress": "Tiến độ chung của khóa học",
@@ -842,8 +845,8 @@
       "no_courses_description": "Đăng ký cho học sinh này để bắt đầu theo dõi tiến độ.",
       "no_exercises_title": "Không có bài tập nào trong khóa học này",
       "no_exercises_description": "Thêm bài tập vào bài học và các lần làm bài của mỗi học sinh sẽ hiển thị ở đây.",
-      "no_grades_title": "Chưa có gì được chấm điểm",
-      "no_grades_description": "Điểm sẽ xuất hiện sau khi học sinh này nộp bài tập.",
+      "no_grades_title": "Nothing reviewed yet",
+      "no_grades_description": "Results appear once this student submits an exercise.",
       "load_failed_title": "Không thể tải thông tin sinh viên này",
       "load_failed_description": "Đã xảy ra lỗi khi tải thông tin sinh viên này. Vui lòng thử lại.",
       "retry": "Thử lại",
@@ -1684,7 +1687,7 @@
       "submissions": {
         "title": "Bài tập đã gửi",
         "access": {
-          "denied_title": "Bạn không thể chấm bài nộp của khóa học này",
+          "denied_title": "You can't review submissions for this course",
           "denied_description": "Hãy nhờ quản trị viên thêm bạn làm trợ giảng khóa học hoặc cố vấn của một nhóm học bao gồm khóa học này."
         },
         "grading_modal": {
@@ -1696,8 +1699,8 @@
           "status": "Trạng thái",
           "add_comment": "Thêm nhận xét",
           "add_comment_placeholder": "Để lại một bình luận",
-          "grade_with_ai": "Chấm điểm bằng AI",
-          "submit_grades": "Gửi điểm",
+          "grade_with_ai": "Review with AI",
+          "submit_grades": "Submit review",
           "accept_grade": "Chấp nhận",
           "reject_grade": "Từ chối",
           "allocated": "Phân bổ số điểm này bởi vì",
@@ -1715,12 +1718,12 @@
         "submission_status": {
           "submitted": "Đã gửi",
           "in_progress": "Đang tiến hành",
-          "graded": "Đã chấm điểm"
+          "graded": "Reviewed"
         },
         "workflow": {
           "awaiting_manual_hint": "Cần xem xét thủ công",
-          "failed_hint": "Tự động chấm điểm không thành công. Chuyển nội dung gửi này trở lại Đã gửi để thử lại.",
-          "invalid_transition": "Việc di chuyển trạng thái này không được phép bởi quy trình chấm điểm"
+          "failed_hint": "Automatic review failed. Move this submission back to Submitted to retry.",
+          "invalid_transition": "This status move is not allowed by the review workflow"
         },
         "filter": {
           "student": "Student",
@@ -1907,8 +1910,8 @@
                 "attempts_count": "{count} lần làm",
                 "attempt_label": "Lần làm {number}",
                 "date_unknown": "Không rõ ngày",
-                "status_awaiting_manual": "Đang chờ chấm thủ công",
-                "status_completed": "Đã chấm",
+                "status_awaiting_manual": "Awaiting manual review",
+                "status_completed": "Reviewed",
                 "status_pending": "Đang chờ",
                 "counts_as_complete": "Được tính là hoàn thành",
                 "passed": "Đạt",
@@ -1942,7 +1945,7 @@
               "due": "Đến hạn bởi",
               "no_description": "Không có mô tả",
               "start": "Bắt đầu",
-              "graded": "Đã chấm điểm",
+              "graded": "Reviewed",
               "pending": "Đang chờ xử lý",
               "submitted": "Đã gửi",
               "status_pending": "Trạng thái: Đang chờ xem xét",
@@ -3306,7 +3309,18 @@
       "empty_tags": "Không có thẻ nào"
     },
     "page_subtitle": "Nơi các bài học trở thành khóa học và khóa học trở thành đăng ký.",
-    "load_more": "Tải thêm"
+    "load_more": "Tải thêm",
+    "catalog_order": {
+      "action": "Reorder courses",
+      "title": "Course order",
+      "description": "Drag courses into the order people should see. The catalog and home page use this order, then the date the course was created. Saving featured courses on the landing page replaces this order.",
+      "saved": "Course order saved",
+      "save_failed": "Could not save course order",
+      "unpublished": "Unpublished",
+      "empty": "There are no courses to order yet.",
+      "admin_only": "Only an organization admin can reorder courses.",
+      "drag": "Drag to reorder"
+    }
   },
   "ai": {
     "help_me": "Giúp tôi viết",
@@ -3670,7 +3684,7 @@
     "tools": "Công cụ"
   },
   "media_manager": {
-    "page_title": "Trình quản lý phương tiện - ClassroomIO",
+    "page_title": "Trình quản lý phương tiện",
     "heading": "Trình quản lý phương tiện",
     "empty": "Không tìm thấy nội dung nào",
     "usage": {
@@ -4418,6 +4432,23 @@
         "internal_enrollment_only": {
           "label": "Chỉ đăng ký nội bộ",
           "description": "Khi được bật, chỉ những thành viên hiện tại trong tổ chức của bạn mới có thể đăng ký các khóa học của bạn. Mọi người khác phải được mời — họ không thể tự đăng ký từ trang khóa học, ngay cả khi khóa học mở cho sinh viên mới."
+        },
+        "members_only_catalog": {
+          "label": "Members-only catalog",
+          "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
+        },
+        "hide_course_pricing": {
+          "label": "Hide course prices",
+          "description": "Hide prices, the pricing filter, and Free labels on the catalog and course cards. Prices stay hidden until you turn this off."
+        },
+        "show_course_type_filter": {
+          "label": "Show course type filter",
+          "description": "Show course types that have published courses, such as live class and self-paced, as catalog filters."
+        },
+        "catalog_filter_groups": {
+          "label": "Catalog filter groups",
+          "description": "Choose which tag groups appear as catalog filters. Every group is included until you pick a subset.",
+          "empty": "Tag groups will show up here after they are created."
         }
       },
       "login": {
@@ -4539,12 +4570,12 @@
           "description": "Gửi email cho thành viên khóa học về bài đăng và bình luận mới trên bảng tin."
         },
         "gradingResult": {
-          "label": "Kết quả chấm điểm",
-          "description": "Gửi email cho học viên khi bài nộp được chấm hoặc cập nhật."
+          "label": "Review results",
+          "description": "Email students when their submission is reviewed or updated."
         },
         "newSubmission": {
-          "label": "Bài nộp mới cần chấm",
-          "description": "Gửi email cho gia sư khi học viên nộp bài cần chấm điểm."
+          "label": "New submissions to review",
+          "description": "Email tutors when a student submits work that needs review."
         },
         "newStudent": {
           "label": "Học viên mới tham gia",
@@ -4625,7 +4656,7 @@
         "quizAssigned": "Đã giao bài kiểm tra",
         "sessionReminder": "Nhắc nhở phiên trực tiếp",
         "sessionUpdated": "Đã cập nhật phiên trực tiếp",
-        "submissionGraded": "Đã chấm điểm bài nộp",
+        "submissionGraded": "Submission reviewed",
         "newsfeedPost": "Bài đăng trên nguồn cấp tin tức của khóa học"
       },
       "descriptions": {
@@ -4967,7 +4998,7 @@
     "confirm_link_suffix": "để xác nhận email của bạn"
   },
   "public_courses": {
-    "page_title": "Khóa học - ClassroomIO",
+    "page_title": "Khóa học",
     "heading": "Khóa học",
     "subtitle": "Duyệt tất cả các khóa học được xuất bản",
     "clear_filters": "Xóa bộ lọc",
@@ -4981,7 +5012,7 @@
     },
     "filters": {
       "title": "Lọc theo thẻ",
-      "help": "Chọn một hoặc nhiều thẻ để lọc các khóa học",
+      "help": "Filter by the options shown, or search by name",
       "empty": "Chưa có thẻ nào",
       "tags_title": "Thẻ",
       "types_title": "Các loại",
@@ -4992,10 +5023,15 @@
       "pricing_paid": "Đã trả tiền",
       "selected": "Đã chọn:",
       "save_changes": "Lưu thay đổi"
+    },
+    "catalog_locked": {
+      "title": "This catalog is for members",
+      "description": "Only members of this academy can browse courses here. Sign in with a member account, or ask an administrator for access.",
+      "sign_in": "Sign in"
     }
   },
   "tags_admin": {
-    "page_title": "Thẻ - ClassroomIO",
+    "page_title": "Thẻ",
     "heading": "Thẻ",
     "create": "Tạo",
     "tag_modal": {
@@ -5040,16 +5076,21 @@
       "edit_tag": "Chỉnh sửa thẻ",
       "save": "Lưu",
       "cancel": "Hủy bỏ",
-      "actions_menu": "Hành động gắn thẻ"
+      "actions_menu": "Hành động gắn thẻ",
+      "delete_tag": "Delete tag"
     },
     "common": {
       "not_available": "N/A"
     },
-    "page_subtitle": "Sắp xếp khóa học bằng nhãn để bộ lọc và danh sách dễ quét hơn."
+    "page_subtitle": "Sắp xếp khóa học bằng nhãn để bộ lọc và danh sách dễ quét hơn.",
+    "delete": {
+      "title": "Delete tag",
+      "description": "Delete {name}? It will be removed from courses and catalog filters."
+    }
   },
   "invite": {
     "organization": {
-      "page_title": "Tham gia cùng {orgName} trên ClassroomIO",
+      "page_title": "Tham gia cùng {orgName}",
       "invitation_student": "Bạn được mời vào {orgName} với vai trò học viên.",
       "invitation_teacher": "Bạn được mời vào {orgName} với vai trò giáo viên.",
       "invitation_admin": "Bạn được mời vào {orgName} với vai trò quản trị viên.",
@@ -5077,7 +5118,7 @@
       "loading": "Đang tải lời mời..."
     },
     "link": {
-      "page_title": "Tham gia cùng {orgName} trên ClassroomIO",
+      "page_title": "Tham gia cùng {orgName}",
       "invitation_student": "Bạn đã được mời tham gia {orgName} với tư cách là sinh viên.",
       "invitation_teacher": "Bạn đã được mời tham gia {orgName} với tư cách là giáo viên.",
       "invitation_admin": "Bạn đã được mời tham gia {orgName} với tư cách quản trị viên.",
@@ -5261,7 +5302,7 @@
         "course_completed": "Một học viên hoàn thành khóa học",
         "course_certificate_issued": "Một chứng chỉ được cấp",
         "course_submission_created": "Một bài nộp bài tập được tạo",
-        "course_submission_status_changed": "Trạng thái bài nộp thay đổi, chẳng hạn khi được chấm điểm",
+        "course_submission_status_changed": "A submission status changes, such as when it is reviewed",
         "lesson_completion_updated": "Một bài học được đánh dấu hoàn thành hoặc đặt lại",
         "exercise_completion_updated": "Một bài tập được hoàn thành hoặc đặt lại",
         "compliance_record_status_changed": "Trạng thái tuân thủ của một học viên thay đổi",
@@ -5861,7 +5902,7 @@
       "practice_again": "Luyện tập lại",
       "attempt_option": "Hãy thử {attemptNumber} - {correct}/{total}",
       "attempts_select_aria": "nỗ lực của bạn",
-      "privacy_hint": "Được chấm điểm ngay lập tức trong trình duyệt của bạn - không có gì được gửi.",
+      "privacy_hint": "Reviewed instantly in your browser — nothing is submitted.",
       "summary_template": "Bạn đã nhận được [[đúng]]/[[tổng]] đúng."
     },
     "powered_by": {
@@ -6300,7 +6341,7 @@
       "disabled": "Liên kết mời đã bị vô hiệu hóa"
     },
     "join": {
-      "page_title": "Tham gia {resourceName} trên ClassroomIO",
+      "page_title": "Tham gia {resourceName}",
       "invitation": "Bạn đã được mời tham gia {resourceName} tại {orgName}.",
       "course_button": "Tham gia khóa học",
       "cohort_button": "Tham gia nhóm",
@@ -6434,7 +6475,7 @@
       "certificate": "Đã bật chứng chỉ",
       "deadline": "Hạn chót {date}",
       "sequential": "Bài học mở khóa theo thứ tự",
-      "grading": "Gia sư chấm bài nộp",
+      "grading": "A tutor reviews submissions",
       "comments_off": "Tính năng bình luận bài học đã tắt",
       "lesson_download": "Người học có thể tải bài học",
       "self_enrollment": "Người học có thể tự mình tham gia",
@@ -6590,8 +6631,8 @@
   },
   "oauth": {
     "consent": {
-      "page_title": "Kết nối ứng dụng với ClassroomIO",
-      "title": "Kết nối {client} với ClassroomIO",
+      "page_title": "Kết nối ứng dụng với {brand}",
+      "title": "Kết nối {client} với {brand}",
       "subtitle": "Chọn không gian làm việc mà {client} có thể truy cập.",
       "workspace_label": "Không gian làm việc",
       "no_workspaces_title": "Không có không gian làm việc nào",

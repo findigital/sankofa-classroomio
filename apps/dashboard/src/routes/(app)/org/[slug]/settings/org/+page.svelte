@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { OrgPage } from '$features/settings/pages';
   import { t } from '$lib/utils/functions/translations';
   import * as Page from '@cio/ui/base/page';
@@ -22,7 +23,7 @@
 </script>
 
 <svelte:head>
-  <title>Organization Settings - ClassroomIO</title>
+  <title>Organization Settings - {appBrandName()}</title>
 </svelte:head>
 
 <OrgPage bind:this={orgComponent} bind:hasUnsavedChanges />

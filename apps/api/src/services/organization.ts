@@ -2,7 +2,6 @@ import { emitOrganizationMemberWebhookEvent } from '@cio/core/services/webhook/e
 import { AppError, ErrorCodes } from '@api/utils/errors';
 import type { OrgAudienceMember, OrgAudiencePagination, OrgAudienceQuery } from '@api/types/org';
 import type {
-  TCourseReorder,
   TGetAudienceQuery,
   TGetOrganizationCoursesQuery,
   TOrganizationCourseSort,
@@ -49,12 +48,19 @@ import {
   getExploreCourses,
   getLessonsBySiteName,
   getOrgCourses,
+  countPublishedCourseTypesBySiteName,
   getPublishedCoursesBySiteName,
+  listOrgCoursesForCatalogOrder,
   reorderOrgCourses as reorderOrgCoursesQuery
 } from '@cio/db/queries/course';
 import { countCohortsByOrgForProfile } from '@cio/db/queries/cohort';
 import { countAssetsByOrg } from '@cio/db/queries/assets';
-import { countTagsByOrg, getCourseIdsByTagSlugs, getCourseTagsByCourseIdsForOrganization } from '@cio/db/queries/tag';
+import {
+  countTagsByOrg,
+  getCourseIdsByTagSlugs,
+  getCourseTagsByCourseIdsForOrganization,
+  getTagGroupsWithTags
+} from '@cio/db/queries/tag';
 import { getAccountPrimary } from '@cio/db/queries/account';
 import { getLastLogin, getProfileCourseProgress, getUserExercisesStats } from '@cio/db/queries/analytics';
 
@@ -62,6 +68,7 @@ import type { OrganizationWithPlans } from '@cio/db/queries/organization/types';
 import { canUseBasicAuthSettings, PLAN } from '@cio/utils/plans';
 import { env } from '@cio/core/config/env';
 import { isFreeLandingPageTheme, ROLE } from '@cio/utils/constants';
+import { canListOrgCatalog, filterTagGroupsForCatalog, resolveCatalogPresentation } from '@cio/utils/functions';
 import { createOrganizationWithOwner } from '@api/services/onboarding';
 import { deriveAudienceMemberStatus } from '@api/utils/audience-member-status';
 import { getProfileById, getProfileByEmail } from '@cio/db/queries/auth';
@@ -309,7 +316,8 @@ export async function getPublicCourses(
   courseTypes?: string[],
   search?: string,
   pricing?: 'free' | 'paid',
-  pagination?: { page?: number; limit?: number }
+  pagination?: { page?: number; limit?: number },
+  viewer?: { orgRoles: Record<string, number> }
 ) {
   try {
     const orgResult = await getOrgIdBySiteName(siteName);
@@ -323,10 +331,54 @@ export async function getPublicCourses(
     const limit = isPaginated ? (pagination.limit ?? ORG_COURSES_PAGE_SIZE) : PUBLIC_ORG_LANDING_PAGE_COURSE_LIMIT;
     const page = isPaginated ? (pagination.page ?? 1) : 1;
     const offset = (page - 1) * limit;
+    const membersOnly = Boolean(org.settings?.membersOnlyCatalog);
+    const catalog = resolveCatalogPresentation(org.settings);
+    const effectivePricing = catalog.hideCoursePricing ? undefined : pricing;
+    const effectiveTypes = catalog.showCourseTypeFilter ? courseTypes : undefined;
+    const isOrgMember = viewer?.orgRoles[org.id] != null;
+
+    if (!canListOrgCatalog(membersOnly, isOrgMember)) {
+      return {
+        courses: [],
+        hasMoreCourses: false,
+        total: 0,
+        page,
+        limit,
+        totalPages: 0,
+        courseTypeCounts: [],
+        catalogLocked: true as const
+      };
+    }
+
+    const courseTypeCounts = await countPublishedCourseTypesBySiteName(siteName);
+
+    let effectiveTagSlugs = tagSlugs;
+    if (catalog.filterTagGroupIds && tagSlugs && tagSlugs.length > 0) {
+      const groups = await getTagGroupsWithTags(org.id, { onlyPublishedCourses: true });
+      const allowedSlugs = new Set(
+        filterTagGroupsForCatalog(groups, catalog.filterTagGroupIds).flatMap((group) =>
+          group.tags.map((tag) => tag.slug)
+        )
+      );
+      effectiveTagSlugs = tagSlugs.filter((slug) => allowedSlugs.has(slug));
+    }
 
     let filteredCourseIds: string[] | undefined = undefined;
-    if (tagSlugs && tagSlugs.length > 0) {
-      filteredCourseIds = await getCourseIdsByTagSlugs(org.id, tagSlugs);
+    if (tagSlugs && tagSlugs.length > 0 && (!effectiveTagSlugs || effectiveTagSlugs.length === 0)) {
+      return {
+        courses: [],
+        hasMoreCourses: false,
+        total: 0,
+        page,
+        limit,
+        totalPages: 0,
+        courseTypeCounts,
+        catalogLocked: false as const
+      };
+    }
+
+    if (effectiveTagSlugs && effectiveTagSlugs.length > 0) {
+      filteredCourseIds = await getCourseIdsByTagSlugs(org.id, effectiveTagSlugs);
       if (filteredCourseIds.length === 0) {
         return {
           courses: [],
@@ -334,7 +386,9 @@ export async function getPublicCourses(
           total: 0,
           page,
           limit,
-          totalPages: 0
+          totalPages: 0,
+          courseTypeCounts,
+          catalogLocked: false as const
         };
       }
     }
@@ -342,16 +396,16 @@ export async function getPublicCourses(
     const totalCourses = await countPublishedCoursesBySiteName(
       siteName,
       filteredCourseIds,
-      courseTypes,
+      effectiveTypes,
       search,
-      pricing
+      effectivePricing
     );
     const courses = await getPublishedCoursesBySiteName(
       siteName,
       filteredCourseIds,
-      courseTypes,
+      effectiveTypes,
       search,
-      pricing,
+      effectivePricing,
       limit,
       offset
     );
@@ -369,7 +423,9 @@ export async function getPublicCourses(
       total: totalCourses,
       page,
       limit,
-      totalPages: Math.ceil(totalCourses / limit)
+      totalPages: Math.ceil(totalCourses / limit),
+      courseTypeCounts,
+      catalogLocked: false as const
     };
   } catch (error) {
     if (error instanceof AppError) throw error;
@@ -386,7 +442,7 @@ export async function getPublicCourses(
  * @param orgId - The organization ID
  * @param orders - Array of course IDs with their new display positions
  */
-export async function reorderOrgCourses(orgId: string, orders: TCourseReorder['courses']) {
+export async function reorderOrgCourses(orgId: string, orders: { id: string; order: number }[]) {
   try {
     await reorderOrgCoursesQuery(orgId, orders);
   } catch (error) {
@@ -397,6 +453,18 @@ export async function reorderOrgCourses(orgId: string, orders: TCourseReorder['c
     throw new AppError(
       error instanceof Error ? error.message : 'Failed to reorder courses',
       ErrorCodes.INTERNAL_ERROR,
+      500
+    );
+  }
+}
+
+export async function listCatalogOrder(orgId: string) {
+  try {
+    return await listOrgCoursesForCatalogOrder(orgId);
+  } catch (error) {
+    throw new AppError(
+      error instanceof Error ? error.message : 'Failed to list course order',
+      ErrorCodes.COURSES_FETCH_FAILED,
       500
     );
   }

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { fly } from 'svelte/transition';
   import type { Component } from 'svelte';
   import { resolve } from '$app/paths';
@@ -125,7 +126,7 @@
 </script>
 
 <svelte:head>
-  <title>Landing Page Editor - ClassroomIO</title>
+  <title>Landing Page Editor - {appBrandName()}</title>
 </svelte:head>
 
 <div

@@ -4,13 +4,20 @@ import { PUBLIC_IS_SELFHOSTED } from '$env/static/public';
 import { env as publicEnv } from '$env/dynamic/public';
 import { buildOrgSiteTitle, extractOrgSiteMetaCopy } from '$lib/utils/functions/org-site-meta';
 import { resolveOrgSiteOgImageUrl } from '$lib/utils/functions/org-site-og-url';
+import { appBrandName, defaultDocumentTitle, twitterSiteMeta } from '$lib/utils/functions/brand';
 
 const isSelfHosted = PUBLIC_IS_SELFHOSTED === 'true';
 
-const DEFAULT_TITLE = 'ClassroomIO | One Platform for Customer, Partner, and Employee Training';
-const DEFAULT_DESCRIPTION =
-  'One platform for customer academies, partner certification, and employee training. Build courses with AI, publish under your domain, and track completions.';
-const CLOUD_OG_IMAGE = 'https://brand.cdn.clsrio.com/og/classroomio-opengraph.jpg';
+const DEFAULT_DESCRIPTION = 'Courses, lessons, and training in one place.';
+
+function openGraphImageType(imageUrl: string): string {
+  const path = imageUrl.split('?')[0].toLowerCase();
+  if (path.endsWith('.jpg') || path.endsWith('.jpeg')) return 'image/jpeg';
+  if (path.endsWith('.webp')) return 'image/webp';
+  if (path.endsWith('.gif')) return 'image/gif';
+
+  return 'image/png';
+}
 const ORG_OG_WIDTH = 1200;
 const ORG_OG_HEIGHT = 630;
 
@@ -36,7 +43,7 @@ async function resolveOgImageUrl(url: URL, orgSiteInfo: OrgSiteInfo): Promise<st
   if (isSelfHosted) {
     const org = orgSiteInfo.org;
     if (!org) {
-      return CLOUD_OG_IMAGE;
+      return new URL('/logo-512.png', url.origin).href;
     }
 
     const orgImage =
@@ -52,7 +59,7 @@ async function resolveOgImageUrl(url: URL, orgSiteInfo: OrgSiteInfo): Promise<st
     }
   }
 
-  return CLOUD_OG_IMAGE;
+  return new URL('/logo-512.png', url.origin).href;
 }
 
 function buildOrgOpenGraphImages(ogImageUrl: string, orgName: string) {
@@ -97,7 +104,7 @@ export async function getBaseMetaTags(url: URL, orgSiteInfo: OrgSiteInfo): Promi
   const title =
     orgMeta?.title ||
     publicEnv.PUBLIC_APP_TITLE?.trim() ||
-    (isSelfHosted && orgSiteInfo.org?.name ? `${orgSiteInfo.org.name} | Learning Platform` : DEFAULT_TITLE);
+    (isSelfHosted && orgSiteInfo.org?.name ? `${orgSiteInfo.org.name} | Learning Platform` : defaultDocumentTitle());
 
   const description = orgMeta?.description || publicEnv.PUBLIC_APP_DESCRIPTION?.trim() || DEFAULT_DESCRIPTION;
 
@@ -105,36 +112,25 @@ export async function getBaseMetaTags(url: URL, orgSiteInfo: OrgSiteInfo): Promi
     orgMeta?.siteName ||
     publicEnv.PUBLIC_APP_TITLE?.trim() ||
     (isSelfHosted && orgSiteInfo.org?.name ? orgSiteInfo.org.name : null) ||
-    'ClassroomIO';
+    appBrandName();
 
   const ogImageUrl = await resolveOgImageUrl(url, orgSiteInfo);
   const usesDynamicOrgOg =
     orgSiteInfo.isOrgSite && Boolean(orgSiteInfo.org?.siteName) && !publicEnv.PUBLIC_OG_IMAGE_URL?.trim();
 
+  const imageAlt = `${siteName} learning platform`;
   const openGraphImages = usesDynamicOrgOg
     ? buildOrgOpenGraphImages(ogImageUrl, siteName)
     : [
         {
           url: ogImageUrl,
-          alt: `${siteName} platform for customer, partner, and employee education`,
-          width: 1920,
-          height: 1080,
+          alt: imageAlt,
+          width: 512,
+          height: 512,
           secureUrl: ogImageUrl.startsWith('https://') ? ogImageUrl : undefined,
-          type: 'image/jpeg'
-        },
-        {
-          url: 'https://brand.cdn.clsrio.com/og/classroomio-opengraph.webp',
-          alt: `${siteName} platform for customer, partner, and employee education`,
-          width: 1920,
-          height: 1080,
-          secureUrl: 'https://brand.cdn.clsrio.com/og/classroomio-opengraph.webp',
-          type: 'image/webp'
+          type: openGraphImageType(ogImageUrl)
         }
       ];
-
-  const imageAlt = usesDynamicOrgOg
-    ? `${siteName} learning platform`
-    : `${siteName} platform for customer, partner, and employee education`;
 
   return Object.freeze({
     title,
@@ -150,8 +146,7 @@ export async function getBaseMetaTags(url: URL, orgSiteInfo: OrgSiteInfo): Promi
       images: openGraphImages
     },
     twitter: {
-      handle: '@classroomio',
-      site: '@classroomio',
+      ...twitterSiteMeta(),
       cardType: 'summary_large_image' as const,
       title,
       description,

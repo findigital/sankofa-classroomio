@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { ApiAutomationPage } from '$features/automation/pages';
   import { automationApi } from '$features/automation/api/automation.svelte';
   import { PUBLIC_API_DOCS_URL } from '$features/automation/utils/automation-utils';
@@ -17,7 +18,7 @@
 </script>
 
 <svelte:head>
-  <title>{t.get('automation.tabs.api')} - ClassroomIO</title>
+  <title>{t.get('automation.tabs.api')} - {appBrandName()}</title>
 </svelte:head>
 
 <Page.Root class="mx-auto w-full max-w-4xl">

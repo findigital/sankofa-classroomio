@@ -64,7 +64,10 @@ describe('toPublicOrg', () => {
       disableGoogleAuth: false,
       settings: {
         signup: { inviteOnly: true },
-        language: { locale: 'tr', enforced: true }
+        language: { locale: 'tr', enforced: true },
+        hideCoursePricing: true,
+        showCourseTypeFilter: true,
+        catalogFilterTagGroupIds: null
       },
       customization: { auth: { backgroundImage: 'https://example.com/auth.png' } },
       plans: [{ planName: 'ENTERPRISE', isActive: true }],

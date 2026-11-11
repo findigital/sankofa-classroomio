@@ -6,8 +6,6 @@ last_reviewed: '2026-10-05'
 
 Go to **Settings → Emails** to rewrite the emails your students receive, such as course invitations, welcome emails, quiz assignments, and live session reminders. Your version replaces ClassroomIO's default for every student in your organization, and it's sent in the language you enforce for students.
 
-![Emails settings page with the Course invitation email open in the editor and the email list grouped by type](./images/customize-student-emails/overview.webp)
-
 ## Before you start
 
 :::info[Available on paid plans]
@@ -70,7 +68,7 @@ The action button, its destination, your organization's branding, and the email 
 Some values only appear when they exist:
 
 - In **Course completion**, `{{course_message}}` is the message set on the course's **Certificates** page under **Email Message**.
-- In **Submission graded**, a paragraph that contains `{{score}}` or `{{lesson_title}}` is left out when the submission has no score or isn't part of a lesson.
+- In **Submission reviewed**, a paragraph that contains `{{score}}` or `{{lesson_title}}` is left out when the submission has no score or isn't part of a lesson.
 
 ## Available placeholders
 
@@ -83,7 +81,7 @@ Every email can use **Organization** (`{{org_name}}`). These emails also support
 | **Course welcome**          | A student gets access to a course           | Course name                                                            |
 | **Cohort welcome**          | A student gets access to a cohort           | Cohort name                                                            |
 | **Quiz assigned**           | A quiz is assigned to a student             | Course name, Exercise title                                            |
-| **Submission graded**       | A student's exercise submission is reviewed | Student name, Exercise title, Course name, Status, Score, Lesson title |
+| **Submission reviewed**     | A student's exercise submission is reviewed | Student name, Exercise title, Course name, Status, Score, Lesson title |
 | **Cohort goal reminder**    | A cohort goal is due or overdue             | Cohort name, Goal, Due status, Completed count, Required count         |
 | **Course completion**       | A student completes a course                | Course name, Student name, Instructor message                          |
 | **Live session reminder**   | Before a scheduled live session             | Course name, Session title, Session time, Start time                   |

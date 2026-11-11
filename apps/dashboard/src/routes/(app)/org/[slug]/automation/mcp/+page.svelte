@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { McpAutomationPage } from '$features/automation/pages';
   import { automationApi } from '$features/automation/api/automation.svelte';
   import { MCP_DOCS_URL } from '$features/automation/utils/automation-utils';
@@ -18,7 +19,7 @@
   });
 </script>
 
-<svelte:head><title>{t.get('automation.tabs.mcp')} - ClassroomIO</title></svelte:head>
+<svelte:head><title>{t.get('automation.tabs.mcp')} - {appBrandName()}</title></svelte:head>
 <Page.Header>
   <Page.HeaderContent>
     <Page.Title>{$t('automation.tabs.mcp')}</Page.Title>

@@ -10,6 +10,7 @@ import type {
 import {
   createTag,
   createTagGroup,
+  deleteTag,
   findTagBySlug,
   findTagGroupBySlug,
   generateUniqueTagGroupSlug,
@@ -298,6 +299,34 @@ export async function updateOrganizationTag(orgId: string, tagId: string, data: 
     throw new AppError(
       error instanceof Error ? error.message : 'Failed to update tag',
       ErrorCodes.TAG_UPDATE_FAILED,
+      500
+    );
+  }
+}
+
+export async function deleteOrganizationTag(orgId: string, tagId: string, dbClient?: DbOrTxClient) {
+  try {
+    const existing = await getTagById(orgId, tagId, dbClient);
+
+    if (!existing) {
+      throw new AppError('Tag not found', ErrorCodes.TAG_NOT_FOUND, 404);
+    }
+
+    const deleted = await deleteTag(orgId, tagId, dbClient);
+
+    if (!deleted) {
+      throw new AppError('Tag not found', ErrorCodes.TAG_NOT_FOUND, 404);
+    }
+
+    return deleted;
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+
+    throw new AppError(
+      error instanceof Error ? error.message : 'Failed to delete tag',
+      ErrorCodes.TAG_DELETE_FAILED,
       500
     );
   }

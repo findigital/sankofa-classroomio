@@ -85,6 +85,11 @@ export type OrgPublicCoursesResponse = InferResponseType<GetOrgPublicCoursesRequ
 export type OrgPublicCoursesSuccess = Extract<InferResponseType<GetOrgPublicCoursesRequest>, { success: true }>;
 export type OrgPublicCoursesData = OrgPublicCoursesSuccess['data'];
 export type OrgPublicCourses = OrgPublicCoursesData['courses'];
+export type GetCatalogOrderRequest = (typeof classroomio.organization.courses)['catalog-order']['$get'];
+export type GetCatalogOrderSuccess = Extract<InferResponseType<GetCatalogOrderRequest>, { success: true }>;
+export type CatalogOrderCourses = GetCatalogOrderSuccess['data'];
+export type SaveCatalogOrderRequest = (typeof classroomio.organization.courses)['catalog-order']['$post'];
+
 export type ReorderOrgCoursesRequest = (typeof classroomio.organization.courses)['reorder']['$post'];
 export type ReorderOrgCoursesBody = InferRequestType<ReorderOrgCoursesRequest>;
 
@@ -184,6 +189,11 @@ export interface TOrgUpdateForm {
   studentHome?: TStudentHomeDestination | null;
   settings?: {
     signup?: { inviteOnly?: boolean };
+    internalEnrollmentOnly?: boolean;
+    membersOnlyCatalog?: boolean;
+    hideCoursePricing?: boolean;
+    showCourseTypeFilter?: boolean;
+    catalogFilterTagGroupIds?: string[] | null;
     language?: { locale?: TLocale; enforced?: boolean };
     emailNotifications?: Record<string, boolean>;
   };

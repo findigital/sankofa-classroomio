@@ -1,7 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
 import {
   buildEmailFromName,
+  buildOrgEmailFromName,
   escapeHtml,
   sanitizeEmailDisplayName,
   sanitizeEmailSubject
@@ -59,5 +60,29 @@ describe('buildEmailFromName', () => {
     expect(buildEmailFromName('Alice "Admin" Academy (via ClassroomIO.com)')).toBe(
       '"Alice \\"Admin\\" Academy (via ClassroomIO.com)" <notify@mail.classroomio.com>'
     );
+  });
+});
+
+describe('buildOrgEmailFromName', () => {
+  const previous = process.env.EMAIL_VIA_SUFFIX;
+
+  afterEach(() => {
+    if (previous === undefined) {
+      delete process.env.EMAIL_VIA_SUFFIX;
+    } else {
+      process.env.EMAIL_VIA_SUFFIX = previous;
+    }
+  });
+
+  it('uses the organization name when no suffix is configured', () => {
+    delete process.env.EMAIL_VIA_SUFFIX;
+
+    expect(buildOrgEmailFromName('Academy')).toBe('"Academy" <notify@mail.classroomio.com>');
+  });
+
+  it('appends the configured via suffix', () => {
+    process.env.EMAIL_VIA_SUFFIX = 'Sankofa Futures';
+
+    expect(buildOrgEmailFromName('Academy')).toBe('"Academy (via Sankofa Futures)" <notify@mail.classroomio.com>');
   });
 });

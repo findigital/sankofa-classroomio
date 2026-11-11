@@ -2,7 +2,7 @@
   import type { Snippet } from 'svelte';
   import * as Drawer from '../../base/drawer';
   import Sidebar from './sidebar.svelte';
-  import type { PublicCourseSidebarItem, PublicCourseSidebarSection } from './types';
+  import type { PublicCourseSidebarItem, PublicCourseSidebarSection, PublicCourseSourceOffer } from './types';
 
   interface Props {
     open: boolean;
@@ -21,6 +21,7 @@
     orgSlug?: string | null;
     poweredByLabel?: string;
     poweredByBrand?: string;
+    sourceOffer?: PublicCourseSourceOffer | null;
   }
 
   let {
@@ -37,7 +38,8 @@
     courseSlug = null,
     orgSlug = null,
     poweredByLabel = 'Powered by',
-    poweredByBrand = 'ClassroomIO'
+    poweredByBrand = 'ClassroomIO',
+    sourceOffer = null
   }: Props = $props();
 
   let scrollContainer = $state<HTMLDivElement | null>(null);
@@ -104,6 +106,7 @@
           {orgSlug}
           {poweredByLabel}
           {poweredByBrand}
+          {sourceOffer}
         />
       </div>
     </Drawer.Content>

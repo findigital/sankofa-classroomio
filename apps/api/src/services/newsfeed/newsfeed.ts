@@ -22,7 +22,7 @@ import {
 } from '@cio/db/queries/newsfeed';
 
 import { env } from '@cio/core/config/env';
-import { buildEmailFromName, buildEmailBranding } from '@cio/email';
+import { buildOrgEmailFromName, buildEmailBranding } from '@cio/email';
 import { enqueueTransactionalEmail } from '@api/services/jobs';
 
 /**
@@ -447,7 +447,7 @@ async function sendNewsfeedPostEmail(feedId: string, authorId: string) {
         orgName,
         branding
       },
-      from: buildEmailFromName(`${orgName} - ClassroomIO`),
+      from: buildOrgEmailFromName(orgName),
       replyTo: feedData.author?.email || 'noreply@classroomio.com',
       idempotencyKey: `newsfeed:post:${feedId}`,
       preference: { organizationId: feedData.organization.id }
@@ -495,7 +495,7 @@ async function sendNewsfeedCommentEmail(feedId: string, commentContent: string, 
         orgName,
         branding
       },
-      from: buildEmailFromName(`${orgName} - ClassroomIO`),
+      from: buildOrgEmailFromName(orgName),
       replyTo: 'noreply@classroomio.com',
       preference: { organizationId: feedData.organization.id }
     });

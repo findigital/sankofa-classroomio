@@ -41,9 +41,15 @@ Enables the in-app Unsplash image search.
 
 | Variable | Description |
 |----------|-------------|
-| `PUBLIC_APP_TITLE` | Custom app title |
+| `PUBLIC_APP_NAME` | Name for logos, sign-in labels, the web app manifest, and browser-tab suffixes (`{page} - {name}`). When `PUBLIC_APP_TITLE` is unset, the default document title is `{name} \| Learning platform` |
+| `PUBLIC_APP_TITLE` | Default document title and Open Graph site name when set. Takes precedence over `PUBLIC_APP_NAME` for that title |
 | `PUBLIC_APP_DESCRIPTION` | Custom app description / meta tag |
 | `PUBLIC_OG_IMAGE_URL` | Custom Open Graph image URL |
+| `PUBLIC_SUPPORT_EMAIL` | Support address shown in the dashboard |
+| `PUBLIC_TWITTER_HANDLE` | Twitter/X site handle for meta tags. Leave empty to omit it |
+| `PUBLIC_SOURCE_URL` | HTTPS URL for the in-app source-code link. Defaults to this repository |
+| `SUPPORT_EMAIL` | API and jobs. Password-reset help text and the default reply-to |
+| `EMAIL_VIA_SUFFIX` | API and jobs. When set, org mail is from `Org Name (via suffix)` |
 | `PRIVATE_APP_HOST` | Dashboard host for multi-subdomain routing |
 | `PRIVATE_APP_SUBDOMAINS` | Subdomains served by the dashboard |
 

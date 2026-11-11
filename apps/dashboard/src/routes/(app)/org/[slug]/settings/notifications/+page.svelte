@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { NotificationsPage } from '$features/settings/pages';
   import { t } from '$lib/utils/functions/translations';
   import * as Page from '@cio/ui/base/page';
@@ -22,7 +23,7 @@
 </script>
 
 <svelte:head>
-  <title>{t.get('settings.notifications.page_title')} - ClassroomIO</title>
+  <title>{t.get('settings.notifications.page_title')} - {appBrandName()}</title>
 </svelte:head>
 
 <Page.Header>

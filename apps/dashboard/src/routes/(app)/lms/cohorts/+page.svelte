@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import * as Page from '@cio/ui/base/page';
   import { t } from '$lib/utils/functions/translations';
   import { cohortApi } from '$features/cohort/api';
@@ -28,7 +29,7 @@
 </script>
 
 <svelte:head>
-  <title>{$t('lms_navigation.cohorts') || 'Cohorts'} - ClassroomIO</title>
+  <title>{$t('lms_navigation.cohorts') || 'Cohorts'} - {appBrandName()}</title>
 </svelte:head>
 
 <Page.Root class="w-full">

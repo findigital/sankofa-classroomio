@@ -1,3 +1,5 @@
+import { resolveCatalogPresentation } from '@cio/utils/functions';
+
 import type { AccountOrg, PublicOrg } from './types';
 
 type OrganizationCustomization = AccountOrg['customization'] & {
@@ -15,6 +17,7 @@ export function toPublicOrg(org: AccountOrg): PublicOrg {
   const customization = org.customization as OrganizationCustomization;
   const signupSettings = org.settings?.signup;
   const languageSettings = org.settings?.language;
+  const catalog = resolveCatalogPresentation(org.settings);
   const authBackgroundImage = customization.auth?.backgroundImage;
 
   return {
@@ -34,7 +37,10 @@ export function toPublicOrg(org: AccountOrg): PublicOrg {
     disableGoogleAuth: org.disableGoogleAuth,
     settings: {
       ...(signupSettings ? { signup: { inviteOnly: signupSettings.inviteOnly } } : {}),
-      ...(languageSettings ? { language: languageSettings } : {})
+      ...(languageSettings ? { language: languageSettings } : {}),
+      hideCoursePricing: catalog.hideCoursePricing,
+      showCourseTypeFilter: catalog.showCourseTypeFilter,
+      catalogFilterTagGroupIds: catalog.filterTagGroupIds
     },
     customization: authBackgroundImage
       ? {

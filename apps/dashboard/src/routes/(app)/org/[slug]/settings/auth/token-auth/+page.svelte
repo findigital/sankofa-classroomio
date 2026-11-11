@@ -1,11 +1,12 @@
 <script>
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { AuthPage } from '$features/settings/pages';
   import { t } from '$lib/utils/functions/translations';
   import * as Page from '@cio/ui/base/page';
 </script>
 
 <svelte:head>
-  <title>{t.get('settings.auth.tabs.token_auth')} - ClassroomIO</title>
+  <title>{t.get('settings.auth.tabs.token_auth')} - {appBrandName()}</title>
 </svelte:head>
 
 <Page.Header>

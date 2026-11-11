@@ -4,6 +4,7 @@
   import { classroomio } from '$lib/utils/services/api';
   import { snackbar } from '$features/ui/snackbar/store';
   import { t } from '$lib/utils/functions/translations';
+  import { brandedPageTitle } from '$lib/utils/functions/brand';
   import { ROLE } from '@cio/utils/constants';
   import type { AcceptableOrgInvite } from '../utils/types';
 
@@ -70,7 +71,7 @@
 >
   <Dialog.Content class="w-96 p-6">
     <Dialog.Header class="p-2">
-      <Dialog.Title>{$t('invite.organization.page_title', { orgName })}</Dialog.Title>
+      <Dialog.Title>{brandedPageTitle($t('invite.organization.page_title', { orgName }))}</Dialog.Title>
     </Dialog.Header>
 
     <div class="mt-2 space-y-3 px-2 text-center">

@@ -46,7 +46,7 @@ import { getAppBaseUrl } from '@cio/core/config/dashboard-url';
 import { parseCourseIdsFromInviteMetadata, parseCohortIdsFromInviteMetadata } from '@api/utils/org';
 import { getProfileById, markUserAndProfileEmailVerified } from '@cio/db/queries/auth/profile';
 import { enqueueTransactionalEmail } from '@api/services/jobs';
-import { buildEmailBranding, buildEmailFromName, sanitizeEmailSubject } from '@cio/email';
+import { buildEmailBranding, buildOrgEmailFromName, sanitizeEmailSubject } from '@cio/email';
 import { emitComplianceEnrollmentEvents, ensureComplianceEnrollmentRecordsForProfiles } from '../course/compliance';
 import { captureLearnersEnrolled } from '@api/services/product-events';
 
@@ -431,7 +431,7 @@ export async function inviteTeamMembers(
   const inviterName = inviterProfile?.fullname?.trim() || undefined;
   const expiryLabel = getExpiryLabel(expiresAt);
   const branding = buildEmailBranding(organization);
-  const from = buildEmailFromName(`${organization.name} (via ClassroomIO.com)`);
+  const from = buildOrgEmailFromName(organization.name);
   const subject = sanitizeEmailSubject(`You have been invited to join ${organization.name} on ClassroomIO`);
   const failedEmails = new Set<string>();
   let queuedCount = 0;

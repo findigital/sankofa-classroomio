@@ -2,11 +2,11 @@
   import { page } from '$app/state';
 
   import { CourseLandingPage } from '$features/ui';
-  import { PoweredBy } from '$features/ui';
+  import { appBrandName } from '$lib/utils/functions/brand';
 
   let { data } = $props();
 
-  const orgName = $derived(data.org?.name ?? data.course?.org?.name ?? 'ClassroomIO');
+  const orgName = $derived(data.org?.name ?? data.course?.org?.name ?? appBrandName());
   const courseImage = $derived(data.course?.bannerImage || '');
 
   const courseJsonLd = $derived.by(() => {
@@ -36,6 +36,5 @@
 </svelte:head>
 
 {#if data.course}
-  <PoweredBy />
   <CourseLandingPage courseData={data.course} org={data.org} themeComponent={data.themeComponent} />
 {/if}

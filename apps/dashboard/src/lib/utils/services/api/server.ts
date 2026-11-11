@@ -1,4 +1,7 @@
 import { env } from '$env/dynamic/private';
+import type { Cookies } from '@sveltejs/kit';
+
+import { getCioCookieString } from '$lib/utils/functions/cookies';
 import { ApiError } from './types';
 
 export type ServerApiResult<T> = { ok: true; status: number; body: T } | { ok: false; status: number; message: string };
@@ -38,6 +41,14 @@ export function getApiKeyHeaders(): { headers: { Authorization: string } } {
   return {
     headers: {
       Authorization: `Bearer ${env.PRIVATE_SERVER_KEY}`
+    }
+  };
+}
+
+export function getVisitorHeaders(cookies: Cookies): { headers: { cookie: string } } {
+  return {
+    headers: {
+      cookie: getCioCookieString(cookies)
     }
   };
 }

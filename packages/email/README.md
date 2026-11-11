@@ -46,6 +46,8 @@ await send('forgotPassword', {
 });
 ```
 
+`replyTo` in that example is an explicit override. When a caller omits it, the default reply-to is `SUPPORT_EMAIL` as `"Support" <address>` when that variable is set, and otherwise `EMAIL_FROM`. Password-reset mail includes the support address only when `SUPPORT_EMAIL` is set. Organization From names use `EMAIL_VIA_SUFFIX` when it is set: `Org Name (via suffix)`. With no suffix, the From name is the organization name.
+
 ## Email link URLs
 
 Email templates receive fully-built URLs in their `fields` — templates do **not** choose the host. Callers in `apps/api` (or other services) must build links before calling `enqueueTransactionalEmail` or `send`.

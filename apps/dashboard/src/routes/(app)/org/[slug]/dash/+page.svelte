@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import AwardIcon from '@lucide/svelte/icons/award';
@@ -34,7 +35,7 @@
 </script>
 
 <svelte:head>
-  <title>Dashboard - ClassroomIO</title>
+  <title>Dashboard - {appBrandName()}</title>
 </svelte:head>
 
 <Page.Root class="w-full">

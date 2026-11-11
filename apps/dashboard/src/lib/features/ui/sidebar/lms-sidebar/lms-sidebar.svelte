@@ -6,6 +6,7 @@
   import NavMain from './nav-main.svelte';
   import OrgLogo from '../org-sidebar/org-logo.svelte';
   import { SidebarFooterMenu } from '../footer';
+  import SourceOffer from '$features/ui/source-offer.svelte';
   import SidebarSkeleton from '../sidebar-skeleton.svelte';
 
   const isOrgLoaded = $derived($orgs.length > 0 && $profile.id);
@@ -25,6 +26,7 @@
 
     <Sidebar.Footer class="gap-4!">
       <SidebarFooterMenu />
+      <SourceOffer class="px-2 py-1" />
     </Sidebar.Footer>
 
     <Sidebar.Rail />

@@ -12,6 +12,10 @@ export const forgotPasswordEmail = defineEmail({
     link: z.url()
   }),
   render: (fields) => {
+    const support = process.env.SUPPORT_EMAIL?.trim();
+    const supportNote = support
+      ? `<p>PS: If you did not initiate this request, reply to this email or write to ${support} so we can look into a possible attempt to breach your account.</p>`
+      : '';
     const content = `Hello ${fields.name},
     <p>You are receiving this email because you have requested a password reset for your ClassroomIO account.</p>
     <p>Please click the button below to reset your password:</p>
@@ -20,7 +24,7 @@ export const forgotPasswordEmail = defineEmail({
       <a class="button" href="${fields.link}">Reset my password</a>
     </div>
 
-    <p>PS: If you did not initiate this request, reply to this email or write to help@classroomio.com so we can look into a possible attempt to breach your account.</p>
+    ${supportNote}
     `;
 
     return getDefaultTemplate(content);

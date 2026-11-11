@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { goto } from '$app/navigation';
   import { ROUTE } from '$lib/utils/constants/routes';
   import { AuthUI } from '$features/ui';
@@ -14,7 +15,7 @@
 </script>
 
 <svelte:head>
-  <title>Forgot Password - ClassroomIO</title>
+  <title>Forgot Password - {appBrandName()}</title>
 </svelte:head>
 
 <AuthUI handleSubmit={() => forgotApi.submit(fields)} showOnlyContent={true} showLogo={!forgotApi.success}>

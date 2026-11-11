@@ -83,7 +83,7 @@ Components in the `custom` directory come from various sources or are built on t
 - `custom/course-creator/` - ChatGPT-style course creation input with level and type selects
 - `custom/attention-highlight/` - Prop-driven focus pulse and smooth scroll wrapper to draw user attention to specific items
 - `custom/question-type-picker/` - Question type picker modal and QuestionTypeIcon glyph/icon component
-- `custom/org-landing-page/` - 11-theme org and course landing page system, including `LearnerMenu` authenticated popover
+- `custom/org-landing-page/` - 11-theme org and course landing page system, including `LearnerMenu` authenticated popover and `CourseTagPills` for course tags
 - `custom/add-block/` - the add-content entry points for lessons (`Menu` between-block plus, `Row` empty-state/AI row, `Item` choice button)
 - `custom/block/` - lesson block container (ordering, gap menus, rail) and presentational blocks (image, document, slide, video, note)
 
@@ -417,7 +417,7 @@ Unified video player component supporting HTML5 video (direct MP4 and HLS via `h
 | `options.onTimeUpdate`    | Callback invoked as playback position advances                                                                                                                                                                                                                                                                                                                                  |
 | `options.onPlayerReady`   | Callback invoked when the underlying player SDK is initialized                                                                                                                                                                                                                                                                                                                  |
 | `options.vimeoRetryLabel` | Optional label override for the Vimeo playback retry button                                                                                                                                                                                                                                                                                                                     |
-| `options.resumeAtSeconds` | Where a returning viewer left off, in seconds. Upload playback only: before the first play the player seeks there and, for HLS, loads one fragment so the frame and progress bar show the position. Ignored once playback has started |
+| `options.resumeAtSeconds` | Where a returning viewer left off, in seconds. Upload playback only: before the first play the player seeks there and, for HLS, loads one fragment so the frame and progress bar show the position. Ignored once playback has started                                                                                                                                           |
 | `options.onBeforeHlsLoad` | HLS only. Mints the playback cookie and returns `{ expiresInSeconds?, authExpired? }`. Called before the manifest loads, shortly before `expiresInSeconds` elapses, after a playlist or segment request is rejected as unauthorized, and on reload. If it throws, playback continues and the call is retried a few times. Return `authExpired: true` to show the sign-in prompt |
 
 ### Combo button (`src/custom/combo-button/`)
@@ -469,7 +469,7 @@ Three machines show features that are not shipped yet: the training line and eve
 
 `stillAt` defaults to `3.9` for `MachineBrokenTrack` and `3` for `MachineBlankLesson`, the frames where each drawing reads best.
 
-In an empty state, pass the machine through the `media` snippet of `Empty` (`@cio/ui/custom/empty`). With `media`, the `Empty` card grows to fit its content, and a `full-page` layout scrolls rather than clipping, leaving room for the logo when `showLogo` is set. The media is hidden on phones (below the `sm` breakpoint, or shorter than 640px), so the message and actions fit without scrolling. Without `media`, the card keeps its 360px height cap. Off a `--muted` card, set `--machine-face` to the page colour:
+In an empty state, pass the machine through the `media` snippet of `Empty` (`@cio/ui/custom/empty`). With `media`, the `Empty` card grows to fit its content, and a `full-page` layout scrolls rather than clipping, leaving room for the logo when `showLogo` is set. Pass `logoName` and `logoHref` with that flag; the banner has no built-in product name or tagline. The media is hidden on phones (below the `sm` breakpoint, or shorter than 640px), so the message and actions fit without scrolling. Without `media`, the card keeps its 360px height cap. Off a `--muted` card, set `--machine-face` to the page colour:
 
 ```svelte
 <Empty title={...} description={...} variant="page" layout="full-page">

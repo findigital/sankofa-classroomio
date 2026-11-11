@@ -5,6 +5,7 @@
   import * as Avatar from '@cio/ui/base/avatar';
   import { t } from '$lib/utils/functions/translations';
   import { currentOrg } from '$lib/utils/store/org';
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { GoogleIconColored } from '$features/ui/icons';
   import { authClient } from '$lib/utils/services/auth/client';
   import { snackbar } from '$features/ui/snackbar/store';
@@ -27,6 +28,7 @@
     newUserCallbackPathname?: string;
     handleSubmit?: () => void;
     children?: Snippet;
+    footer?: Snippet;
     getPasswordAuthAlternative?: Snippet;
   }
 
@@ -42,6 +44,7 @@
     newUserCallbackPathname,
     handleSubmit = () => {},
     children,
+    footer,
     getPasswordAuthAlternative
   }: Props = $props();
 
@@ -80,12 +83,15 @@
 
   const authBackgroundUrl = $derived($currentOrg.customization.auth?.backgroundImage?.trim() ?? '');
   const brandName = $derived(logoName ?? $currentOrg.name);
+  const brandLabel = $derived(brandName || appBrandName());
   const brandAvatarUrl = $derived(logoName !== undefined ? logoUrl : $currentOrg.avatarUrl);
   const showBlockFooter = $derived(page.data.isOrgSite === false);
 </script>
 
 <div
-  class="auth-ui-background ui:bg-background relative flex min-h-screen w-full items-center justify-center overflow-hidden p-4"
+  class="auth-ui-background ui:bg-background relative flex min-h-screen w-full items-center justify-center overflow-hidden px-4 pt-4 {footer
+    ? 'pb-16'
+    : 'pb-4'}"
 >
   {#if showBlockFooter}
     <div class="absolute inset-0 z-0 hidden translate-x-[16%] md:block" style:--machine-face="var(--background)">
@@ -106,13 +112,10 @@
     <Card.Root class="ui:notch-cutout w-full shadow-none">
       {#if !showOnlyContent || showLogo}
         <Card.Header class="flex flex-col items-center gap-4">
-          <a href={resolve(ROUTE.HOME, {})} class="inline-flex" aria-label={brandName ? brandName : 'ClassroomIO'}>
+          <a href={resolve(ROUTE.HOME, {})} class="inline-flex" aria-label={brandLabel}>
             <Avatar.Root>
-              <Avatar.Image
-                src={brandAvatarUrl ? brandAvatarUrl : '/logo-192.png'}
-                alt={brandName ? brandName : 'ClassroomIO'}
-              />
-              <Avatar.Fallback>{brandName ? brandName : 'ClassroomIO'}</Avatar.Fallback>
+              <Avatar.Image src={brandAvatarUrl ? brandAvatarUrl : '/logo-192.png'} alt={brandLabel} />
+              <Avatar.Fallback>{brandLabel}</Avatar.Fallback>
             </Avatar.Root>
           </a>
 
@@ -169,4 +172,9 @@
       {/if}
     </Card.Root>
   </div>
+  {#if footer}
+    <div class="absolute inset-x-0 bottom-4 z-20 flex justify-center">
+      {@render footer()}
+    </div>
+  {/if}
 </div>

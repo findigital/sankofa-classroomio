@@ -37,7 +37,8 @@
         "caption": "Preparando tus cursos, estudiantes y configuración."
       }
     },
-    "back": "Atrás"
+    "back": "Atrás",
+    "source_offer": "View source code"
   },
   "validations": {
     "generic": {
@@ -230,7 +231,7 @@
     },
     "submissions": {
       "success": {
-        "grading": "Calificación guardada y notificación al estudiante"
+        "grading": "Review saved and student notified"
       }
     },
     "marks": {
@@ -439,7 +440,9 @@
       "tag_updated": "Etiqueta actualizada",
       "course_tags_updated": "Etiquetas del curso actualizadas",
       "fetch_failed": "No se pudieron cargar las etiquetas",
-      "save_failed": "No se pudieron guardar los cambios de etiqueta"
+      "save_failed": "No se pudieron guardar los cambios de etiqueta",
+      "tag_deleted": "Tag deleted",
+      "delete_failed": "Failed to delete tag"
     },
     "error_update": "No se pudo actualizar",
     "token_auth": {
@@ -543,8 +546,8 @@
     "heading": "Ejercicios",
     "not_submitted": "No enviado",
     "submitted": "Enviado",
-    "in_progress": "Calificación en progreso",
-    "graded": "Calificado",
+    "in_progress": "Review in progress",
+    "graded": "Reviewed",
     "lesson": "Lección"
   },
   "my_learning": {
@@ -606,8 +609,8 @@
     "last_seen": "visto por última vez",
     "a_while_ago": "hace un tiempo",
     "exercises": "Ejercicios",
-    "graded": "Calificado",
-    "not_graded": "No calificado",
+    "graded": "Reviewed",
+    "not_graded": "Not reviewed",
     "enrolled_courses": "Cursos inscritos",
     "enrolled_courses_description": "Todos los cursos inscritos",
     "overall_course_progress": "Progreso general del curso",
@@ -842,8 +845,8 @@
       "no_courses_description": "Inscribe a este estudiante para comenzar a registrar su progreso.",
       "no_exercises_title": "No hay ejercicios en este curso",
       "no_exercises_description": "Añade un ejercicio a una lección y los intentos de cada estudiante aparecerán aquí.",
-      "no_grades_title": "Nada calificado aún",
-      "no_grades_description": "Las calificaciones aparecerán una vez que este estudiante entregue un ejercicio.",
+      "no_grades_title": "Nothing reviewed yet",
+      "no_grades_description": "Results appear once this student submits an exercise.",
       "load_failed_title": "No se pudo cargar este estudiante",
       "load_failed_description": "Ocurrió un error al cargar este estudiante. Inténtalo de nuevo.",
       "retry": "Reintentar",
@@ -1684,7 +1687,7 @@
       "submissions": {
         "title": "Ejercicios enviados",
         "access": {
-          "denied_title": "No puedes calificar las entregas de este curso",
+          "denied_title": "You can't review submissions for this course",
           "denied_description": "Pide a un administrador que te añada como tutor del curso o como mentor de una cohorte que incluya este curso."
         },
         "grading_modal": {
@@ -1696,8 +1699,8 @@
           "status": "Estado",
           "add_comment": "Añadir comentario",
           "add_comment_placeholder": "Deja un comentario",
-          "grade_with_ai": "Calificar con IA",
-          "submit_grades": "Enviar calificaciones",
+          "grade_with_ai": "Review with AI",
+          "submit_grades": "Submit review",
           "accept_grade": "Aceptar",
           "reject_grade": "Rechazar",
           "allocated": "Asignó esta puntuación porque",
@@ -1715,12 +1718,12 @@
         "submission_status": {
           "submitted": "Enviado",
           "in_progress": "En progreso",
-          "graded": "Calificado"
+          "graded": "Reviewed"
         },
         "workflow": {
           "awaiting_manual_hint": "Necesita revisión manual",
-          "failed_hint": "Error en la calificación automática. Mueva este envío nuevamente a Enviado para volver a intentarlo.",
-          "invalid_transition": "Este cambio de estado no está permitido por el flujo de trabajo de calificación"
+          "failed_hint": "Automatic review failed. Move this submission back to Submitted to retry.",
+          "invalid_transition": "This status move is not allowed by the review workflow"
         },
         "filter": {
           "student": "Student",
@@ -1907,8 +1910,8 @@
                 "attempts_count": "{count} intentos",
                 "attempt_label": "Intento {number}",
                 "date_unknown": "Fecha desconocida",
-                "status_awaiting_manual": "En espera de calificación manual",
-                "status_completed": "Calificado",
+                "status_awaiting_manual": "Awaiting manual review",
+                "status_completed": "Reviewed",
                 "status_pending": "Pendiente",
                 "counts_as_complete": "Cuenta como completado",
                 "passed": "Aprobado",
@@ -1942,7 +1945,7 @@
               "due": "Vencido por",
               "no_description": "Sin descripción",
               "start": "Iniciar",
-              "graded": "Calificado",
+              "graded": "Reviewed",
               "pending": "Pendiente",
               "submitted": "Enviado",
               "status_pending": "Estado: Pendiente de revisión",
@@ -3306,7 +3309,18 @@
       "empty_tags": "No hay etiquetas disponibles"
     },
     "page_subtitle": "Donde las lecciones se convierten en cursos y los cursos en inscripciones.",
-    "load_more": "Cargar más"
+    "load_more": "Cargar más",
+    "catalog_order": {
+      "action": "Reorder courses",
+      "title": "Course order",
+      "description": "Drag courses into the order people should see. The catalog and home page use this order, then the date the course was created. Saving featured courses on the landing page replaces this order.",
+      "saved": "Course order saved",
+      "save_failed": "Could not save course order",
+      "unpublished": "Unpublished",
+      "empty": "There are no courses to order yet.",
+      "admin_only": "Only an organization admin can reorder courses.",
+      "drag": "Drag to reorder"
+    }
   },
   "ai": {
     "help_me": "Ayúdame a escribir",
@@ -3670,7 +3684,7 @@
     "tools": "Herramientas"
   },
   "media_manager": {
-    "page_title": "Administrador de medios - ClassroomIO",
+    "page_title": "Administrador de medios",
     "heading": "Gerente de Medios",
     "empty": "No se encontraron activos",
     "usage": {
@@ -4418,6 +4432,23 @@
         "internal_enrollment_only": {
           "label": "Inscripción interna únicamente",
           "description": "Cuando está habilitado, solo los miembros existentes de su organización pueden inscribirse en sus cursos. Se debe invitar a todos los demás; no pueden inscribirse desde la página de un curso, incluso cuando el curso está abierto a nuevos estudiantes."
+        },
+        "members_only_catalog": {
+          "label": "Members-only catalog",
+          "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
+        },
+        "hide_course_pricing": {
+          "label": "Hide course prices",
+          "description": "Hide prices, the pricing filter, and Free labels on the catalog and course cards. Prices stay hidden until you turn this off."
+        },
+        "show_course_type_filter": {
+          "label": "Show course type filter",
+          "description": "Show course types that have published courses, such as live class and self-paced, as catalog filters."
+        },
+        "catalog_filter_groups": {
+          "label": "Catalog filter groups",
+          "description": "Choose which tag groups appear as catalog filters. Every group is included until you pick a subset.",
+          "empty": "Tag groups will show up here after they are created."
         }
       },
       "login": {
@@ -4539,12 +4570,12 @@
           "description": "Enviar correo a los miembros del curso sobre nuevas publicaciones y comentarios en el feed."
         },
         "gradingResult": {
-          "label": "Resultados de calificación",
-          "description": "Enviar correo a estudiantes cuando su entrega es calificada o actualizada."
+          "label": "Review results",
+          "description": "Email students when their submission is reviewed or updated."
         },
         "newSubmission": {
-          "label": "Nuevas entregas para calificar",
-          "description": "Enviar correo a tutores cuando un estudiante entrega trabajo que necesita calificación."
+          "label": "New submissions to review",
+          "description": "Email tutors when a student submits work that needs review."
         },
         "newStudent": {
           "label": "Nuevo estudiante se inscribe",
@@ -4625,7 +4656,7 @@
         "quizAssigned": "Prueba asignada",
         "sessionReminder": "Recordatorio de sesión en vivo",
         "sessionUpdated": "Sesión en vivo actualizada",
-        "submissionGraded": "Envío calificado",
+        "submissionGraded": "Submission reviewed",
         "newsfeedPost": "Publicación de noticias del curso"
       },
       "descriptions": {
@@ -4967,7 +4998,7 @@
     "confirm_link_suffix": "para confirmar tu correo electrónico"
   },
   "public_courses": {
-    "page_title": "Cursos - ClassroomIO",
+    "page_title": "Cursos",
     "heading": "Cursos",
     "subtitle": "Explorar todos los cursos publicados",
     "clear_filters": "Borrar filtros",
@@ -4981,7 +5012,7 @@
     },
     "filters": {
       "title": "Filtrar por etiquetas",
-      "help": "Seleccione una o más etiquetas para filtrar cursos",
+      "help": "Filter by the options shown, or search by name",
       "empty": "Aún no hay etiquetas disponibles",
       "tags_title": "Etiquetas",
       "types_title": "Tipos",
@@ -4992,10 +5023,15 @@
       "pricing_paid": "Pagado",
       "selected": "Seleccionado:",
       "save_changes": "Guardar cambios"
+    },
+    "catalog_locked": {
+      "title": "This catalog is for members",
+      "description": "Only members of this academy can browse courses here. Sign in with a member account, or ask an administrator for access.",
+      "sign_in": "Sign in"
     }
   },
   "tags_admin": {
-    "page_title": "Etiquetas - ClassroomIO",
+    "page_title": "Etiquetas",
     "heading": "Etiquetas",
     "create": "crear",
     "tag_modal": {
@@ -5040,16 +5076,21 @@
       "edit_tag": "Editar etiqueta",
       "save": "Guardar",
       "cancel": "Cancelar",
-      "actions_menu": "Acciones de etiqueta"
+      "actions_menu": "Acciones de etiqueta",
+      "delete_tag": "Delete tag"
     },
     "common": {
       "not_available": "N/D"
     },
-    "page_subtitle": "Organiza los cursos con etiquetas para que los filtros y las listas sean fáciles de revisar."
+    "page_subtitle": "Organiza los cursos con etiquetas para que los filtros y las listas sean fáciles de revisar.",
+    "delete": {
+      "title": "Delete tag",
+      "description": "Delete {name}? It will be removed from courses and catalog filters."
+    }
   },
   "invite": {
     "organization": {
-      "page_title": "Únase a {orgName} en ClassroomIO",
+      "page_title": "Únase a {orgName}",
       "invitation_student": "Has sido invitado a {orgName} como estudiante.",
       "invitation_teacher": "Has sido invitado a {orgName} como profesor.",
       "invitation_admin": "Has sido invitado a {orgName} como administrador.",
@@ -5077,7 +5118,7 @@
       "loading": "Cargando invitación..."
     },
     "link": {
-      "page_title": "Únase a {orgName} en ClassroomIO",
+      "page_title": "Únase a {orgName}",
       "invitation_student": "Te invitaron a unirte a {orgName} como estudiante.",
       "invitation_teacher": "Te han invitado a unirte a {orgName} como profesor.",
       "invitation_admin": "Le invitaron a unirse a {orgName} como administrador.",
@@ -5261,7 +5302,7 @@
         "course_completed": "Un estudiante completa un curso",
         "course_certificate_issued": "Se obtiene un certificado",
         "course_submission_created": "Se crea una entrega de ejercicio",
-        "course_submission_status_changed": "Cambia el estado de una entrega, por ejemplo al calificarla",
+        "course_submission_status_changed": "A submission status changes, such as when it is reviewed",
         "lesson_completion_updated": "Una lección se marca como completada o se restablece",
         "exercise_completion_updated": "Un ejercicio se completa o se restablece",
         "compliance_record_status_changed": "Cambia el estado de cumplimiento de un estudiante",
@@ -5861,7 +5902,7 @@
       "practice_again": "Practica de nuevo",
       "attempt_option": "Intento {attemptNumber} - {correct}/{total}",
       "attempts_select_aria": "Tus intentos",
-      "privacy_hint": "Calificado instantáneamente en su navegador: no se envía nada.",
+      "privacy_hint": "Reviewed instantly in your browser — nothing is submitted.",
       "summary_template": "Obtuviste [[correcto]] / [[total]] correcto."
     },
     "powered_by": {
@@ -6300,7 +6341,7 @@
       "disabled": "Enlace de invitación deshabilitado"
     },
     "join": {
-      "page_title": "Únete a {resourceName} en ClassroomIO",
+      "page_title": "Únete a {resourceName}",
       "invitation": "Te han invitado a unirte a {resourceName} en {orgName}.",
       "course_button": "Unirse al curso",
       "cohort_button": "Unirse al grupo",
@@ -6434,7 +6475,7 @@
       "certificate": "Certificado habilitado",
       "deadline": "Fecha límite {date}",
       "sequential": "Las lecciones se desbloquean en orden",
-      "grading": "Un tutor califica los envíos",
+      "grading": "A tutor reviews submissions",
       "comments_off": "Los comentarios de la lección están desactivados.",
       "lesson_download": "Los estudiantes pueden descargar lecciones",
       "self_enrollment": "Los estudiantes pueden unirse ellos mismos.",
@@ -6590,8 +6631,8 @@
   },
   "oauth": {
     "consent": {
-      "page_title": "Conecta una app con ClassroomIO",
-      "title": "Conectar {client} con ClassroomIO",
+      "page_title": "Conecta una app con {brand}",
+      "title": "Conectar {client} con {brand}",
       "subtitle": "Elige el espacio de trabajo al que {client} puede acceder.",
       "workspace_label": "Espacio de trabajo",
       "no_workspaces_title": "No hay espacios de trabajo disponibles",

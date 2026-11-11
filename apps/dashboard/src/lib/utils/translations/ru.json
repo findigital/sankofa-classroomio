@@ -37,7 +37,8 @@
         "caption": "Подготавливаем ваши курсы, студентов и настройки."
       }
     },
-    "back": "Назад"
+    "back": "Назад",
+    "source_offer": "View source code"
   },
   "validations": {
     "generic": {
@@ -230,7 +231,7 @@
     },
     "submissions": {
       "success": {
-        "grading": "Оценка сохранена и учащийся уведомлен"
+        "grading": "Review saved and student notified"
       }
     },
     "marks": {
@@ -439,7 +440,9 @@
       "tag_updated": "Тег обновлен",
       "course_tags_updated": "Теги курса обновлены.",
       "fetch_failed": "Не удалось загрузить теги.",
-      "save_failed": "Не удалось сохранить изменения тега."
+      "save_failed": "Не удалось сохранить изменения тега.",
+      "tag_deleted": "Tag deleted",
+      "delete_failed": "Failed to delete tag"
     },
     "error_update": "Не удалось обновить",
     "token_auth": {
@@ -543,8 +546,8 @@
     "heading": "Упражнения",
     "not_submitted": "Не отправлено",
     "submitted": "Отправлено",
-    "in_progress": "Выставление оценок в процессе",
-    "graded": "Оцененный",
+    "in_progress": "Review in progress",
+    "graded": "Reviewed",
     "lesson": "Урок"
   },
   "my_learning": {
@@ -606,8 +609,8 @@
     "last_seen": "Последний раз видели",
     "a_while_ago": "некоторое время назад",
     "exercises": "Упражнения",
-    "graded": "Оцененный",
-    "not_graded": "Не оценено",
+    "graded": "Reviewed",
+    "not_graded": "Not reviewed",
     "enrolled_courses": "Зарегистрированные курсы",
     "enrolled_courses_description": "Все зарегистрированные курсы",
     "overall_course_progress": "Общий прогресс курса",
@@ -842,8 +845,8 @@
       "no_courses_description": "Запишите этого студента, чтобы начать отслеживать прогресс.",
       "no_exercises_title": "В этом курсе нет упражнений",
       "no_exercises_description": "Добавьте упражнение к уроку, и попытки каждого студента отобразятся здесь.",
-      "no_grades_title": "Ничего пока не оценено",
-      "no_grades_description": "Оценки появятся после того, как этот студент отправит упражнение.",
+      "no_grades_title": "Nothing reviewed yet",
+      "no_grades_description": "Results appear once this student submits an exercise.",
       "load_failed_title": "Не удалось загрузить этого студента",
       "load_failed_description": "При загрузке этого студента произошла ошибка. Пожалуйста, попробуйте еще раз.",
       "retry": "Повторить попытку",
@@ -1684,7 +1687,7 @@
       "submissions": {
         "title": "Представленные упражнения",
         "access": {
-          "denied_title": "Вы не можете проверять работы по этому курсу",
+          "denied_title": "You can't review submissions for this course",
           "denied_description": "Попросите администратора добавить вас преподавателем курса или наставником потока, в который входит этот курс."
         },
         "grading_modal": {
@@ -1696,8 +1699,8 @@
           "status": "Статус",
           "add_comment": "Добавить комментарий",
           "add_comment_placeholder": "Оставить комментарий",
-          "grade_with_ai": "Оценка с помощью ИИ",
-          "submit_grades": "Отправить оценки",
+          "grade_with_ai": "Review with AI",
+          "submit_grades": "Submit review",
           "accept_grade": "Принять",
           "reject_grade": "Отклонить",
           "allocated": "Присвоен этот балл, потому что",
@@ -1715,12 +1718,12 @@
         "submission_status": {
           "submitted": "Отправлено",
           "in_progress": "В процессе",
-          "graded": "Оцененный"
+          "graded": "Reviewed"
         },
         "workflow": {
           "awaiting_manual_hint": "Требуется ручная проверка",
-          "failed_hint": "Не удалось выполнить автооценку. Переместите эту отправку обратно в раздел «Отправлено», чтобы повторить попытку.",
-          "invalid_transition": "Это изменение статуса не разрешено рабочим процессом оценивания."
+          "failed_hint": "Automatic review failed. Move this submission back to Submitted to retry.",
+          "invalid_transition": "This status move is not allowed by the review workflow"
         },
         "filter": {
           "student": "Student",
@@ -1913,8 +1916,8 @@
                 "attempts_count": "{count} попыток",
                 "attempt_label": "Попытка {number}",
                 "date_unknown": "Дата неизвестна",
-                "status_awaiting_manual": "Ожидает ручной оценки",
-                "status_completed": "Оценено",
+                "status_awaiting_manual": "Awaiting manual review",
+                "status_completed": "Reviewed",
                 "status_pending": "В ожидании",
                 "counts_as_complete": "Считается завершенным",
                 "passed": "Пройдено",
@@ -1948,7 +1951,7 @@
               "due": "К оплате",
               "no_description": "Нет описания",
               "start": "Начать",
-              "graded": "Оцененный",
+              "graded": "Reviewed",
               "pending": "Ожидается",
               "submitted": "Отправлено",
               "status_pending": "Статус: Ожидается рассмотрение",
@@ -3306,7 +3309,18 @@
       "empty_tags": "Нет доступных тегов"
     },
     "page_subtitle": "Здесь уроки превращаются в курсы, а курсы — в зачисления.",
-    "load_more": "Загрузить больше"
+    "load_more": "Загрузить больше",
+    "catalog_order": {
+      "action": "Reorder courses",
+      "title": "Course order",
+      "description": "Drag courses into the order people should see. The catalog and home page use this order, then the date the course was created. Saving featured courses on the landing page replaces this order.",
+      "saved": "Course order saved",
+      "save_failed": "Could not save course order",
+      "unpublished": "Unpublished",
+      "empty": "There are no courses to order yet.",
+      "admin_only": "Only an organization admin can reorder courses.",
+      "drag": "Drag to reorder"
+    }
   },
   "ai": {
     "help_me": "Помогите мне написать",
@@ -3670,7 +3684,7 @@
     "tools": "Инструменты"
   },
   "media_manager": {
-    "page_title": "Медиаменеджер — ClassroomIO",
+    "page_title": "Медиаменеджер",
     "heading": "Медиа-менеджер",
     "empty": "Активы не найдены",
     "usage": {
@@ -4418,6 +4432,23 @@
         "internal_enrollment_only": {
           "label": "Только внутренняя регистрация",
           "description": "Если эта функция включена, только существующие члены вашей организации смогут записаться на ваши курсы. Все остальные должны быть приглашены — они не могут зарегистрироваться со страницы курса, даже если курс открыт для новых студентов."
+        },
+        "members_only_catalog": {
+          "label": "Members-only catalog",
+          "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
+        },
+        "hide_course_pricing": {
+          "label": "Hide course prices",
+          "description": "Hide prices, the pricing filter, and Free labels on the catalog and course cards. Prices stay hidden until you turn this off."
+        },
+        "show_course_type_filter": {
+          "label": "Show course type filter",
+          "description": "Show course types that have published courses, such as live class and self-paced, as catalog filters."
+        },
+        "catalog_filter_groups": {
+          "label": "Catalog filter groups",
+          "description": "Choose which tag groups appear as catalog filters. Every group is included until you pick a subset.",
+          "empty": "Tag groups will show up here after they are created."
         }
       },
       "login": {
@@ -4539,12 +4570,12 @@
           "description": "Отправлять письмо участникам курса о новых публикациях и комментариях в ленте."
         },
         "gradingResult": {
-          "label": "Результаты оценки",
-          "description": "Отправлять письмо студентам, когда их работа оценена или обновлена."
+          "label": "Review results",
+          "description": "Email students when their submission is reviewed or updated."
         },
         "newSubmission": {
-          "label": "Новые работы для оценки",
-          "description": "Отправлять письмо наставникам, когда студент сдаёт работу, требующую оценки."
+          "label": "New submissions to review",
+          "description": "Email tutors when a student submits work that needs review."
         },
         "newStudent": {
           "label": "Новый студент записывается",
@@ -4668,7 +4699,7 @@
         "quizAssigned": "Назначен тест",
         "sessionReminder": "Напоминание об онлайн-занятии",
         "sessionUpdated": "Онлайн-занятие изменено",
-        "submissionGraded": "Работа проверена",
+        "submissionGraded": "Submission reviewed",
         "newsfeedPost": "Публикация в ленте курса"
       },
       "test_dialog": {
@@ -4967,7 +4998,7 @@
     "confirm_link_suffix": "чтобы подтвердить свою электронную почту"
   },
   "public_courses": {
-    "page_title": "Курсы - ClassroomIO",
+    "page_title": "Курсы",
     "heading": "Курсы",
     "subtitle": "Просмотреть все опубликованные курсы",
     "clear_filters": "Очистить фильтры",
@@ -4981,7 +5012,7 @@
     },
     "filters": {
       "title": "Фильтровать по тегам",
-      "help": "Выберите один или несколько тегов, чтобы отфильтровать курсы.",
+      "help": "Filter by the options shown, or search by name",
       "empty": "Тегов пока нет",
       "tags_title": "Теги",
       "types_title": "Типы",
@@ -4992,10 +5023,15 @@
       "pricing_paid": "Платный",
       "selected": "Выбрано:",
       "save_changes": "Сохранить изменения"
+    },
+    "catalog_locked": {
+      "title": "This catalog is for members",
+      "description": "Only members of this academy can browse courses here. Sign in with a member account, or ask an administrator for access.",
+      "sign_in": "Sign in"
     }
   },
   "tags_admin": {
-    "page_title": "Теги — ClassroomIO",
+    "page_title": "Теги",
     "heading": "Теги",
     "create": "Создать",
     "tag_modal": {
@@ -5040,16 +5076,21 @@
       "edit_tag": "Изменить тег",
       "save": "Сохранить",
       "cancel": "Отмена",
-      "actions_menu": "Действия с тегами"
+      "actions_menu": "Действия с тегами",
+      "delete_tag": "Delete tag"
     },
     "common": {
       "not_available": "Н/Д"
     },
-    "page_subtitle": "Организуйте курсы с помощью меток, чтобы фильтры и списки было легко просматривать."
+    "page_subtitle": "Организуйте курсы с помощью меток, чтобы фильтры и списки было легко просматривать.",
+    "delete": {
+      "title": "Delete tag",
+      "description": "Delete {name}? It will be removed from courses and catalog filters."
+    }
   },
   "invite": {
     "organization": {
-      "page_title": "Присоединяйтесь к {orgName} в ClassroomIO.",
+      "page_title": "Присоединяйтесь к {orgName}",
       "invitation_student": "Вас пригласили в {orgName} в качестве ученика.",
       "invitation_teacher": "Вас пригласили в {orgName} в качестве преподавателя.",
       "invitation_admin": "Вас пригласили в {orgName} в качестве администратора.",
@@ -5077,7 +5118,7 @@
       "loading": "Загрузка приглашения..."
     },
     "link": {
-      "page_title": "Присоединяйтесь к {orgName} в ClassroomIO.",
+      "page_title": "Присоединяйтесь к {orgName}",
       "invitation_student": "Вас пригласили присоединиться к {orgName} в качестве студента.",
       "invitation_teacher": "Вас пригласили присоединиться к {orgName} в качестве преподавателя.",
       "invitation_admin": "Вас пригласили присоединиться к {orgName} в качестве администратора.",
@@ -5261,7 +5302,7 @@
         "course_completed": "Студент завершает курс",
         "course_certificate_issued": "Получен сертификат",
         "course_submission_created": "Создана отправка упражнения",
-        "course_submission_status_changed": "Меняется статус отправки, например при оценивании",
+        "course_submission_status_changed": "A submission status changes, such as when it is reviewed",
         "lesson_completion_updated": "Урок отмечен как пройденный или сброшен",
         "exercise_completion_updated": "Упражнение завершено или сброшено",
         "compliance_record_status_changed": "Меняется статус соответствия требованиям у студента",
@@ -5861,7 +5902,7 @@
       "practice_again": "Практикуйтесь снова",
       "attempt_option": "Попытка {attemptNumber} – {correct}/{total}",
       "attempts_select_aria": "Ваши попытки",
-      "privacy_hint": "Оценивается мгновенно в вашем браузере — ничего не отправляется.",
+      "privacy_hint": "Reviewed instantly in your browser — nothing is submitted.",
       "summary_template": "Вы ответили [[правильно]] / [[всего]] правильно."
     },
     "powered_by": {
@@ -6300,7 +6341,7 @@
       "disabled": "Ссылка-приглашение отключена"
     },
     "join": {
-      "page_title": "Присоединяйтесь к {resourceName} на ClassroomIO",
+      "page_title": "Присоединяйтесь к {resourceName}",
       "invitation": "Вас пригласили присоединиться к {resourceName} в {orgName}.",
       "course_button": "Присоединиться к курсу",
       "cohort_button": "Присоединиться к группе",
@@ -6431,7 +6472,7 @@
       "certificate": "Сертификат включён",
       "deadline": "Срок {date}",
       "sequential": "Уроки открываются по порядку",
-      "grading": "Преподаватель проверяет работы",
+      "grading": "A tutor reviews submissions",
       "comments_off": "Комментарии к урокам выключены",
       "lesson_download": "Ученики могут скачивать уроки",
       "self_enrollment": "Ученики могут записаться сами",
@@ -6590,8 +6631,8 @@
   },
   "oauth": {
     "consent": {
-      "page_title": "Подключите приложение к ClassroomIO",
-      "title": "Подключить {client} к ClassroomIO",
+      "page_title": "Подключите приложение к {brand}",
+      "title": "Подключить {client} к {brand}",
       "subtitle": "Выберите рабочее пространство, к которому {client} получит доступ.",
       "workspace_label": "Рабочее пространство",
       "no_workspaces_title": "Нет доступных рабочих пространств",

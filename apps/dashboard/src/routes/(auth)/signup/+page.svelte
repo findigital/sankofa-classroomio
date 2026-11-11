@@ -8,6 +8,7 @@
   import { capturePosthogEvent } from '$lib/utils/services/posthog';
   import { globalStore } from '$lib/utils/store/app';
   import { currentOrg, isFreePlan } from '$lib/utils/store/org';
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { authClient } from '$lib/utils/services/auth/client';
   import * as Field from '@cio/ui/base/field';
   import { Input } from '@cio/ui/base/input';
@@ -227,7 +228,7 @@
 </script>
 
 <svelte:head>
-  <title>Join ClassroomIO</title>
+  <title>Join {org.name || appBrandName()}</title>
 </svelte:head>
 
 {#if !$globalStore.isOrgSite || $isFreePlan}

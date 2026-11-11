@@ -3,22 +3,19 @@
   import { page } from '$app/state';
   import { Button } from '@cio/ui/base/button';
   import { Empty } from '@cio/ui/custom/empty';
-  import { ExternalLinkIcon, HomeIcon, HoverableItem } from '@cio/ui/custom/moving-icons';
+  import { HomeIcon, HoverableItem } from '@cio/ui/custom/moving-icons';
   import { MachineBrokenTrack } from '@cio/ui/custom/animation';
+  import { appBrandName, brandedPageTitle } from '$lib/utils/functions/brand';
 
   const isNotFound = $derived(page.status === 404);
   const isOrgSite = $derived(Boolean(page.data.isOrgSite));
+  const brandName = $derived(appBrandName());
 
   console.error('Error message:', page.error?.message);
   console.error('Error page:', page.url);
 
   function goHome() {
-    if (isOrgSite) {
-      goto('/');
-      return;
-    }
-
-    window.location.href = 'https://classroomio.com';
+    goto('/');
   }
 
   function continueLearning() {
@@ -27,7 +24,7 @@
 </script>
 
 <svelte:head>
-  <title>{isNotFound ? 'Page not found' : 'Something unexpected occurred'}</title>
+  <title>{brandedPageTitle(isNotFound ? 'Page not found' : 'Something unexpected occurred')}</title>
 </svelte:head>
 
 {#snippet brokenTrack()}
@@ -43,6 +40,8 @@
     variant="page"
     layout="full-page"
     showLogo={true}
+    logoName={brandName}
+    logoHref="/"
     media={brokenTrack}
   >
     <div class="flex items-center gap-2">
@@ -66,17 +65,11 @@
     variant="page"
     layout="full-page"
     showLogo={true}
+    logoName={brandName}
+    logoHref="/"
     media={brokenTrack}
   >
     <div class="flex gap-2">
-      <HoverableItem>
-        {#snippet children(isHovered)}
-          <Button href="https://classroomio.com/changelog" variant="secondary" size="xs">
-            <ExternalLinkIcon {isHovered} size={16} ariaHidden={true} />
-            Explore our Changelog
-          </Button>
-        {/snippet}
-      </HoverableItem>
       <HoverableItem>
         {#snippet children(isHovered)}
           <Button size="xs" onclick={goHome}>

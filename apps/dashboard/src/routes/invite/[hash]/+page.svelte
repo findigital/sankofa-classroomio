@@ -11,6 +11,7 @@
   import { snackbar } from '$features/ui/snackbar/store';
   import { page } from '$app/state';
   import { t } from '$lib/utils/functions/translations';
+  import { brandedPageTitle } from '$lib/utils/functions/brand';
   import { ROLE } from '@cio/utils/constants';
   import { STUDENT_HOME_ENTRY_PATH } from '@cio/utils/lms';
 
@@ -120,7 +121,7 @@
 </script>
 
 <svelte:head>
-  <title>{$t('invite.organization.page_title', { orgName: data.invite.organization.name })}</title>
+  <title>{brandedPageTitle($t('invite.organization.page_title', { orgName: data.invite.organization.name }))}</title>
 </svelte:head>
 
 <AuthUI

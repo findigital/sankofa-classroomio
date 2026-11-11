@@ -1,6 +1,12 @@
 <script lang="ts">
   import type { CourseItem, OrgLandingPageLabels } from '../types';
-  import { defaultEnrolledLabel, defaultLessonsLabel, getCourseTypeLandingMeta } from '../landing-page-utils';
+  import {
+    defaultEnrolledLabel,
+    defaultLessonsLabel,
+    getCourseTypeLandingMeta,
+    landingCoursePriceLabel
+  } from '../landing-page-utils';
+  import CourseTagPills from '../course-tag-pills.svelte';
 
   interface Props {
     course: CourseItem;
@@ -22,6 +28,7 @@
   ];
 
   const courseTypeMeta = $derived(getCourseTypeLandingMeta(course));
+  const priceLabel = $derived(landingCoursePriceLabel(course, labels, { maximumFractionDigits: 0 }));
   const resolvedLessonsLabel = $derived(labels?.lessonsLabel ?? defaultLessonsLabel);
   const resolvedEnrolledLabel = $derived(labels?.enrolledLabel ?? defaultEnrolledLabel);
 
@@ -35,11 +42,6 @@
     if (disableCourseLinks) return undefined;
     return course.link || (course.slug ? `/course/${course.slug}` : undefined);
   });
-
-  function formatCost(cost?: number, currency = 'USD'): string {
-    if (!cost) return labels?.freeLabel ?? 'Free';
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(cost);
-  }
 </script>
 
 <a
@@ -106,13 +108,19 @@
       </div>
     {/if}
 
+    <div class="ui:mt-3 ui:mb-3">
+      <CourseTagPills tags={course.tags} />
+    </div>
+
     <div
       class="ui:flex ui:items-center ui:justify-between ui:pt-4 ui:mt-auto"
       style="border-top: 1px solid var(--landing-border);"
     >
-      <span class="ui:text-base ui:font-semibold ui:text-[var(--landing-fg)]" style="letter-spacing: -0.01em;">
-        {course.price || formatCost(course.cost, course.currency)}
-      </span>
+      {#if priceLabel}
+        <span class="ui:text-base ui:font-semibold ui:text-[var(--landing-fg)]" style="letter-spacing: -0.01em;">
+          {priceLabel}
+        </span>
+      {/if}
       <span
         class="ui:inline-flex ui:items-center ui:gap-1 ui:text-sm ui:font-medium ui:text-[var(--landing-accent)]"
         aria-hidden="true"

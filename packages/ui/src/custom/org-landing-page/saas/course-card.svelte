@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { CourseItem, OrgLandingPageLabels } from '../types';
   import ClockIcon from '@lucide/svelte/icons/clock';
-  import TagIcon from '@lucide/svelte/icons/tag';
   import ArrowRightIcon from '@lucide/svelte/icons/arrow-right';
-  import { getCourseTypeLandingMeta, getPrimaryCourseTag } from '../landing-page-utils';
+  import { getCourseTypeLandingMeta, landingCoursePriceLabel } from '../landing-page-utils';
+  import CourseTagPills from '../course-tag-pills.svelte';
 
   interface Props {
     course: CourseItem;
@@ -14,17 +14,12 @@
   let { course, disableCourseLinks = false, labels }: Props = $props();
 
   const courseTypeMeta = $derived(getCourseTypeLandingMeta(course));
-  const primaryTag = $derived(getPrimaryCourseTag(course));
+  const priceLabel = $derived(landingCoursePriceLabel(course, labels));
 
   const href = $derived.by(() => {
     if (disableCourseLinks) return undefined;
     return course.link || (course.slug ? `/course/${course.slug}` : undefined);
   });
-
-  function formatCurrency(cost?: number, currency = 'USD') {
-    if (!cost) return labels?.freeLabel ?? 'Free';
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(cost);
-  }
 </script>
 
 <a
@@ -65,27 +60,15 @@
           {course.duration}
         </span>
       {/if}
-      {#if primaryTag}
-        <span class="ui:inline-flex ui:items-center ui:gap-1">
-          <TagIcon class="ui:size-3.5" />
-          {#if primaryTag.color}
-            <span
-              class="ui:inline-block ui:size-2 ui:rounded-full"
-              style={`background-color: ${primaryTag.color}`}
-              aria-hidden="true"
-            ></span>
-          {/if}
-          {primaryTag.name}
-        </span>
-      {/if}
+    </div>
+    <div class="ui:mt-2">
+      <CourseTagPills tags={course.tags} />
     </div>
 
     <div
       class="ui:flex ui:items-center ui:justify-between ui:pt-4 ui:mt-2 ui:border-t ui:border-[var(--landing-border)]/60"
     >
-      <span class="ui:text-sm ui:font-bold">
-        {course.price || formatCurrency(course.cost, course.currency)}
-      </span>
+      {#if priceLabel}<span class="ui:text-sm ui:font-bold">{priceLabel}</span>{/if}
       <span
         class="ui:inline-flex ui:items-center ui:gap-1 ui:text-xs ui:font-semibold ui:text-[var(--landing-accent)]"
         aria-hidden="true"

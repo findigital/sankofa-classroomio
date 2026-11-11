@@ -9,7 +9,7 @@ import type { AccountOrg, PublicOrg } from '$features/app/types';
 import { normalizeLandingPageSettings } from '$features/org/utils/landing-page';
 import type { CourseLandingPageProps, OrgLandingPageTheme } from '@cio/ui/custom/org-landing-page';
 import { calcCourseCost, isCourseFree } from '$lib/utils/functions/course';
-import { toFiniteNumber } from '@cio/utils/functions';
+import { resolveCatalogPresentation, toFiniteNumber, type CatalogPresentationSettings } from '@cio/utils/functions';
 import { t } from '$lib/utils/functions/translations';
 import { processErrors } from '$lib/utils/functions/validator';
 import z from 'zod';
@@ -217,6 +217,7 @@ export function buildCourseLandingPageProps(
   }
 ): CourseLandingPageProps {
   const landing = normalizeLandingPageSettings(org.landingpage);
+  const catalog = resolveCatalogPresentation(org.settings as CatalogPresentationSettings | null | undefined);
   const metadata = course.metadata ?? null;
   const reviewsRaw = (metadata?.reviews ?? []) as NonNullable<NonNullable<Course['metadata']>['reviews']>;
   const reviewsVisible = reviewsRaw.filter((r) => !r?.hide);
@@ -384,6 +385,7 @@ export function buildCourseLandingPageProps(
       reviewsHeading: t.get('course.navItem.landing_page.reviews'),
       pricingEyebrow: t.get('course.navItem.landing_page.pricing_section.enroll'),
       freeLabel: t.get('course.navItem.landing_page.pricing_section.free'),
+      hidePrice: catalog.hideCoursePricing,
       navAboutLabel: t.get('course.navItem.landing_page.editor.title.description'),
       navCurriculumLabel: t.get('course.navItem.landing_page.editor.title.curriculum'),
       navSkillsLabel: t.get('course.navItem.landing_page.editor.title.skills'),

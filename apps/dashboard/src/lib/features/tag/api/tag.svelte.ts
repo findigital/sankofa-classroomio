@@ -10,7 +10,8 @@ import type {
   OrganizationTagGroups,
   UpdateTagGroupRequest,
   UpdateCourseTagsRequest,
-  UpdateTagRequest
+  UpdateTagRequest,
+  DeleteTagRequest
 } from '../utils/types';
 import type { TTagCreate, TTagGroupCreate, TTagGroupUpdate, TTagUpdate } from '@cio/utils/validation/tag';
 import {
@@ -203,6 +204,37 @@ class TagApi extends BaseApiWithErrors {
     }
 
     return updated;
+  }
+
+  async deleteTag(tagId: string): Promise<boolean> {
+    let deleted = false;
+
+    await this.execute<DeleteTagRequest>({
+      requestFn: () =>
+        classroomio.organization.tags[':tagId'].$delete({
+          param: { tagId }
+        }),
+      logContext: 'deleting tag',
+      onSuccess: () => {
+        deleted = true;
+        orgNavCountsApi.adjustCount('tags', -1);
+        snackbar.success('snackbar.tags.tag_deleted');
+      },
+      onError: (result) => {
+        if (typeof result === 'string') {
+          snackbar.error(result);
+          return;
+        }
+
+        snackbar.error('snackbar.tags.delete_failed');
+      }
+    });
+
+    if (deleted) {
+      await this.getTagGroups();
+    }
+
+    return deleted;
   }
 
   async getCourseTags(courseId: string) {

@@ -5,7 +5,7 @@ import {
 } from '@cio/db/queries/course/course';
 import { setMemberCertificateEarned, setMemberCertificationEmailSent } from '@cio/db/queries/course/people';
 import { getProfileById } from '@cio/db/queries/auth';
-import { buildEmailFromName, buildEmailBranding } from '@cio/email';
+import { buildOrgEmailFromName, buildEmailBranding } from '@cio/email';
 import { enqueueTransactionalEmail } from '@api/services/jobs';
 
 export function calcCourseProgressPercent(params: {
@@ -88,7 +88,7 @@ export function scheduleCertificationCompletionWork(params: {
             theme: courseRow.orgTheme
           })
         },
-        from: buildEmailFromName(`${courseRow.orgName} (via ClassroomIO.com)`),
+        from: buildOrgEmailFromName(courseRow.orgName),
         idempotencyKey: `course-completion:${groupMemberId}`,
         preference: { organizationId: courseRow.orgId, recipientProfileId: profileId }
       });

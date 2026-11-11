@@ -272,9 +272,9 @@
                             </Table.Cell>
                             <Table.Cell>
                               {#if exercise.status === 3}
-                                <Badge variant="success">Graded</Badge>
+                                <Badge variant="success">Reviewed</Badge>
                               {:else if exercise.isCompleted}
-                                <Badge variant="secondary">Awaiting grade</Badge>
+                                <Badge variant="secondary">Awaiting review</Badge>
                               {:else}
                                 <Badge variant="outline">Not submitted</Badge>
                               {/if}

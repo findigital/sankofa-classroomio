@@ -247,7 +247,7 @@
       "practice_again": "Practice again",
       "attempt_option": "Attempt {attemptNumber} - {correct}/{total}",
       "attempts_select_aria": "Your attempts",
-      "privacy_hint": "Graded instantly in your browser — nothing is submitted.",
+      "privacy_hint": "Reviewed instantly in your browser — nothing is submitted.",
       "summary_template": "You got [[correct]] / [[total]] correct."
     },
     "copy_page": {
@@ -450,6 +450,7 @@
     "cancel": "Cancel",
     "refresh": "Refresh",
     "scroll_to_top": "Scroll to top",
+    "source_offer": "View source code",
     "delete": "Delete",
     "restricted_page": {
       "title": "Restricted page",
@@ -694,7 +695,7 @@
         "quizAssigned": "Quiz assigned",
         "sessionReminder": "Live session reminder",
         "sessionUpdated": "Live session updated",
-        "submissionGraded": "Submission graded",
+        "submissionGraded": "Submission reviewed",
         "newsfeedPost": "Course newsfeed post"
       }
     },
@@ -763,12 +764,12 @@
           "description": "Email tutors when a student enrolls in a course."
         },
         "newSubmission": {
-          "label": "New submissions to grade",
-          "description": "Email tutors when a student submits work that needs grading."
+          "label": "New submissions to review",
+          "description": "Email tutors when a student submits work that needs review."
         },
         "gradingResult": {
-          "label": "Grading results",
-          "description": "Email students when their submission is graded or updated."
+          "label": "Review results",
+          "description": "Email students when their submission is reviewed or updated."
         },
         "newsfeed": {
           "label": "Course announcements and comments",
@@ -910,6 +911,23 @@
         "internal_enrollment_only": {
           "label": "Internal Enrollment Only",
           "description": "When enabled, only existing members of your organization can enroll in your courses. Everyone else must be invited — they cannot enroll themselves from a course page, even when the course is open to new students."
+        },
+        "members_only_catalog": {
+          "label": "Members-only catalog",
+          "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
+        },
+        "hide_course_pricing": {
+          "label": "Hide course prices",
+          "description": "Hide prices, the pricing filter, and Free labels on the catalog and course cards. Prices stay hidden until you turn this off."
+        },
+        "show_course_type_filter": {
+          "label": "Show course type filter",
+          "description": "Show course types that have published courses, such as live class and self-paced, as catalog filters."
+        },
+        "catalog_filter_groups": {
+          "label": "Catalog filter groups",
+          "description": "Choose which tag groups appear as catalog filters. Every group is included until you pick a subset.",
+          "empty": "Tag groups will show up here after they are created."
         }
       },
       "sso": {
@@ -1413,7 +1431,7 @@
     }
   },
   "media_manager": {
-    "page_title": "Media Manager - ClassroomIO",
+    "page_title": "Media Manager",
     "heading": "Media Manager",
     "page_subtitle": "Keep files, videos, and links for your courses in one library.",
     "empty": "No assets found",
@@ -1597,7 +1615,7 @@
     }
   },
   "tags_admin": {
-    "page_title": "Tags - ClassroomIO",
+    "page_title": "Tags",
     "heading": "Tags",
     "page_subtitle": "Organize courses with labels so filters and lists stay easy to scan.",
     "create": "Create",
@@ -1610,6 +1628,7 @@
       "actions_menu": "Tag actions",
       "edit_group": "Edit Group",
       "edit_tag": "Edit Tag",
+      "delete_tag": "Delete tag",
       "save": "Save",
       "cancel": "Cancel"
     },
@@ -1647,16 +1666,20 @@
       "search_category": "Search category",
       "no_results": "No categories found",
       "no_groups": "Create a tag group before creating tags"
+    },
+    "delete": {
+      "title": "Delete tag",
+      "description": "Delete {name}? It will be removed from courses and catalog filters."
     }
   },
   "public_courses": {
-    "page_title": "Courses - ClassroomIO",
+    "page_title": "Courses",
     "heading": "Courses",
     "subtitle": "Browse all published courses",
     "clear_filters": "Clear Filters",
     "filters": {
       "title": "Filter",
-      "help": "Filter courses by type, tags, or search by name",
+      "help": "Filter by the options shown, or search by name",
       "tags_title": "Tags",
       "types_title": "Types",
       "pricing_title": "Pricing",
@@ -1675,6 +1698,11 @@
     "catalog_empty": {
       "title": "No courses published yet",
       "description": "Check back soon for new courses."
+    },
+    "catalog_locked": {
+      "title": "This catalog is for members",
+      "description": "Only members of this academy can browse courses here. Sign in with a member account, or ask an administrator for access.",
+      "sign_in": "Sign in"
     }
   },
   "org_navigation": {
@@ -2291,6 +2319,17 @@
     "heading": "Courses",
     "page_subtitle": "Where lessons turn into courses and courses turn into enrollments.",
     "heading_button": "Create Course",
+    "catalog_order": {
+      "action": "Reorder courses",
+      "title": "Course order",
+      "description": "Drag courses into the order people should see. The catalog and home page use this order, then the date the course was created. Saving featured courses on the landing page replaces this order.",
+      "saved": "Course order saved",
+      "save_failed": "Could not save course order",
+      "unpublished": "Unpublished",
+      "empty": "There are no courses to order yet.",
+      "admin_only": "Only an organization admin can reorder courses.",
+      "drag": "Drag to reorder"
+    },
     "search_placeholder": "Find Course",
     "load_more": "Load more",
     "tag_filters": {
@@ -3318,7 +3357,7 @@
               "due": "Due by",
               "no_description": "No description",
               "start": "Start",
-              "graded": "Graded",
+              "graded": "Reviewed",
               "pending": "Pending",
               "submitted": "Submitted",
               "status_pending": "Status: Pending Review",
@@ -3356,8 +3395,8 @@
                 "attempts_count": "{count} attempts",
                 "attempt_label": "Attempt {number}",
                 "date_unknown": "Date unknown",
-                "status_awaiting_manual": "Awaiting manual grading",
-                "status_completed": "Graded",
+                "status_awaiting_manual": "Awaiting manual review",
+                "status_completed": "Reviewed",
                 "status_pending": "Pending",
                 "counts_as_complete": "Counts as complete",
                 "optional": "Optional",
@@ -3775,18 +3814,18 @@
       "submissions": {
         "title": "Submitted Exercises",
         "access": {
-          "denied_title": "You can't grade submissions for this course",
+          "denied_title": "You can't review submissions for this course",
           "denied_description": "Ask an admin to add you as a course tutor, or as a mentor on a cohort that includes this course."
         },
         "submission_status": {
           "submitted": "Submitted",
           "in_progress": "In Progress",
-          "graded": "Graded"
+          "graded": "Reviewed"
         },
         "workflow": {
           "awaiting_manual_hint": "Needs manual review",
-          "failed_hint": "Auto-grading failed. Move this submission back to Submitted to retry.",
-          "invalid_transition": "This status move is not allowed by the grading workflow"
+          "failed_hint": "Automatic review failed. Move this submission back to Submitted to retry.",
+          "invalid_transition": "This status move is not allowed by the review workflow"
         },
         "grading_modal": {
           "details": "Details",
@@ -3798,9 +3837,9 @@
           "status": "Status",
           "add_comment": "Add comment",
           "add_comment_placeholder": "Leave a comment",
-          "grade_with_ai": "Grade with AI",
+          "grade_with_ai": "Review with AI",
           "ai_icon": "AI",
-          "submit_grades": "Submit Grades",
+          "submit_grades": "Submit review",
           "accept_grade": "Accept",
           "reject_grade": "Reject",
           "allocated": "Allocated this score because",
@@ -4685,8 +4724,8 @@
       "no_courses_description": "Enroll this student to start tracking progress.",
       "no_exercises_title": "No exercises in this course",
       "no_exercises_description": "Add an exercise to a lesson and each student's attempts show up here.",
-      "no_grades_title": "Nothing graded yet",
-      "no_grades_description": "Grades appear once this student submits an exercise.",
+      "no_grades_title": "Nothing reviewed yet",
+      "no_grades_description": "Results appear once this student submits an exercise.",
       "load_failed_title": "Unable to load this student",
       "load_failed_description": "Something went wrong while loading this student. Please try again.",
       "retry": "Retry",
@@ -4865,8 +4904,8 @@
     "months_ago": "{count, plural, one {# month ago} other {# months ago}}",
     "years_ago": "{count, plural, one {# year ago} other {# years ago}}",
     "exercises": "Exercises",
-    "graded": "Graded",
-    "not_graded": "Not Graded",
+    "graded": "Reviewed",
+    "not_graded": "Not reviewed",
     "enrolled_courses": "Enrolled Courses",
     "enrolled_courses_description": "All enrolled courses",
     "overall_course_progress": "Overall Course Progress",
@@ -5109,7 +5148,7 @@
         "course_completed": "A student completes a course",
         "course_certificate_issued": "A certificate is earned",
         "course_submission_created": "An exercise submission is created",
-        "course_submission_status_changed": "A submission status changes, such as when it is graded",
+        "course_submission_status_changed": "A submission status changes, such as when it is reviewed",
         "lesson_completion_updated": "A lesson is marked complete or reset",
         "exercise_completion_updated": "An exercise is completed or reset",
         "compliance_record_status_changed": "A student's compliance status changes",
@@ -5269,8 +5308,8 @@
     "heading": "Exercises",
     "not_submitted": "Not Submitted",
     "submitted": "Submitted",
-    "in_progress": "Grading In Progress",
-    "graded": "Graded",
+    "in_progress": "Review in progress",
+    "graded": "Reviewed",
     "lesson": "Lesson"
   },
   "explore": {
@@ -5493,6 +5532,8 @@
       "group_updated": "Tag group updated",
       "tag_created": "Tag created",
       "tag_updated": "Tag updated",
+      "tag_deleted": "Tag deleted",
+      "delete_failed": "Failed to delete tag",
       "course_tags_updated": "Course tags updated",
       "fetch_failed": "Failed to load tags",
       "save_failed": "Failed to save tag changes"
@@ -5553,7 +5594,7 @@
     },
     "submissions": {
       "success": {
-        "grading": "Grading saved and student notified"
+        "grading": "Review saved and student notified"
       }
     },
     "invite": {
@@ -5626,7 +5667,7 @@
   },
   "invite": {
     "organization": {
-      "page_title": "Join {orgName} on ClassroomIO",
+      "page_title": "Join {orgName}",
       "invitation_student": "You've been invited into {orgName} as a student.",
       "invitation_teacher": "You've been invited into {orgName} as a teacher.",
       "invitation_admin": "You've been invited into {orgName} as an admin.",
@@ -5654,7 +5695,7 @@
       "loading": "Loading invite..."
     },
     "link": {
-      "page_title": "Join {orgName} on ClassroomIO",
+      "page_title": "Join {orgName}",
       "invitation_student": "You've been invited to join {orgName} as a student.",
       "invitation_teacher": "You've been invited to join {orgName} as a teacher.",
       "invitation_admin": "You've been invited to join {orgName} as an admin.",
@@ -6287,7 +6328,7 @@
     "generate_failed": "Could not create the invite link",
     "toggle_failed": "Could not update the invite link",
     "join": {
-      "page_title": "Join {resourceName} on ClassroomIO",
+      "page_title": "Join {resourceName}",
       "invitation": "You've been invited to join {resourceName} at {orgName}.",
       "course_button": "Join course",
       "cohort_button": "Join cohort",
@@ -6402,7 +6443,7 @@
       "certificate": "Certificate enabled",
       "deadline": "Deadline {date}",
       "sequential": "Lessons unlock in order",
-      "grading": "A tutor grades submissions",
+      "grading": "A tutor reviews submissions",
       "comments_off": "Lesson comments are off",
       "lesson_download": "Learners can download lessons",
       "self_enrollment": "Learners can join themselves",
@@ -6576,8 +6617,8 @@
   },
   "oauth": {
     "consent": {
-      "page_title": "Connect an app to ClassroomIO",
-      "title": "Connect {client} to ClassroomIO",
+      "page_title": "Connect an app to {brand}",
+      "title": "Connect {client} to {brand}",
       "subtitle": "Pick the workspace {client} can access.",
       "workspace_label": "Workspace",
       "no_workspaces_title": "No workspace available",

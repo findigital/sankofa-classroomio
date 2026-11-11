@@ -3,6 +3,7 @@
   import { MediaPage, UploadMediaActions } from '$features/media';
   import { mediaApi } from '$features/media/api';
   import { t } from '$lib/utils/functions/translations';
+  import { brandedPageTitle } from '$lib/utils/functions/brand';
 
   let { data } = $props();
 
@@ -16,7 +17,7 @@
 </script>
 
 <svelte:head>
-  <title>{$t('media_manager.page_title')}</title>
+  <title>{brandedPageTitle($t('media_manager.page_title'))}</title>
 </svelte:head>
 
 <Page.Root class="w-full">
