@@ -1,7 +1,8 @@
 import type { SubmissionAnswer, SubmissionListItem } from '$features/course/utils/types';
 
 type ApiProfile = NonNullable<NonNullable<SubmissionListItem['groupmember']>['profile']>;
-type ExerciseSubmissionProfile = Required<Pick<ApiProfile, 'id' | 'fullname' | 'avatarUrl'>>;
+type ExerciseSubmissionProfile = Required<Pick<ApiProfile, 'id' | 'fullname' | 'avatarUrl'>> &
+  Pick<ApiProfile, 'username'>;
 
 type ExerciseSubmissionAnswer = {
   id: SubmissionAnswer['id'];

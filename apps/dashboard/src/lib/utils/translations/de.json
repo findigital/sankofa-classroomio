@@ -1714,7 +1714,7 @@
         },
         "submission_status": {
           "submitted": "Eingereicht",
-          "in_progress": "In Bearbeitung",
+          "in_progress": "Wartet auf Prüfung",
           "graded": "Benotet"
         },
         "workflow": {

@@ -1,4 +1,5 @@
 import { getManualQuestionsFromList } from './public-conversion-utils';
+import { profileDisplayName } from '$lib/utils/functions/profile-display-name';
 
 import type { Question } from '$features/course/types';
 import type { SubmissionListItem } from '$features/course/utils/types';
@@ -102,7 +103,7 @@ export function groupSubmissionsByStudentAndAttempt(
 
       return {
         studentKey,
-        studentName: profile?.fullname ?? '',
+        studentName: profileDisplayName(profile),
         studentAvatarUrl: profile?.avatarUrl ?? '',
         attempts: orderedSubmissions.map((submission, index) => ({
           attemptNumber: index + 1,

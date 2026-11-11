@@ -155,4 +155,34 @@ describe('exercise progression helpers', () => {
     expect(groups[0].attempts.map((attempt) => attempt.submission.id)).toEqual(['attempt-1', 'attempt-2']);
     expect(groups[0].attempts.map((attempt) => attempt.attemptNumber)).toEqual([1, 2]);
   });
+
+  it('prefers a profile full name and falls back to the username', () => {
+    const named = makeSubmission({
+      id: 'named',
+      groupmember: {
+        profile: {
+          id: 'student-named',
+          fullname: 'Amara Okonkwo',
+          username: 'amara.okonkwo',
+          avatarUrl: ''
+        }
+      }
+    });
+    const usernameOnly = makeSubmission({
+      id: 'username-only',
+      groupmember: {
+        profile: {
+          id: 'student-username',
+          fullname: '   ',
+          username: 'amara.okonkwo',
+          avatarUrl: ''
+        }
+      }
+    });
+
+    const groups = groupSubmissionsByStudentAndAttempt([named, usernameOnly]);
+    const names = groups.map((group) => group.studentName).sort();
+
+    expect(names).toEqual(['Amara Okonkwo', 'amara.okonkwo']);
+  });
 });

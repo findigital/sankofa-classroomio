@@ -1714,7 +1714,7 @@
         },
         "submission_status": {
           "submitted": "Отправлено",
-          "in_progress": "В процессе",
+          "in_progress": "Ожидает проверки",
           "graded": "Оцененный"
         },
         "workflow": {

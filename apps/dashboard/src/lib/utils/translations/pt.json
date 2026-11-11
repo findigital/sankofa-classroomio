@@ -1714,7 +1714,7 @@
         },
         "submission_status": {
           "submitted": "Enviado",
-          "in_progress": "Em andamento",
+          "in_progress": "Aguardando revisão",
           "graded": "Classificado"
         },
         "workflow": {

@@ -1,5 +1,6 @@
 import * as schema from '@db/schema';
 
+import { preferStoredLessonNote } from '@cio/utils/functions';
 import type { TBlock, TBlockPlacement, TLessonLanguage, TLocale } from '@db/types';
 import { db, eq, inArray, sql } from '@db/drizzle';
 import type { DbOrTxClient } from '@db/drizzle';
@@ -116,5 +117,10 @@ export async function withDerivedLessonContent<T extends { id: string }>(
     dbClient
   );
 
-  return lessons.map((lesson) => ({ ...lesson, ...(contentMap.get(lesson.id) ?? emptyContent()) }));
+  return lessons.map((lesson) => {
+    const derived = contentMap.get(lesson.id) ?? emptyContent();
+    const storedNote = 'note' in lesson && typeof lesson.note === 'string' ? lesson.note : null;
+
+    return { ...lesson, ...derived, note: preferStoredLessonNote(derived.note, storedNote) };
+  });
 }

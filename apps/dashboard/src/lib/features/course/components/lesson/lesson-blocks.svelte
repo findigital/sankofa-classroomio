@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { legacyLessonNoteToRender } from '@cio/utils/functions';
   import MODES from '$lib/utils/constants/mode';
   import { isOrgStudent } from '$lib/utils/store/app';
   import { t } from '$lib/utils/functions/translations';
+  import LegacyLessonNote from './legacy-lesson-note.svelte';
   import BlockEditor from '$features/block/components/block-editor.svelte';
   import BlockReader from '$features/block/components/block-reader.svelte';
   import { toBlockViewModel } from '$features/block/utils/block-list-utils';
@@ -31,6 +33,7 @@
     getReadingDensitySpacingClass(lessonApi.lesson?.readingDensity ?? DEFAULT_READING_DENSITY)
   );
   const viewBlocks = $derived(lessonBlockList.blocks.map((block) => toBlockViewModel(block, locale)));
+  const legacyNote = $derived(isEditing ? '' : legacyLessonNoteToRender(lessonApi.lesson?.note, viewBlocks));
   const viewHost: BlockViewHost = { videoPlayer: lessonVideoPlayer };
   const editHost = $derived<BlockEditHost>({ lessonId });
   const showsEncodingState = $derived(isEditing || $isOrgStudent !== true);
@@ -89,5 +92,8 @@
 {#if isEditing}
   <BlockEditor api={lessonBlockList} {locale} host={editHost} {spacingClass} />
 {:else}
-  <BlockReader blocks={viewBlocks} host={viewHost} {emptyTitle} {emptyDescription} {spacingClass} />
+  <LegacyLessonNote html={legacyNote} />
+  {#if viewBlocks.length > 0 || !legacyNote}
+    <BlockReader blocks={viewBlocks} host={viewHost} {emptyTitle} {emptyDescription} {spacingClass} />
+  {/if}
 {/if}

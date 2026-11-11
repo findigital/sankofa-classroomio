@@ -33,8 +33,6 @@
   import ContentActions from './content-actions.svelte';
   import SectionHeader from './section-header.svelte';
   import { deleteContent, saveContent, toggleLock } from './content-action-helpers';
-  import { isSelfPacedLikeCourse } from '$features/course/utils/compliance-utils';
-
   type CrudParam = {
     sectionId?: string;
     lessonId?: string;
@@ -75,7 +73,6 @@
   const contentData = $derived(getCourseContent(courseApi.course));
   const isStudentView = $derived($isOrgStudent === true);
   const isLiveCourse = $derived(courseApi.course?.type === 'LIVE_CLASS');
-  const isSelfPacedCourse = $derived(isSelfPacedLikeCourse(courseApi.course?.type));
   const metaChipClass =
     'inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-1 text-[10px] text-gray-700 dark:bg-neutral-700 dark:text-gray-200';
 
@@ -653,7 +650,7 @@
                       </span>
                     {/if}
 
-                    {#if isSelfPacedCourse && item.dueBy}
+                    {#if item.dueBy}
                       <span class={metaChipClass}>
                         <CalendarClockIcon size={11} />
                         {$t('course.navItem.lessons.exercises.all_exercises.view_mode.due')}: {formatMetaDate(

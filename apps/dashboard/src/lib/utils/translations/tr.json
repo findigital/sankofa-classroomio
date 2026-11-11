@@ -3790,7 +3790,7 @@
         },
         "submission_status": {
           "submitted": "Gönderildi",
-          "in_progress": "Devam Ediyor",
+          "in_progress": "İnceleme bekliyor",
           "graded": "Notlandırılmış"
         },
         "workflow": {

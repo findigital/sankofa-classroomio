@@ -91,7 +91,7 @@ Legend: ✅ available now, ⚠️ exists but not in list payload, ❌ missing da
 - Date rendering uses existing app formatter (`formatDate`); missing values are hidden.
 - Lock toggle is teacher/admin-only; students get read-only lock state.
 - Teacher/admin rows include schedule/join CTA for live class, resources count for lessons, question count and due date for exercises.
-- Student rows include completion state (lesson), materials chips for video, document and slide (lesson), schedule/join (live), due date (self-paced), and next-step CTA.
+- Student rows include completion state (lesson), materials chips for video, document and slide (lesson), schedule/join (live), due date (when the exercise has a due date), and next-step CTA.
 - The Note and No content chips were removed; `hasNoteContent` is no longer computed for list loads.
 
 ### Verification Run
@@ -118,7 +118,7 @@ Legend: ✅ available now, ⚠️ exists but not in list payload, ❌ missing da
 | T6 | Teachers: show exercise question count | [ ] | [ ] | [x] | [x] |
 | T7 | Teachers live class: show schedule time | [ ] | [ ] | [x] | [x] |
 | T8 | Teachers live class: show join/host link | [ ] | [ ] | [x] | [x] |
-| T9 | Teachers self-paced: show exercise due date | [ ] | [ ] | [x] | [x] |
+| T9 | Teachers: show exercise due date | [ ] | [ ] | [x] | [x] |
 | T10 | Students: show lesson/exercise title | [ ] | [ ] | [x] | [x] |
 | T11 | Students: show lesson/exercise type icon | [ ] | [ ] | [x] | [x] |
 | T12 | Students: show lock status (read-only) | [ ] | [ ] | [x] | [x] |
@@ -128,7 +128,7 @@ Legend: ✅ available now, ⚠️ exists but not in list payload, ❌ missing da
 | T16 | Students live class: show schedule time | [ ] | [ ] | [x] | [x] |
 | T17 | Students live class: show join button | [ ] | [ ] | [x] | [x] |
 | T18 | Students live class: show lesson materials | [ ] | [ ] | [x] | [x] |
-| T19 | Students self-paced: show exercise due date | [ ] | [ ] | [x] | [x] |
+| T19 | Students: show exercise due date | [ ] | [ ] | [x] | [x] |
 
 ## Ticket Breakdown (Backend/UI Split)
 

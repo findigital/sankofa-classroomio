@@ -1,4 +1,5 @@
 import { AppError, ErrorCodes } from '@cio/utils/errors';
+import { preferStoredLessonNote } from '@cio/utils/functions';
 import type { TLessonSlide, TLessonVideoItem } from '@cio/utils/validation/lesson';
 import type { TBlockType } from '@cio/utils/validation/block';
 import { parseBlockData } from '@cio/utils/validation/block';
@@ -98,8 +99,10 @@ export async function attachBlocksToLesson<T extends { id: string }>(
 ): Promise<T & LegacyLessonContent & { blocks: LessonBlock[] }> {
   const loaded = await loadLessonBlocks(lesson.id);
   const blocks = options.enrich ? await enrichBlocksMedia(loaded) : loaded;
+  const derived = blocksToLegacyContent(blocks);
+  const storedNote = 'note' in lesson && typeof lesson.note === 'string' ? lesson.note : null;
 
-  return { ...lesson, ...blocksToLegacyContent(blocks), blocks };
+  return { ...lesson, ...derived, note: preferStoredLessonNote(derived.note, storedNote), blocks };
 }
 
 /**
@@ -112,8 +115,10 @@ export async function attachBlocksToLessons<T extends { id: string }>(
 
   return lessons.map((lesson) => {
     const blocks = blocksByLesson.get(lesson.id) ?? [];
+    const derived = blocksToLegacyContent(blocks);
+    const storedNote = 'note' in lesson && typeof lesson.note === 'string' ? lesson.note : null;
 
-    return { ...lesson, ...blocksToLegacyContent(blocks), blocks };
+    return { ...lesson, ...derived, note: preferStoredLessonNote(derived.note, storedNote), blocks };
   });
 }
 

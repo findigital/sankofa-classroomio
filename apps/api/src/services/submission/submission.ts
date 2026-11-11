@@ -454,10 +454,7 @@ export async function listSubmissionsForGrading(courseId: string) {
         ? new Date(submission.createdAt!).getTime() <= new Date(submission.exercise.dueBy).getTime()
         : true;
 
-      const submittedAt = new Intl.DateTimeFormat('en-US', {
-        dateStyle: 'full',
-        timeStyle: 'medium'
-      }).format(new Date(submission.createdAt!));
+      const submittedAt = submission.createdAt ?? '';
 
       const questionKeyById: { [id: number]: string } = {};
       const questionTypeById: { [id: number]: number } = {};
@@ -526,6 +523,7 @@ export async function listSubmissionsForGrading(courseId: string) {
         overallStatus,
         feedback: submission.feedback,
         isEarly,
+        createdAt: submission.createdAt ?? null,
         title: submission.exercise.title,
         student: submission.groupmember?.profile || null,
         questions: (submission.exercise.questions || []).map((q: any) => ({

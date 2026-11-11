@@ -1714,7 +1714,7 @@
         },
         "submission_status": {
           "submitted": "प्रस्तुत किया गया",
-          "in_progress": "प्रगति पर है",
+          "in_progress": "समीक्षा की प्रतीक्षा",
           "graded": "श्रेणीबद्ध"
         },
         "workflow": {
