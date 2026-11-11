@@ -89,7 +89,7 @@
   --str-chat__message-send-disabled-background-color: var(--muted);
   --str-chat__message-send-disabled-color: var(--muted-foreground);
   --str-chat__avatar-background-color: var(--primary);
-  --str-chat__avatar-color: var(--primary-foreground);
+  --str-chat__avatar-color: #fff;
   --str-chat__unread-badge-color: var(--primary);
   --str-chat__on-unread-badge-color: var(--primary-foreground);
   --str-chat__channel-preview-unread-badge-background-color: var(--primary);
@@ -166,9 +166,8 @@
   --messaging-sender-6: #c2410c;
   --messaging-sender-7: #a16207;
   --messaging-sender-8: #3f6212;
-  --messaging-sender-9: #166534;
-  --messaging-sender-10: #334155;
-  --messaging-sender-11: #7c2d12;
+  --messaging-sender-9: #334155;
+  --messaging-sender-10: #7c2d12;
   --messaging-sender-0-label: #155e75;
   --messaging-sender-1-label: #1e3a8a;
   --messaging-sender-2-label: #3730a3;
@@ -178,9 +177,24 @@
   --messaging-sender-6-label: #9a3412;
   --messaging-sender-7-label: #854d0e;
   --messaging-sender-8-label: #3f6212;
-  --messaging-sender-9-label: #14532d;
-  --messaging-sender-10-label: #1e293b;
-  --messaging-sender-11-label: #7c2d12;
+  --messaging-sender-9-label: #1e293b;
+  --messaging-sender-10-label: #7c2d12;
+  --messaging-course-0: #2f555c;
+  --messaging-course-1: #314256;
+  --messaging-course-2: #3e3c5c;
+  --messaging-course-3: #5c4052;
+  --messaging-course-4: #5e3d34;
+  --messaging-course-5: #55492c;
+  --messaging-course-6: #3e463f;
+  --messaging-course-7: #4a453f;
+  --messaging-course-0-ink: #2f555c;
+  --messaging-course-1-ink: #314256;
+  --messaging-course-2-ink: #3e3c5c;
+  --messaging-course-3-ink: #5c4052;
+  --messaging-course-4-ink: #5e3d34;
+  --messaging-course-5-ink: #55492c;
+  --messaging-course-6-ink: #3e463f;
+  --messaging-course-7-ink: #4a453f;
 }
 
 .dark .messaging-inbox {
@@ -193,9 +207,16 @@
   --messaging-sender-6-label: #fdba74;
   --messaging-sender-7-label: #fcd34d;
   --messaging-sender-8-label: #bef264;
-  --messaging-sender-9-label: #86efac;
-  --messaging-sender-10-label: #cbd5e1;
-  --messaging-sender-11-label: #f5c4a1;
+  --messaging-sender-9-label: #cbd5e1;
+  --messaging-sender-10-label: #f5c4a1;
+  --messaging-course-0-ink: #c5dde1;
+  --messaging-course-1-ink: #d0d8e4;
+  --messaging-course-2-ink: #d8d7e6;
+  --messaging-course-3-ink: #e6d4dc;
+  --messaging-course-4-ink: #e8d5ce;
+  --messaging-course-5-ink: #e6dcc4;
+  --messaging-course-6-ink: #d9ddd6;
+  --messaging-course-7-ink: #e2ddd8;
 }
 
 .messaging-inbox .str-chat__message--other {
@@ -208,7 +229,7 @@
 
 .messaging-sender {
   --str-chat__avatar-background-color: var(--messaging-sender-fill);
-  --str-chat__avatar-color: var(--primary-foreground);
+  --str-chat__avatar-color: #fff;
 }
 
 .messaging-inbox .str-chat__message--other .str-chat__message-bubble {

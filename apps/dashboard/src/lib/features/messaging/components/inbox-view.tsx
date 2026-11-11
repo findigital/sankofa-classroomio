@@ -34,7 +34,14 @@ import 'stream-chat-react/dist/css/v2/index.css';
 import './stream-theme.css';
 import './inbox.css';
 
-import { channelColorKey, senderColorIndex, senderFillVariable, type ChannelColorMember } from '../utils/avatar-color';
+import {
+  channelColorKey,
+  courseColorIndex,
+  courseFillVariable,
+  senderColorIndex,
+  senderFillVariable,
+  type ChannelColorMember
+} from '../utils/avatar-color';
 import type { InboxViewProps } from '../utils/inbox-types';
 
 export type { InboxViewProps } from '../utils/inbox-types';
@@ -98,7 +105,7 @@ function senderStyle(index: number): CSSProperties {
     '--messaging-sender-fill': senderFillVariable(index),
     '--messaging-sender-label': `var(--messaging-sender-${index}-label)`,
     '--str-chat__avatar-background-color': senderFillVariable(index),
-    '--str-chat__avatar-color': 'var(--primary-foreground)'
+    '--str-chat__avatar-color': '#fff'
   } as CSSProperties;
 }
 
@@ -237,19 +244,50 @@ function useNarrowViewport() {
   return narrow;
 }
 
-function CohortAvatar({ image, name, hueIndex }: { image?: string | null; name?: string; hueIndex: number }) {
+function ChannelMark({
+  image,
+  name,
+  kind,
+  colorKey
+}: {
+  image?: string | null;
+  name?: string;
+  kind: 'person' | 'course';
+  colorKey: string;
+}) {
   const safeImage = safeMarkImage(image);
+  const className = kind === 'course' ? 'messaging-inbox__mark messaging-inbox__mark--course' : 'messaging-inbox__mark';
 
   if (safeImage) {
-    return <img alt="" className="messaging-inbox__mark" data-testid="messaging-channel-avatar" src={safeImage} />;
+    return <img alt="" className={className} data-testid="messaging-channel-avatar" src={safeImage} />;
+  }
+
+  if (kind === 'course') {
+    const slot = courseColorIndex(colorKey);
+
+    return (
+      <span
+        className={className}
+        data-testid="messaging-channel-avatar"
+        aria-hidden="true"
+        style={
+          {
+            '--messaging-course-fill': courseFillVariable(slot),
+            '--messaging-course-ink': `var(--messaging-course-${slot}-ink)`
+          } as CSSProperties
+        }
+      >
+        {channelInitials(name ?? '')}
+      </span>
+    );
   }
 
   return (
     <span
-      className="messaging-inbox__mark"
+      className={className}
       data-testid="messaging-channel-avatar"
       aria-hidden="true"
-      style={{ background: senderFillVariable(hueIndex), color: 'var(--primary-foreground)' }}
+      style={{ background: senderFillVariable(senderColorIndex(colorKey)), color: '#fff' }}
     >
       {channelInitials(name ?? '')}
     </span>
@@ -277,14 +315,14 @@ function NamedPreview(props: ChannelPreviewUIComponentProps) {
     displayName: title,
     fallback: key
   });
-  const hueIndex = senderColorIndex(colorKey);
+  const kind = purpose === 'fellow_dm' || purpose === 'mentor_dm' ? 'person' : 'course';
 
   return (
     <div onClick={() => preview?.onOpen(props.channel)}>
       <ChannelPreviewMessenger
         {...props}
         Avatar={(avatar) => (
-          <CohortAvatar image={image || avatar.image} name={title || avatar.name} hueIndex={hueIndex} />
+          <ChannelMark image={image || avatar.image} name={title || avatar.name} kind={kind} colorKey={colorKey} />
         )}
       />
     </div>
@@ -315,8 +353,7 @@ function ConversationHeader(props: {
     displayName: title,
     fallback: key || 'channel'
   });
-  const hueIndex = senderColorIndex(colorKey);
-  const mark = <CohortAvatar image={image} name={title} hueIndex={hueIndex} />;
+  const mark = <ChannelMark image={image} name={title} kind={direct ? 'person' : 'course'} colorKey={colorKey} />;
 
   if (!direct) {
     return <ChannelHeader Avatar={() => mark} title={title || undefined} />;

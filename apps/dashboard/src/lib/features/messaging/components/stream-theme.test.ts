@@ -50,14 +50,22 @@ describe('Stream inbox theme', () => {
     expect(theme).toContain('opacity: 0.5');
     expect(theme).not.toMatch(/#005fff|#1d4ee2|rgba\(0,\s*95,\s*255|rgba\(51,\s*126,\s*255/i);
 
-    for (let hue = 0; hue < 12; hue += 1) {
+    for (let hue = 0; hue < 11; hue += 1) {
       expect(theme).toContain(`--messaging-sender-${hue}:`);
       expect(theme).toContain(`--messaging-sender-${hue}-label:`);
     }
 
+    for (let slot = 0; slot < 8; slot += 1) {
+      expect(theme).toContain(`--messaging-course-${slot}:`);
+      expect(theme).toContain(`--messaging-course-${slot}-ink:`);
+    }
+
     expect(theme).toContain('--messaging-sender-0: #0e7490;');
-    expect(theme).toContain('--messaging-sender-9: #166534;');
-    expect(theme).toContain('--messaging-sender-11: #7c2d12;');
+    expect(theme).toContain('--messaging-sender-8: #3f6212;');
+    expect(theme).toContain('--messaging-sender-9: #334155;');
+    expect(theme).toContain('--messaging-sender-10: #7c2d12;');
+    expect(theme).not.toContain('#166534');
+    expect(theme).toContain('--str-chat__avatar-color: #fff');
     expect(theme).not.toContain('oklch(from var(--primary)');
     expect(theme).toContain('.dark .messaging-inbox');
     expect(theme).toContain('--messaging-sender-0-label: #67e8f9;');
@@ -76,6 +84,8 @@ describe('Stream inbox theme', () => {
     expect(layout).toContain('width: 18.75rem');
     expect(layout).toContain('width: 16.25rem');
     expect(layout).toContain('@container messaging-channel (max-width: 43.75rem)');
+    expect(layout).toContain('.messaging-inbox__mark--course');
+    expect(layout).toContain('color-mix(in srgb, var(--messaging-course-fill) 16%, var(--card))');
     expect(layout).toContain('.messaging-inbox__mobile-thread');
     expect(layout).toContain('grid-column: 2');
     expect(layout).toContain('text-overflow: ellipsis');
@@ -95,5 +105,9 @@ describe('Stream inbox theme', () => {
     expect(mobile).toContain('border-radius: 0');
     expect(mobile).toContain('.messaging-inbox__mobile-thread');
     expect(mobile).toContain('text-overflow: ellipsis');
+    expect(mobile).toContain(
+      '.messaging-inbox .str-chat__thread-container .str-chat__thread-header .str-chat__close-thread-button'
+    );
+    expect(mobile).not.toContain('.messaging-inbox .str-chat__close-thread-button {');
   });
 });

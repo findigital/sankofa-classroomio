@@ -250,9 +250,11 @@ describe('Stream inbox', () => {
 
     expect(list.textContent).toContain('Bea Fellow');
     expect(list.textContent).toContain('BF');
-    expect(list.querySelector('[data-testid="messaging-channel-avatar"]')?.getAttribute('style')).toContain(
-      senderColorVariable('ada-fellow')
-    );
+    const listAvatar = list.querySelector('[data-testid="messaging-channel-avatar"]');
+
+    expect(listAvatar?.getAttribute('style')).toContain(senderColorVariable('ada-fellow'));
+    expect(listAvatar?.getAttribute('style')).toMatch(/#fff|rgb\(255,\s*255,\s*255\)/);
+    expect(listAvatar?.className).not.toContain('messaging-inbox__mark--course');
     expect(harness.previewChannel?.data.own_capabilities).toEqual(
       expect.arrayContaining(['read-channel', 'send-reaction', 'send-reply'])
     );
@@ -279,12 +281,13 @@ describe('Stream inbox', () => {
     expect(screen.getByTestId('messaging-dm-header').textContent).toContain('Supervised');
     expect(screen.getByTestId('messaging-dm-header').textContent).not.toContain('members');
     expect(screen.getByTestId('messaging-dm-header').textContent).not.toContain('Amara');
-    expect(
-      screen
-        .getByTestId('messaging-dm-header')
-        .querySelector('[data-testid="messaging-channel-avatar"]')
-        ?.getAttribute('style')
-    ).toContain(senderColorVariable('ada-fellow'));
+    const headerAvatar = screen
+      .getByTestId('messaging-dm-header')
+      .querySelector('[data-testid="messaging-channel-avatar"]');
+
+    expect(headerAvatar?.getAttribute('style')).toContain(senderColorVariable('ada-fellow'));
+    expect(headerAvatar?.getAttribute('style')).toMatch(/#fff|rgb\(255,\s*255,\s*255\)/);
+    expect(headerAvatar?.className).not.toContain('messaging-inbox__mark--course');
     expect(harness.messageListProps.current.maxTimeBetweenGroupedMessages).toBe(5 * 60 * 1000);
     expect(harness.threadListProps.current.maxTimeBetweenGroupedMessages).toBe(5 * 60 * 1000);
     expect(thread.querySelector('.str-chat__message--me')).toBeTruthy();
@@ -339,6 +342,33 @@ describe('Stream inbox', () => {
 
     expect(avatar.tagName).toBe('IMG');
     expect(avatar.getAttribute('src')).toBe('https://cdn.example/react.png');
+    expect(avatar.className).toContain('messaging-inbox__mark--course');
+  });
+
+  it('uses a muted course square instead of a person color', async () => {
+    render(
+      <InboxView
+        {...props({
+          channels: [
+            {
+              channelType: 'mentor_dm',
+              channelId: 'mdm',
+              name: 'React Discussion',
+              purpose: 'discussion',
+              cohortId: 'cohort-react',
+              image: null
+            }
+          ]
+        })}
+      />
+    );
+
+    const avatar = await screen.findByTestId('messaging-channel-avatar');
+
+    expect(avatar.className).toContain('messaging-inbox__mark--course');
+    expect(avatar.getAttribute('style')).toContain('var(--messaging-course-');
+    expect(avatar.getAttribute('style')).not.toContain('var(--messaging-sender-');
+    expect(avatar.textContent).toBe('RD');
   });
 
   it('uses the channel list as its own screen on a narrow viewport and returns from the thread', async () => {

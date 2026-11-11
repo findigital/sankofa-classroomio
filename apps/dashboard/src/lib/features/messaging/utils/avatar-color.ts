@@ -1,4 +1,5 @@
-export const SENDER_COLOR_COUNT = 12;
+export const SENDER_COLOR_COUNT = 11;
+export const COURSE_COLOR_COUNT = 8;
 
 const DIRECT_PURPOSES = new Set(['fellow_dm', 'mentor_dm']);
 
@@ -8,9 +9,40 @@ export type ChannelColorMember = {
 };
 
 /**
- * Index into the sender palette. The same id always returns the same index.
+ * Index into the person palette. The same id always returns the same index.
  */
 export function senderColorIndex(key: string) {
+  return hashIndex(key, SENDER_COLOR_COUNT);
+}
+
+/**
+ * Index into the muted course palette. The same course id always returns the same index.
+ */
+export function courseColorIndex(key: string) {
+  return hashIndex(key, COURSE_COLOR_COUNT);
+}
+
+/** Person fill. Initials on this fill are white. */
+export function senderColorVariable(key: string) {
+  return senderFillVariable(senderColorIndex(key));
+}
+
+/** Muted course fill. Initials use the matching ink, not this fill as a solid. */
+export function courseColorVariable(key: string) {
+  return courseFillVariable(courseColorIndex(key));
+}
+
+/** CSS variable for a person palette index. */
+export function senderFillVariable(index: number) {
+  return `var(--messaging-sender-${paletteSlot(index, SENDER_COLOR_COUNT)})`;
+}
+
+/** CSS variable for a course palette index. */
+export function courseFillVariable(index: number) {
+  return `var(--messaging-course-${paletteSlot(index, COURSE_COLOR_COUNT)})`;
+}
+
+function hashIndex(key: string, count: number) {
   let hash = 2166136261;
 
   for (const char of key) {
@@ -18,19 +50,11 @@ export function senderColorIndex(key: string) {
     hash = Math.imul(hash, 16777619);
   }
 
-  return (hash >>> 0) % SENDER_COLOR_COUNT;
+  return (hash >>> 0) % count;
 }
 
-/** Initials fill for a person or a course. Text on this fill is white. */
-export function senderColorVariable(key: string) {
-  return senderFillVariable(senderColorIndex(key));
-}
-
-/** CSS variable for a palette index. */
-export function senderFillVariable(index: number) {
-  const hue = ((index % SENDER_COLOR_COUNT) + SENDER_COLOR_COUNT) % SENDER_COLOR_COUNT;
-
-  return `var(--messaging-sender-${hue})`;
+function paletteSlot(index: number, count: number) {
+  return ((index % count) + count) % count;
 }
 
 /**

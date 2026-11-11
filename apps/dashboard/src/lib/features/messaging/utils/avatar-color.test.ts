@@ -1,12 +1,20 @@
 import { describe, expect, it } from 'vitest';
 
-import { channelColorKey, senderColorIndex, senderColorVariable, SENDER_COLOR_COUNT } from './avatar-color';
+import {
+  channelColorKey,
+  courseColorIndex,
+  courseColorVariable,
+  senderColorIndex,
+  senderColorVariable,
+  COURSE_COLOR_COUNT,
+  SENDER_COLOR_COUNT
+} from './avatar-color';
 
 describe('sender color hashing', () => {
-  it('keeps one person on one of twelve colors everywhere', () => {
+  it('keeps one person on one of eleven colors everywhere', () => {
     const ada = senderColorIndex('ada-fellow');
 
-    expect(SENDER_COLOR_COUNT).toBe(12);
+    expect(SENDER_COLOR_COUNT).toBe(11);
     expect(senderColorIndex('ada-fellow')).toBe(ada);
     expect(ada).toBeGreaterThanOrEqual(0);
     expect(ada).toBeLessThan(SENDER_COLOR_COUNT);
@@ -65,7 +73,12 @@ describe('sender color hashing', () => {
     expect(senderColorVariable(direct)).toBe(senderColorVariable('ada-fellow'));
     expect(discussion).toBe('cohort-react');
     expect(announcement).toBe(discussion);
-    expect(senderColorVariable(discussion)).toBe(senderColorVariable(announcement));
+    expect(courseColorVariable(discussion)).toBe(courseColorVariable(announcement));
+    expect(courseColorVariable(discussion)).toMatch(/^var\(--messaging-course-\d+\)$/);
+    expect(senderColorVariable('taylor')).toMatch(/^var\(--messaging-sender-\d+\)$/);
+    expect(COURSE_COLOR_COUNT).toBe(8);
+    expect(courseColorIndex('cohort-react')).toBeGreaterThanOrEqual(0);
+    expect(courseColorIndex('cohort-react')).toBeLessThan(COURSE_COLOR_COUNT);
   });
 
   it('skips safeguarding staff and uses the named mentor or fellow', () => {
