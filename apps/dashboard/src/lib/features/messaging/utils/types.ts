@@ -49,3 +49,8 @@ export type MessagingCohortsRequest = typeof classroomio.messaging.cohorts.$get;
 export type MessagingCohortsSuccess = Extract<InferResponseType<MessagingCohortsRequest>, { success: true }>;
 export type MessagingCohortSetting = MessagingCohortsSuccess['data'][number];
 export type UpdateMessagingCohortRequest = (typeof classroomio.messaging.cohorts)[':groupId']['$put'];
+
+export type SafeguardingStaffRequest = (typeof classroomio.messaging)['safeguarding-staff']['$get'];
+export type SafeguardingStaffSuccess = Extract<InferResponseType<SafeguardingStaffRequest>, { success: true }>;
+export type SafeguardingStaff = SafeguardingStaffSuccess['data'];
+export type UpdateSafeguardingStaffRequest = (typeof classroomio.messaging)['safeguarding-staff']['$put'];

@@ -27,6 +27,7 @@ import {
   unmuteMessagingMember
 } from '@api/services/messaging/moderation';
 import { acceptStaffDisclosure, issueMessagingSession } from '@api/services/messaging/session';
+import { getSafeguardingStaff, setSafeguardingStaff } from '@api/services/messaging/safeguarding';
 import { runUnreadMessageDigest } from '@api/services/messaging/unread-digest';
 import { AppError, ErrorCodes, handleError } from '@api/utils/errors';
 import { Hono } from '@api/utils/hono';
@@ -42,6 +43,7 @@ import {
   ZMessagingProfileParam,
   ZMuteMessagingUser,
   ZOpenDirectMessage,
+  ZSafeguardingStaff,
   ZSendMessagingMessage
 } from '@cio/utils/validation/messaging';
 
@@ -355,6 +357,27 @@ export const messagingRouter = new Hono()
       }
     }
   )
+  .get('/safeguarding-staff', authMiddleware, orgAdminMiddleware, async (c) => {
+    try {
+      const member = viewer(c);
+      const data = await getSafeguardingStaff(member.organizationId);
+
+      return c.json({ success: true, data }, 200);
+    } catch (error) {
+      return handleError(c, error, 'Failed to load safeguarding staff');
+    }
+  })
+  .put('/safeguarding-staff', authMiddleware, orgAdminMiddleware, zValidator('json', ZSafeguardingStaff), async (c) => {
+    try {
+      const member = viewer(c);
+      const { staffIds } = c.req.valid('json');
+      const data = await setSafeguardingStaff(member.organizationId, staffIds);
+
+      return c.json({ success: true, data }, 200);
+    } catch (error) {
+      return handleError(c, error, 'Failed to save safeguarding staff');
+    }
+  })
   .post('/digest', authMiddleware, orgAdminMiddleware, async (c) => {
     try {
       viewer(c);

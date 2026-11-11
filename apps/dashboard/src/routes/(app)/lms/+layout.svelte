@@ -10,6 +10,7 @@
   import { currentOrg } from '$lib/utils/store/org';
   import LmsHeader from '$features/ui/navigation/lms-header.svelte';
   import { LMSSidebar } from '$features/ui/sidebar/lms-sidebar';
+  import MessagingPresence from '$features/messaging/components/messaging-presence.svelte';
 
   interface Props {
     children?: import('svelte').Snippet;
@@ -33,6 +34,7 @@
 </script>
 
 <Sidebar.Provider>
+  <MessagingPresence />
   <LMSSidebar />
 
   <Sidebar.Inset>

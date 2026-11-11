@@ -3,6 +3,7 @@ import {
   listMessagingProfiles,
   listSharedMessagingCohorts,
   mentorPairAssigned,
+  readSafeguardingStaffIds,
   type MessagingProfile
 } from '@cio/db/queries/messaging';
 import { ROLE } from '@cio/utils/constants';
@@ -11,6 +12,7 @@ import {
   decideDirectMessage,
   directChannelId,
   directMessageDenyCode,
+  selectSafeguardingStaff,
   type DirectMessageDenyReason,
   type MessagingParticipant
 } from '@cio/utils/functions/messaging';
@@ -64,7 +66,12 @@ export async function openDirectMessage(
   const profiles = await listMessagingProfiles(organizationId, [requesterId, targetId]);
   const requester = profiles.find((profile) => profile.profileId === requesterId);
   const target = profiles.find((profile) => profile.profileId === targetId);
-  const staff = await listMessagingAdmins(organizationId);
+  const configuredIds = await readSafeguardingStaffIds(organizationId);
+  const admins = await listMessagingAdmins(organizationId);
+  const staff = selectSafeguardingStaff({
+    configuredIds,
+    admins: admins.map((profile) => participant(profile, profile.profileId))
+  });
   const shared = await listSharedMessagingCohorts(organizationId, requesterId, targetId);
   const requesterRole = requester?.roleId ?? 0;
   const targetRole = target?.roleId ?? 0;
@@ -84,7 +91,7 @@ export async function openDirectMessage(
     target: participant(target, targetId),
     sharedCohorts: shared.map((cohort) => ({ fellowDmEnabled: cohort.fellowDmEnabled })),
     mentorAssigned,
-    staff: staff.map((profile) => participant(profile, profile.profileId))
+    staff
   });
 
   if (!decision.allowed) {
@@ -92,9 +99,10 @@ export async function openDirectMessage(
   }
 
   const channelId = directChannelId(decision.channelType, requesterId, targetId);
+  const staffIds = new Set(staff.map((person) => person.profileId));
   const known = new Map<string, MessagingProfile>();
 
-  for (const profile of [...profiles, ...staff]) {
+  for (const profile of [...profiles, ...admins.filter((profile) => staffIds.has(profile.profileId))]) {
     known.set(profile.profileId, profile);
   }
 

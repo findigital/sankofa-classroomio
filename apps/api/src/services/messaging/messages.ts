@@ -1,8 +1,9 @@
-import { recordMessagingAudit } from '@cio/db/queries/messaging';
+import { recordMessagingAudit, listPublishedMessagingGroupIds } from '@cio/db/queries/messaging';
 import { ROLE } from '@cio/utils/constants';
 import { AppError, ErrorCodes } from '@api/utils/errors';
 import {
   canSendToPurpose,
+  isListedCohortChannel,
   reviewMessageText,
   transcriptToCsv,
   transcriptToJson,
@@ -154,5 +155,8 @@ export async function listOrganizationChannels(
 ): Promise<MessagingChannelSummary[]> {
   assertMessagingAvailable();
 
-  return gateway.queryOrganizationChannels(organizationId);
+  const publishedGroupIds = new Set(await listPublishedMessagingGroupIds(organizationId));
+  const channels = await gateway.queryOrganizationChannels(organizationId);
+
+  return channels.filter((channel) => isListedCohortChannel(channel, publishedGroupIds));
 }

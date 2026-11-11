@@ -26,7 +26,9 @@ const services = vi.hoisted(() => ({
   unmuteMessagingMember: vi.fn(),
   messagingActivity: vi.fn(),
   handleMessagingWebhook: vi.fn(),
-  getStreamGateway: vi.fn()
+  getStreamGateway: vi.fn(),
+  getSafeguardingStaff: vi.fn(),
+  setSafeguardingStaff: vi.fn()
 }));
 
 vi.mock('@api/services/messaging/direct', () => ({
@@ -69,6 +71,11 @@ vi.mock('@api/services/messaging/gateway', () => ({
 
 vi.mock('@api/services/messaging/unread-digest', () => ({
   runUnreadMessageDigest: vi.fn()
+}));
+
+vi.mock('@api/services/messaging/safeguarding', () => ({
+  getSafeguardingStaff: services.getSafeguardingStaff,
+  setSafeguardingStaff: services.setSafeguardingStaff
 }));
 
 import { messagingRouter } from './index';

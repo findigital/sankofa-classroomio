@@ -8,8 +8,10 @@ import {
   channelTypeUpdate,
   decideDirectMessage,
   directChannelId,
+  isListedCohortChannel,
   planUnreadMessageDigest,
   reviewMessageText,
+  selectSafeguardingStaff,
   transcriptToCsv,
   type MessagingParticipant
 } from '../src/functions/messaging';
@@ -160,6 +162,48 @@ describe('decideDirectMessage', () => {
     expect(forward).toBe(backward);
     expect(forward.length).toBeLessThanOrEqual(64);
     expect(forward.startsWith('fdm')).toBe(true);
+  });
+});
+
+describe('selectSafeguardingStaff', () => {
+  it('uses every non-minor admin when the list is unset', () => {
+    const minorAdmin: MessagingParticipant = {
+      profileId: '66666666-6666-4666-8666-666666666666',
+      roleId: ROLE.ADMIN,
+      isMinor: true
+    };
+    const selected = selectSafeguardingStaff({
+      configuredIds: null,
+      admins: [STAFF, minorAdmin, MENTOR]
+    });
+
+    expect(selected.map((person) => person.profileId)).toEqual([STAFF.profileId]);
+  });
+
+  it('uses only the configured admins, and an empty list adds nobody', () => {
+    const otherStaff: MessagingParticipant = {
+      profileId: '77777777-7777-4777-8777-777777777777',
+      roleId: ROLE.ADMIN,
+      isMinor: false
+    };
+
+    expect(
+      selectSafeguardingStaff({ configuredIds: [otherStaff.profileId], admins: [STAFF, otherStaff] }).map(
+        (person) => person.profileId
+      )
+    ).toEqual([otherStaff.profileId]);
+    expect(selectSafeguardingStaff({ configuredIds: [], admins: [STAFF] })).toEqual([]);
+  });
+});
+
+describe('isListedCohortChannel', () => {
+  it('hides unpublished cohort channels and keeps direct messages', () => {
+    const published = new Set(['group-published']);
+
+    expect(isListedCohortChannel({ purpose: 'discussion', cohortId: 'group-published' }, published)).toBe(true);
+    expect(isListedCohortChannel({ purpose: 'announcement', cohortId: 'group-draft' }, published)).toBe(false);
+    expect(isListedCohortChannel({ purpose: 'discussion', cohortId: null }, published)).toBe(false);
+    expect(isListedCohortChannel({ purpose: 'fellow_dm', cohortId: null }, published)).toBe(true);
   });
 });
 

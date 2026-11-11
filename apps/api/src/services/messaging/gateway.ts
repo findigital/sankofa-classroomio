@@ -265,25 +265,44 @@ export class StreamServerGateway implements StreamGateway {
     let olderThan: string | undefined;
 
     for (let page = 0; page < MESSAGE_PAGE_CAP; page += 1) {
+      const messageQuery: { limit: number; id_lt?: string } = { limit: MESSAGE_PAGE };
+
+      if (olderThan) messageQuery.id_lt = olderThan;
+
       const response = await channel.query({
         watch: false,
-        state: false,
-        messages: {
-          limit: MESSAGE_PAGE,
-          ...(olderThan ? { id_lt: olderThan } : {})
-        }
+        state: true,
+        messages: messageQuery
       });
-      const batch = (response.messages ?? []).map(toTranscript).filter((message) => message.id);
+      const batch = (response.messages ?? [])
+        .map(toTranscript)
+        .filter((message) => message.id)
+        .sort((left, right) => left.createdAt.localeCompare(right.createdAt) || left.id.localeCompare(right.id));
 
       if (batch.length === 0) break;
 
+      const oldestId = batch[0]?.id;
+
+      if (!oldestId || oldestId === olderThan) break;
+
       pages.push(batch);
-      olderThan = batch[0]?.id;
+      olderThan = oldestId;
 
       if (batch.length < MESSAGE_PAGE) break;
     }
 
-    return pages.reverse().flat();
+    const seen = new Set<string>();
+
+    return pages
+      .reverse()
+      .flat()
+      .filter((message) => {
+        if (seen.has(message.id)) return false;
+
+        seen.add(message.id);
+
+        return true;
+      });
   }
 
   async sendMessage(input: {
