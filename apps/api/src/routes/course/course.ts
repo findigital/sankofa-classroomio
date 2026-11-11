@@ -26,6 +26,11 @@ import {
   getCourseAnalytics,
   updateCourse
 } from '@cio/core/services/course/course';
+import {
+  autoEnrollPublishedCourseQuietly,
+  publicCourseTutors,
+  viewerMemberCourseAccess
+} from '@api/services/course/member-auto-enroll';
 import { getCourseProgressForRequester } from '@api/services/course/progress-access';
 import { requireCourseSlugAccess, viewerFromAuth } from '@api/services/course/course-visibility';
 import { assertCertificateDownloadAllowed, evaluateCourseCertification } from '@api/services/course/completion';
@@ -129,11 +134,25 @@ export const courseRouter = new Hono()
       const viewer = viewerFromAuth(c.get('user'), c.get('orgRoles'));
       await requireCourseSlugAccess(slug, viewer);
       const course = await getCourse(undefined, slug, viewer.userId ?? undefined);
+      const tutors = await publicCourseTutors(course.id);
+      const courseOrg = 'org' in course ? course.org : undefined;
+      const viewerCourseAccess = courseOrg
+        ? await viewerMemberCourseAccess({
+            orgId: courseOrg.id,
+            profileId: viewer.userId,
+            orgRoleId: viewer.orgRoles[courseOrg.id],
+            courseId: course.id
+          })
+        : null;
 
       return c.json(
         {
           success: true,
-          data: course
+          data: {
+            ...course,
+            tutors,
+            viewerCourseAccess
+          }
         },
         200
       );
@@ -381,6 +400,7 @@ export const courseRouter = new Hono()
 
           if (result.publishedNow) {
             captureCoursePublished(result.course, user.id, getEventSource(c));
+            await autoEnrollPublishedCourseQuietly(orgId, courseId);
           }
 
           return c.json(
@@ -406,6 +426,10 @@ export const courseRouter = new Hono()
 
         if (publishedNow) {
           captureCoursePublished(result, c.get('user')!.id, getEventSource(c));
+          const publishedOrgId = c.req.header('cio-org-id');
+          if (publishedOrgId) {
+            await autoEnrollPublishedCourseQuietly(publishedOrgId, courseId);
+          }
         }
 
         await emitCoursePublishWebhookEvent(courseId, publishChange, userId);

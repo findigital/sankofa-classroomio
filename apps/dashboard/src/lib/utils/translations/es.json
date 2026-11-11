@@ -1301,7 +1301,9 @@
           "discount": "Descuento",
           "enroll": "Inscríbete ahora",
           "buy": "Comprar ahora",
-          "bird": "Oferta por reserva anticipada. Compre lo antes posible"
+          "bird": "Oferta por reserva anticipada. Compre lo antes posible",
+          "go_to_course": "Go to course",
+          "continue_course": "Continue"
         },
         "upload_widget": {
           "title": "Widget de banner",
@@ -4469,6 +4471,10 @@
           "label": "Catalog filter groups",
           "description": "Choose which tag groups appear as catalog filters. Every group is included until you pick a subset.",
           "empty": "Tag groups will show up here after they are created."
+        },
+        "auto_enroll_members": {
+          "label": "Enroll members in every published course",
+          "description": "Students in this organization are added to every published course. They open the course instead of enrolling. This stays on while the members-only catalog is on, unless you turn it off."
         }
       },
       "login": {

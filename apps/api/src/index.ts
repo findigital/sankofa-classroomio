@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import './instrument';
 
+import { autoEnrollMembersOnBoot } from '@api/services/course/member-auto-enroll';
 import { API_PORT } from '@api/constants';
 import { app } from '@api/app';
 import { configureOpenAPI } from '@api/utils/openapi';
@@ -30,6 +31,7 @@ async function startServer() {
   void ensureStreamMessagingSetup().catch((error) => {
     console.error('Messaging setup failed:', error);
   });
+  void autoEnrollMembersOnBoot();
 
   if (env.NODE_ENV !== 'production') {
     showRoutes(app, { colorize: true });

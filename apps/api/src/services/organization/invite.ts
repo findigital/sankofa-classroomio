@@ -35,6 +35,7 @@ import {
 } from '@cio/core/services/webhook/emit';
 import { addCohortMember, getCourseIdsByCohortIds, getExistingCohortMembers } from '@cio/db/queries/cohort';
 
+import { autoEnrollOrgStudentQuietly } from '@api/services/course/member-auto-enroll';
 import { ROLE } from '@cio/utils/constants';
 import { STUDENT_HOME_ENTRY_PATH } from '@cio/utils/lms';
 import type { TNewOrganizationInviteAudit } from '@db/types';
@@ -638,6 +639,10 @@ export async function acceptOrganizationInvite(token: string, user: TAuthUser, c
       result.createdMember,
       user.id
     );
+
+    if (result.roleId === ROLE.STUDENT) {
+      await autoEnrollOrgStudentQuietly(result.organization.id, user.id);
+    }
   }
 
   await emitInviteEnrollmentEvents(result.organization.id, user.id, result.enrollment);

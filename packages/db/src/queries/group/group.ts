@@ -84,7 +84,16 @@ export async function enrollUsersInCourseGroups(
       email: emailByProfile.get(p.profileId) ?? undefined
     }));
 
-  return addGroupMembers(toInsert, dbClient);
+  if (toInsert.length === 0) return [];
+
+  try {
+    return await dbClient.insert(schema.groupmember).values(toInsert).onConflictDoNothing().returning();
+  } catch (error) {
+    console.error('enrollUsersInCourseGroups error:', error);
+    throw new Error(
+      `Failed to enroll users in course groups: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
+  }
 }
 
 /**

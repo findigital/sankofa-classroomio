@@ -205,6 +205,49 @@ export function filterNavItems(course: Course, reviews: Review[]) {
   });
 }
 
+function courseInstructorProps(
+  course: Course,
+  metadataInstructor: {
+    name?: string;
+    role?: string;
+    description?: string;
+    imgUrl?: string;
+    coursesNo?: number;
+  },
+  orgName: string | null | undefined,
+  includeInstructor: boolean
+): CourseLandingPageProps['instructor'] {
+  if (!includeInstructor) return { name: '' };
+
+  const tutors = (course.tutors ?? []).flatMap((tutor) => {
+    const name = tutor.name.trim();
+    if (!name) return [];
+
+    return [{ name, imgUrl: tutor.avatarUrl || undefined }];
+  });
+
+  if (tutors.length > 0) {
+    const firstTutor = tutors[0];
+
+    return {
+      name: firstTutor.name,
+      imgUrl: firstTutor.imgUrl,
+      people: tutors
+    };
+  }
+
+  const customName = metadataInstructor.name?.trim() ?? '';
+  if (!customName || customName === (orgName ?? '').trim()) return { name: '' };
+
+  return {
+    name: customName,
+    role: metadataInstructor.role || undefined,
+    imgUrl: metadataInstructor.imgUrl || undefined,
+    description: metadataInstructor.description || undefined,
+    coursesNo: metadataInstructor.coursesNo || undefined
+  };
+}
+
 export function buildCourseLandingPageProps(
   course: Course,
   org: AccountOrg | PublicOrg,
@@ -270,10 +313,18 @@ export function buildCourseLandingPageProps(
 
   const calculatedCost = calcCourseCost(course);
   const isFree = isCourseFree(calculatedCost);
-  const pricingCtaLabel = isFree
-    ? t.get('course.navItem.landing_page.pricing_section.enroll')
-    : t.get('course.navItem.landing_page.pricing_section.buy');
-  const paidEnrollClick = !isFree && !options.enrollDisabled ? options.onPaidEnrollClick : undefined;
+  const memberAccess = course.viewerCourseAccess?.openCourse ? course.viewerCourseAccess : null;
+  const pricingCtaLabel = memberAccess
+    ? t.get(
+        memberAccess.started
+          ? 'course.navItem.landing_page.pricing_section.continue_course'
+          : 'course.navItem.landing_page.pricing_section.go_to_course'
+      )
+    : isFree
+      ? t.get('course.navItem.landing_page.pricing_section.enroll')
+      : t.get('course.navItem.landing_page.pricing_section.buy');
+  const memberHref = memberAccess?.href;
+  const paidEnrollClick = memberAccess || isFree || options.enrollDisabled ? undefined : options.onPaidEnrollClick;
 
   return {
     theme: landing.theme as OrgLandingPageTheme,
@@ -287,9 +338,9 @@ export function buildCourseLandingPageProps(
       subheading: course.description ?? landing.hero.subheading,
       primaryAction: {
         label: pricingCtaLabel,
-        href: paidEnrollClick ? undefined : options.enrollHref,
+        href: memberHref ?? (paidEnrollClick ? undefined : options.enrollHref),
         onclick: paidEnrollClick,
-        disabled: options.enrollDisabled
+        disabled: memberAccess ? false : options.enrollDisabled
       },
       secondaryAction: { label: t.get('course.navItem.landing_page.course_content'), href: '#curriculum' },
       image: course.bannerImage || undefined,
@@ -330,15 +381,7 @@ export function buildCourseLandingPageProps(
       skills: metadata?.skills ?? undefined,
       tools: metadata?.tools ?? undefined
     },
-    instructor: includeInstructor
-      ? {
-          name: instructor.name?.trim() || org.name || '',
-          role: instructor.role || undefined,
-          imgUrl: instructor.imgUrl || org.avatarUrl || undefined,
-          description: instructor.description || undefined,
-          coursesNo: instructor.coursesNo || undefined
-        }
-      : { name: '' },
+    instructor: courseInstructorProps(course, instructor, org.name, includeInstructor),
     reviews: {
       items: includeReviews
         ? reviewsVisible.map((r, idx) => ({
@@ -358,9 +401,9 @@ export function buildCourseLandingPageProps(
       discount: metadata?.discount,
       showDiscount: metadata?.showDiscount,
       ctaLabel: pricingCtaLabel,
-      ctaHref: paidEnrollClick ? undefined : options.enrollHref,
+      ctaHref: memberHref ?? (paidEnrollClick ? undefined : options.enrollHref),
       ctaOnclick: paidEnrollClick,
-      ctaDisabled: options.enrollDisabled,
+      ctaDisabled: memberAccess ? false : options.enrollDisabled,
       reward: metadata?.reward?.show ? { show: true, description: metadata.reward.description ?? '' } : undefined
     },
     footer: landing.footer,
@@ -383,9 +426,9 @@ export function buildCourseLandingPageProps(
       instructorHeading: t.get('course.navItem.landing_page.instructor'),
       reviewsEyebrow: t.get('course.navItem.landing_page.reviews'),
       reviewsHeading: t.get('course.navItem.landing_page.reviews'),
-      pricingEyebrow: t.get('course.navItem.landing_page.pricing_section.enroll'),
+      pricingEyebrow: memberAccess ? pricingCtaLabel : t.get('course.navItem.landing_page.pricing_section.enroll'),
       freeLabel: t.get('course.navItem.landing_page.pricing_section.free'),
-      hidePrice: catalog.hideCoursePricing,
+      hidePrice: catalog.hideCoursePricing || Boolean(memberAccess),
       navAboutLabel: t.get('course.navItem.landing_page.editor.title.description'),
       navCurriculumLabel: t.get('course.navItem.landing_page.editor.title.curriculum'),
       navSkillsLabel: t.get('course.navItem.landing_page.editor.title.skills'),

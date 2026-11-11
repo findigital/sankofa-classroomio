@@ -11,6 +11,7 @@ import {
 } from '@cio/db/queries/invite-link';
 import { createOrganizationMember, getOrganizationMemberIdByOrgAndProfile } from '@cio/db/queries/organization';
 
+import { autoEnrollOrgStudentQuietly } from '@api/services/course/member-auto-enroll';
 import { ROLE } from '@cio/utils/constants';
 import { emitOrganizationMemberWebhookEvent } from '@cio/core/services/webhook/emit';
 import type { TOrganizationmember } from '@cio/db/types';
@@ -270,6 +271,10 @@ export async function acceptInviteLink(token: string, user: TAuthUser, context: 
 
   if (createdOrgMember) {
     await emitOrganizationMemberWebhookEvent('organization.member.added', organizationId, createdOrgMember, user.id);
+
+    if (inviteContext.invite.roleId === ROLE.STUDENT) {
+      await autoEnrollOrgStudentQuietly(organizationId, user.id);
+    }
   }
 
   // Membership already committed at this point, so a failure here must never

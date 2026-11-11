@@ -1,6 +1,11 @@
 <script lang="ts">
   import type { CourseItem, OrgLandingPageLabels } from '../types';
-  import { getCourseCoverImage, getCourseTypeLandingMeta, landingCoursePriceLabel } from '../landing-page-utils';
+  import {
+    getCourseCoverImage,
+    getCourseTypeLandingMeta,
+    landingCourseActionLabel,
+    landingCoursePriceLabel
+  } from '../landing-page-utils';
   import CourseTagPills from '../course-tag-pills.svelte';
   import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
 
@@ -78,7 +83,7 @@
         <span
           class="ui:inline-flex ui:items-center ui:gap-1.5 ui:text-[13.5px] ui:font-medium ui:text-[var(--landing-fg)]"
         >
-          {labels?.enrollLabel ?? 'View course'}
+          {landingCourseActionLabel(course, labels) ?? 'View course'}
           <ChevronRightIcon class="ui:size-3.5" aria-hidden="true" />
         </span>
       </span>

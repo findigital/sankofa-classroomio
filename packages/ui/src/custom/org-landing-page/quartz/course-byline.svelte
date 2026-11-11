@@ -9,9 +9,9 @@
     labels?: CourseLandingPageLabels;
   }
 
-  let { instructor, logoUrl, socialProof, curriculum, labels }: Props = $props();
+  let { instructor, logoUrl: _logoUrl, socialProof, curriculum, labels }: Props = $props();
 
-  const avatarSrc = $derived(instructor.imgUrl || logoUrl);
+  const avatarSrc = $derived(instructor.imgUrl);
 
   const lessonCount = $derived(
     socialProof.lessons ?? curriculum.sections.reduce((total, section) => total + section.lessons.length, 0)
@@ -43,15 +43,17 @@
   <div
     class="ui:max-w-[1200px] ui:mx-auto ui:px-5 ui:md:px-8 ui:py-4 ui:flex ui:flex-wrap ui:items-center ui:justify-between ui:gap-x-6 ui:gap-y-2"
   >
-    <span class="ui:flex ui:items-center ui:gap-2.5 ui:min-w-0">
-      {#if avatarSrc}
-        <img src={avatarSrc} alt="" class="ui:size-6 ui:rounded-full ui:object-cover ui:shrink-0" />
-      {/if}
-      <span class="ui:text-[13.5px] ui:text-[var(--landing-fg)] ui:truncate">{instructor.name}</span>
-      {#if instructor.role}
-        <span class="ui:text-[13.5px] ui:text-[var(--landing-fg-faint)] ui:truncate">· {instructor.role}</span>
-      {/if}
-    </span>
+    {#if instructor.name}
+      <span class="ui:flex ui:items-center ui:gap-2.5 ui:min-w-0">
+        {#if avatarSrc}
+          <img src={avatarSrc} alt="" class="ui:size-6 ui:rounded-full ui:object-cover ui:shrink-0" />
+        {/if}
+        <span class="ui:text-[13.5px] ui:text-[var(--landing-fg)] ui:truncate">{instructor.name}</span>
+        {#if instructor.role}
+          <span class="ui:text-[13.5px] ui:text-[var(--landing-fg-faint)] ui:truncate">· {instructor.role}</span>
+        {/if}
+      </span>
+    {/if}
 
     {#if meta.length > 0}
       <span class="ui:text-[13.5px] ui:text-[var(--landing-fg-muted)]">{meta.join(' · ')}</span>

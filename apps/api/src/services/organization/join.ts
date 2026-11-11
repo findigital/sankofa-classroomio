@@ -16,6 +16,7 @@ import { scheduleCourseRoleReconcile } from '@cio/core/services/organization/cou
 import { getProfileById } from '@cio/db/queries/auth';
 import { db } from '@cio/db/drizzle';
 import { env } from '@cio/core/config/env';
+import { autoEnrollOrgStudentQuietly } from '@api/services/course/member-auto-enroll';
 import { assertStudentCapacityOrThrow } from './student-limit';
 
 interface OrgSignupSettings {
@@ -96,6 +97,7 @@ export async function joinOrganization(userId: string, orgId: string): Promise<J
 
   const linked = await linkExistingMemberByEmail(userId, orgId, normalizedEmail);
   if (linked) {
+    await autoEnrollOrgStudentQuietly(orgId, userId);
     return linked;
   }
 
@@ -123,6 +125,7 @@ export async function joinOrganization(userId: string, orgId: string): Promise<J
     verified: true
   });
   await emitOrganizationMemberWebhookEvent('organization.member.added', orgId, createdMember, userId);
+  await autoEnrollOrgStudentQuietly(orgId, userId);
 
   // A course team role from a previous membership must not come back on rejoin.
   await scheduleCourseRoleReconcile(orgId, userId);

@@ -4,7 +4,7 @@
   import { Button } from '../../../base/button';
   import { BorderBeam } from '../../animation/border-beam';
   import ClockIcon from '@lucide/svelte/icons/clock';
-  import { getCourseTypeLandingMeta, landingCoursePriceLabel } from '../landing-page-utils';
+  import { getCourseTypeLandingMeta, landingCourseActionLabel, landingCoursePriceLabel } from '../landing-page-utils';
   import CourseTagPills from '../course-tag-pills.svelte';
 
   interface Props {
@@ -82,7 +82,7 @@
           aria-disabled={disableCourseLinks}
           tabindex={disableCourseLinks ? -1 : undefined}
         >
-          {labels?.enrollLabel ?? 'Details'}
+          {landingCourseActionLabel(course, labels) ?? 'Details'}
         </Button>
       </div>
     </Card.Content>

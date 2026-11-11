@@ -916,6 +916,10 @@
           "label": "Members-only catalog",
           "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
         },
+        "auto_enroll_members": {
+          "label": "Enroll members in every published course",
+          "description": "Students in this organization are added to every published course. They open the course instead of enrolling. This stays on while the members-only catalog is on, unless you turn it off."
+        },
         "hide_course_pricing": {
           "label": "Hide course prices",
           "description": "Hide prices, the pricing filter, and Free labels on the catalog and course cards. Prices stay hidden until you turn this off."
@@ -4461,6 +4465,8 @@
           "not_accepting": "This course is currently not accepting new students.",
           "discount": "Discount",
           "enroll": "Enroll Now",
+          "go_to_course": "Go to course",
+          "continue_course": "Continue",
           "buy": "Buy Now",
           "bird": "Early bird offer. Buy ASAP"
         },

@@ -191,6 +191,7 @@ export interface TOrgUpdateForm {
     signup?: { inviteOnly?: boolean };
     internalEnrollmentOnly?: boolean;
     membersOnlyCatalog?: boolean;
+    autoEnrollMembers?: boolean;
     hideCoursePricing?: boolean;
     showCourseTypeFilter?: boolean;
     catalogFilterTagGroupIds?: string[] | null;

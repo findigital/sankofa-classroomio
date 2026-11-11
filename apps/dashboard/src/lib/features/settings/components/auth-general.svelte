@@ -12,6 +12,7 @@
   import { Checkbox } from '@cio/ui/base/checkbox';
   import { UpgradeLock } from '$features/ui';
   import { SvelteSet } from 'svelte/reactivity';
+  import { isAutoEnrollMembersEnabled } from '@cio/utils/functions';
 
   function readCatalogSettings(settings: unknown) {
     const record = settings && typeof settings === 'object' ? (settings as Record<string, unknown>) : {};
@@ -40,6 +41,7 @@
   let disableGoogleAuth = $state($currentOrg?.disableGoogleAuth ?? false);
   let internalEnrollmentOnly = $state($currentOrg?.settings?.internalEnrollmentOnly ?? false);
   let membersOnlyCatalog = $state($currentOrg?.settings?.membersOnlyCatalog ?? false);
+  let autoEnrollMembers = $state(isAutoEnrollMembersEnabled($currentOrg?.settings));
   let hideCoursePricing = $state(readCatalogSettings($currentOrg?.settings).hideCoursePricing);
   let showCourseTypeFilter = $state(readCatalogSettings($currentOrg?.settings).showCourseTypeFilter);
   let selectedFilterGroupIds = new SvelteSet<string>();
@@ -57,6 +59,7 @@
       disableGoogleAuth = $currentOrg.disableGoogleAuth ?? false;
       internalEnrollmentOnly = $currentOrg.settings?.internalEnrollmentOnly ?? false;
       membersOnlyCatalog = $currentOrg.settings?.membersOnlyCatalog ?? false;
+      autoEnrollMembers = isAutoEnrollMembersEnabled($currentOrg.settings);
       const catalog = readCatalogSettings($currentOrg.settings);
       hideCoursePricing = catalog.hideCoursePricing;
       showCourseTypeFilter = catalog.showCourseTypeFilter;
@@ -93,6 +96,7 @@
       disableGoogleAuth !== ($currentOrg?.disableGoogleAuth ?? false) ||
       internalEnrollmentOnly !== ($currentOrg?.settings?.internalEnrollmentOnly ?? false) ||
       membersOnlyCatalog !== ($currentOrg?.settings?.membersOnlyCatalog ?? false) ||
+      autoEnrollMembers !== isAutoEnrollMembersEnabled($currentOrg?.settings) ||
       hideCoursePricing !== readCatalogSettings($currentOrg?.settings).hideCoursePricing ||
       showCourseTypeFilter !== readCatalogSettings($currentOrg?.settings).showCourseTypeFilter ||
       selectedFilterGroupIds.size !== storedFilterGroupIds.length ||
@@ -142,6 +146,7 @@
           },
           internalEnrollmentOnly,
           membersOnlyCatalog,
+          autoEnrollMembers,
           hideCoursePricing,
           showCourseTypeFilter,
           catalogFilterTagGroupIds: allFilterGroupsSelected ? null : [...selectedFilterGroupIds]
@@ -168,6 +173,7 @@
     disableGoogleAuth = $currentOrg.disableGoogleAuth ?? false;
     internalEnrollmentOnly = $currentOrg.settings?.internalEnrollmentOnly ?? false;
     membersOnlyCatalog = $currentOrg.settings?.membersOnlyCatalog ?? false;
+    autoEnrollMembers = isAutoEnrollMembersEnabled($currentOrg.settings);
     const catalog = readCatalogSettings($currentOrg.settings);
     hideCoursePricing = catalog.hideCoursePricing;
     showCourseTypeFilter = catalog.showCourseTypeFilter;
@@ -232,11 +238,29 @@
       </Field.Field>
 
       <Field.Field orientation="horizontal">
-        <Switch bind:checked={membersOnlyCatalog} disabled={isSaving} />
+        <Switch
+          bind:checked={membersOnlyCatalog}
+          disabled={isSaving}
+          onCheckedChange={(checked) => {
+            if (checked && $currentOrg?.settings?.autoEnrollMembers !== false) {
+              autoEnrollMembers = true;
+            }
+          }}
+        />
         <div class="space-y-0.5">
           <Field.Label>{$t('settings.auth.general.members_only_catalog.label')}</Field.Label>
           <Field.Description>
             {$t('settings.auth.general.members_only_catalog.description')}
+          </Field.Description>
+        </div>
+      </Field.Field>
+
+      <Field.Field orientation="horizontal">
+        <Switch bind:checked={autoEnrollMembers} disabled={isSaving} />
+        <div class="space-y-0.5">
+          <Field.Label>{$t('settings.auth.general.auto_enroll_members.label')}</Field.Label>
+          <Field.Description>
+            {$t('settings.auth.general.auto_enroll_members.description')}
           </Field.Description>
         </div>
       </Field.Field>

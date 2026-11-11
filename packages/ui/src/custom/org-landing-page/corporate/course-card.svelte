@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { CourseItem, OrgLandingPageLabels } from '../types';
-  import { getCourseTypeLandingMeta, landingCoursePriceLabel } from '../landing-page-utils';
+  import { getCourseTypeLandingMeta, landingCourseActionLabel, landingCoursePriceLabel } from '../landing-page-utils';
   import CourseTagPills from '../course-tag-pills.svelte';
 
   interface Props {
@@ -47,7 +47,7 @@
   <div class="ui:flex ui:items-center ui:justify-between ui:pt-4 ui:mt-3 ui:border-t ui:border-[var(--landing-border)]">
     {#if priceLabel}<span class="ui:text-sm ui:font-semibold">{priceLabel}</span>{/if}
     <span class="ui:text-sm ui:text-[var(--landing-fg)] ui:underline ui:underline-offset-4" aria-hidden="true">
-      {labels?.enrollLabel ?? 'Enroll →'}
+      {landingCourseActionLabel(course, labels) ?? 'Enroll →'}
     </span>
   </div>
 </a>

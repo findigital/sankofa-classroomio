@@ -46,6 +46,7 @@ import { buildEmailFromName, buildOrgEmailFromName, buildEmailBranding, type Ema
 import { enqueueTransactionalEmail } from '@api/services/jobs';
 import { getProfileByEmail, markUserAndProfileEmailVerified } from '@cio/db/queries/auth';
 import { generateSlug } from '@cio/utils/functions';
+import { autoEnrollOrgStudentQuietly } from './member-auto-enroll';
 import { ensureComplianceEnrollmentRecordsForProfiles } from './compliance';
 import { assertStudentCapacityOrThrow, notifyStudentMilestone } from '../organization/student-limit';
 import type { StudentMilestoneNotification } from '../organization/student-limit';
@@ -803,6 +804,7 @@ export async function enrollInCourse(
   await invalidateOrgStats(org.id);
 
   await ensureComplianceEnrollmentRecordsForProfiles([courseId], [user.id]);
+  await autoEnrollOrgStudentQuietly(org.id, user.id);
 
   await sendStudentJoinEmails({
     courseId,
@@ -1245,6 +1247,7 @@ export async function acceptStudentInvite(token: string, user: TAuthUser, contex
   }
 
   await ensureComplianceEnrollmentRecordsForProfiles([result.courseId], [user.id]);
+  await autoEnrollOrgStudentQuietly(result.organizationId, user.id);
 
   if (!result.alreadyJoined) {
     await sendStudentJoinEmails({
