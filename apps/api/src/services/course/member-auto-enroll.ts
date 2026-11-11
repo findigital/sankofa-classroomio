@@ -5,13 +5,15 @@ import {
   listCourseTutorProfiles,
   listOrganizationIdsForMemberAutoEnroll,
   listPublishedCourseGroupsForAutoEnroll,
-  listStartedCourseIdsForProfile
+  listStartedCourseIdsForProfile,
+  removeUnpublishedStudentMembershipsWithoutProgress
 } from '@cio/db/queries/course';
 import { enrollUsersInCourseGroups } from '@cio/db/queries/group';
 import { ROLE } from '@cio/utils/constants';
 import {
   isAutoEnrollMembersEnabled,
   resolveMemberCourseCta,
+  selectPublicCourseInstructors,
   type MemberAutoEnrollSettings
 } from '@cio/utils/functions';
 
@@ -23,27 +25,33 @@ export type ViewerCourseAccess = {
 
 export type MemberAutoEnrollResult = {
   inserted: number;
+  removed: number;
 };
 
 /**
  * Adds active organization students to every published course group.
- * Existing memberships are left in place. Unpublished courses are not included.
+ * Existing memberships are left in place. Unpublished courses are not enrolled.
+ * Student memberships on unpublished courses are removed when they have no progress or submissions.
  */
 export async function autoEnrollOrgStudents(input: {
   orgId: string;
   profileIds?: string[];
   courseIds?: string[];
 }): Promise<MemberAutoEnrollResult> {
-  if (input.profileIds && input.profileIds.length === 0) return { inserted: 0 };
-
-  if (input.courseIds && input.courseIds.length === 0) return { inserted: 0 };
+  if (input.profileIds && input.profileIds.length === 0) return { inserted: 0, removed: 0 };
 
   const org = await getOrganizationById(input.orgId);
-  if (!org || !isAutoEnrollMembersEnabled(org.settings)) return { inserted: 0 };
+  if (!org || !isAutoEnrollMembersEnabled(org.settings)) return { inserted: 0, removed: 0 };
 
-  const courses = await listPublishedCourseGroupsForAutoEnroll(input.orgId, input.courseIds);
+  const removed = await removeUnpublishedStudentMembershipsWithoutProgress(input.orgId, input.profileIds);
+
+  if (input.courseIds && input.courseIds.length === 0) return { inserted: 0, removed };
+
+  const courses = (await listPublishedCourseGroupsForAutoEnroll(input.orgId, input.courseIds)).filter(
+    (course) => course.isPublished
+  );
   const students = await listActiveOrgStudentsForAutoEnroll(input.orgId, input.profileIds);
-  if (courses.length === 0 || students.length === 0) return { inserted: 0 };
+  if (courses.length === 0 || students.length === 0) return { inserted: 0, removed };
 
   const inserted = await enrollUsersInCourseGroups(
     courses.map((course) => course.groupId),
@@ -54,7 +62,7 @@ export async function autoEnrollOrgStudents(input: {
     ROLE.STUDENT
   );
 
-  if (inserted.length === 0) return { inserted: 0 };
+  if (inserted.length === 0) return { inserted: 0, removed };
 
   const courseIdByGroupId = new Map(courses.map((course) => [course.groupId, course.courseId]));
   const touchedCourseIds = [
@@ -75,7 +83,7 @@ export async function autoEnrollOrgStudents(input: {
     }
   }
 
-  return { inserted: inserted.length };
+  return { inserted: inserted.length, removed };
 }
 
 export async function autoEnrollOrgStudentQuietly(orgId: string, profileId: string): Promise<void> {
@@ -150,8 +158,16 @@ export async function viewerMemberCourseAccess(input: {
   return { openCourse: true, started: cta.started, href: cta.href };
 }
 
-export async function publicCourseTutors(courseId: string) {
-  return listCourseTutorProfiles(courseId);
+export async function publicCourseTutors(
+  courseId: string,
+  explicit?: { instructorName?: string | null; orgName?: string | null }
+) {
+  const candidates = await listCourseTutorProfiles(courseId);
+
+  return selectPublicCourseInstructors(candidates, {
+    explicitInstructorName: explicit?.instructorName,
+    orgName: explicit?.orgName
+  });
 }
 
 /**

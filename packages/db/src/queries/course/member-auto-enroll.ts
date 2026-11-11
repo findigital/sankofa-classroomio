@@ -1,6 +1,6 @@
 import * as schema from '@db/schema';
 
-import { and, eq, inArray, isNotNull } from 'drizzle-orm';
+import { and, eq, gt, inArray, isNotNull, isNull, ne, notExists, or } from 'drizzle-orm';
 
 import { ROLE } from '@cio/utils/constants';
 import { isAutoEnrollMembersEnabled } from '@cio/utils/functions';
@@ -10,7 +10,7 @@ export async function listPublishedCourseGroupsForAutoEnroll(
   orgId: string,
   courseIds?: string[],
   dbClient: DbOrTxClient = db
-): Promise<Array<{ courseId: string; groupId: string }>> {
+): Promise<Array<{ courseId: string; groupId: string; isPublished: true }>> {
   try {
     const filters = [
       eq(schema.group.organizationId, orgId),
@@ -27,13 +27,18 @@ export async function listPublishedCourseGroupsForAutoEnroll(
     const rows = await dbClient
       .select({
         courseId: schema.course.id,
-        groupId: schema.course.groupId
+        groupId: schema.course.groupId,
+        isPublished: schema.course.isPublished
       })
       .from(schema.course)
       .innerJoin(schema.group, eq(schema.course.groupId, schema.group.id))
       .where(and(...filters));
 
-    return rows.flatMap((row) => (row.groupId ? [{ courseId: row.courseId, groupId: row.groupId }] : []));
+    return rows.flatMap((row) =>
+      row.groupId && row.isPublished
+        ? [{ courseId: row.courseId, groupId: row.groupId, isPublished: true as const }]
+        : []
+    );
   } catch (error) {
     console.error('listPublishedCourseGroupsForAutoEnroll error:', error);
     throw new Error(
@@ -100,27 +105,178 @@ export async function listStartedCourseIdsForProfile(
 export async function listCourseTutorProfiles(
   courseId: string,
   dbClient: DbOrTxClient = db
-): Promise<Array<{ name: string; avatarUrl: string | null }>> {
+): Promise<Array<{ name: string; avatarUrl: string | null; courseRoleId: number; orgRoleId: number | null }>> {
   try {
     const rows = await dbClient
       .select({
         name: schema.profile.fullname,
-        avatarUrl: schema.profile.avatarUrl
+        avatarUrl: schema.profile.avatarUrl,
+        courseRoleId: schema.groupmember.roleId,
+        orgRoleId: schema.organizationmember.roleId
       })
       .from(schema.groupmember)
       .innerJoin(schema.course, eq(schema.course.groupId, schema.groupmember.groupId))
+      .innerJoin(schema.group, eq(schema.group.id, schema.course.groupId))
       .innerJoin(schema.profile, eq(schema.profile.id, schema.groupmember.profileId))
-      .where(and(eq(schema.course.id, courseId), eq(schema.groupmember.roleId, ROLE.TUTOR)));
+      .leftJoin(
+        schema.organizationmember,
+        and(
+          eq(schema.organizationmember.organizationId, schema.group.organizationId),
+          eq(schema.organizationmember.profileId, schema.profile.id),
+          eq(schema.organizationmember.status, 'ACTIVE')
+        )
+      )
+      .where(
+        and(
+          eq(schema.course.id, courseId),
+          or(eq(schema.groupmember.roleId, ROLE.TUTOR), eq(schema.groupmember.roleId, ROLE.ADMIN))
+        )
+      );
 
     return rows.flatMap((row) => {
       const name = row.name?.trim();
       if (!name) return [];
 
-      return [{ name, avatarUrl: row.avatarUrl }];
+      return [
+        {
+          name,
+          avatarUrl: row.avatarUrl,
+          courseRoleId: row.courseRoleId,
+          orgRoleId: row.orgRoleId
+        }
+      ];
     });
   } catch (error) {
     console.error('listCourseTutorProfiles error:', error);
     throw new Error(`Failed to list course tutors: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+}
+
+/**
+ * Deletes student memberships on unpublished courses that have no lesson progress or submissions.
+ * Rows that record progress stay, and this does not delete progress or submission rows.
+ */
+export async function removeUnpublishedStudentMembershipsWithoutProgress(
+  orgId: string,
+  profileIds?: string[],
+  dbClient: DbOrTxClient = db
+): Promise<number> {
+  try {
+    const filters = [
+      eq(schema.group.organizationId, orgId),
+      eq(schema.course.isPublished, false),
+      eq(schema.groupmember.roleId, ROLE.STUDENT),
+      isNull(schema.groupmember.completedAt),
+      isNull(schema.groupmember.certificateEarnedAt),
+      notExists(
+        dbClient
+          .select({ id: schema.lessonCompletion.id })
+          .from(schema.lessonCompletion)
+          .innerJoin(schema.lesson, eq(schema.lessonCompletion.lessonId, schema.lesson.id))
+          .where(
+            and(
+              eq(schema.lesson.courseId, schema.course.id),
+              eq(schema.lessonCompletion.profileId, schema.groupmember.profileId)
+            )
+          )
+      ),
+      notExists(
+        dbClient
+          .select({ id: schema.lessonVideoProgress.id })
+          .from(schema.lessonVideoProgress)
+          .innerJoin(schema.lesson, eq(schema.lessonVideoProgress.lessonId, schema.lesson.id))
+          .where(
+            and(
+              eq(schema.lesson.courseId, schema.course.id),
+              eq(schema.lessonVideoProgress.profileId, schema.groupmember.profileId)
+            )
+          )
+      ),
+      notExists(
+        dbClient
+          .select({ id: schema.submission.id })
+          .from(schema.submission)
+          .where(eq(schema.submission.submittedBy, schema.groupmember.id))
+      ),
+      notExists(
+        dbClient
+          .select({ id: schema.questionAnswer.id })
+          .from(schema.questionAnswer)
+          .where(eq(schema.questionAnswer.groupMemberId, schema.groupmember.id))
+      ),
+      notExists(
+        dbClient
+          .select({ id: schema.courseCompletionRecord.id })
+          .from(schema.courseCompletionRecord)
+          .where(
+            and(
+              eq(schema.courseCompletionRecord.groupMemberId, schema.groupmember.id),
+              or(
+                isNotNull(schema.courseCompletionRecord.startedAt),
+                isNotNull(schema.courseCompletionRecord.completedAt),
+                isNotNull(schema.courseCompletionRecord.score),
+                gt(schema.courseCompletionRecord.attempts, 0),
+                gt(schema.courseCompletionRecord.timeSpentMinutes, 0),
+                ne(schema.courseCompletionRecord.status, 'not_started')
+              )
+            )
+          )
+      ),
+      notExists(
+        dbClient
+          .select({ id: schema.groupAttendance.id })
+          .from(schema.groupAttendance)
+          .where(eq(schema.groupAttendance.studentId, schema.groupmember.id))
+      ),
+      notExists(
+        dbClient
+          .select({ id: schema.lessonComment.id })
+          .from(schema.lessonComment)
+          .where(eq(schema.lessonComment.groupmemberId, schema.groupmember.id))
+      ),
+      notExists(
+        dbClient
+          .select({ id: schema.courseNewsfeed.id })
+          .from(schema.courseNewsfeed)
+          .where(eq(schema.courseNewsfeed.authorId, schema.groupmember.id))
+      ),
+      notExists(
+        dbClient
+          .select({ id: schema.courseNewsfeedComment.id })
+          .from(schema.courseNewsfeedComment)
+          .where(eq(schema.courseNewsfeedComment.authorId, schema.groupmember.id))
+      )
+    ];
+
+    if (profileIds && profileIds.length > 0) {
+      filters.push(inArray(schema.groupmember.profileId, profileIds));
+    }
+
+    const candidates = await dbClient
+      .select({ id: schema.groupmember.id })
+      .from(schema.groupmember)
+      .innerJoin(schema.course, eq(schema.course.groupId, schema.groupmember.groupId))
+      .innerJoin(schema.group, eq(schema.group.id, schema.course.groupId))
+      .where(and(...filters));
+
+    if (candidates.length === 0) return 0;
+
+    const deleted = await dbClient
+      .delete(schema.groupmember)
+      .where(
+        inArray(
+          schema.groupmember.id,
+          candidates.map((candidate) => candidate.id)
+        )
+      )
+      .returning({ id: schema.groupmember.id });
+
+    return deleted.length;
+  } catch (error) {
+    console.error('removeUnpublishedStudentMembershipsWithoutProgress error:', error);
+    throw new Error(
+      `Failed to remove unpublished student memberships: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
   }
 }
 

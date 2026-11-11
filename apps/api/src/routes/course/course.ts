@@ -134,8 +134,15 @@ export const courseRouter = new Hono()
       const viewer = viewerFromAuth(c.get('user'), c.get('orgRoles'));
       await requireCourseSlugAccess(slug, viewer);
       const course = await getCourse(undefined, slug, viewer.userId ?? undefined);
-      const tutors = await publicCourseTutors(course.id);
       const courseOrg = 'org' in course ? course.org : undefined;
+      const instructorName =
+        course.metadata && typeof course.metadata.instructor?.name === 'string'
+          ? course.metadata.instructor.name
+          : null;
+      const tutors = await publicCourseTutors(course.id, {
+        instructorName,
+        orgName: courseOrg?.name
+      });
       const viewerCourseAccess = courseOrg
         ? await viewerMemberCourseAccess({
             orgId: courseOrg.id,

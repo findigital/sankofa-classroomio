@@ -47,7 +47,9 @@ export function buildCourseSectionNavItems(
     items.push({ id: 'reviews', label: labels?.navReviewsLabel ?? 'Reviews' });
   }
 
-  items.push({ id: 'pricing', label: labels?.navPricingLabel ?? 'Pricing' });
+  if (!labels?.hidePrice) {
+    items.push({ id: 'pricing', label: labels?.navPricingLabel ?? 'Pricing' });
+  }
 
   return items;
 }
