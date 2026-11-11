@@ -1,5 +1,6 @@
 import type { Event, StreamChat } from 'stream-chat';
 
+import { presenceChannelFilter, unreadInListedChannels } from '../utils/presence';
 import type { MessagingSession } from '../utils/types';
 import '../utils/stream';
 
@@ -7,9 +8,15 @@ class MessagingPresence {
   unreadCount = $state(0);
   private client: StreamChat | null = null;
   private organizationId = '';
+  private allowedCids = new Set<string>();
   private listening = false;
+  private requestId = 0;
 
-  async connect(session: MessagingSession, organizationId: string): Promise<StreamChat | null> {
+  async connect(
+    session: MessagingSession,
+    organizationId: string,
+    channelIds: readonly string[]
+  ): Promise<StreamChat | null> {
     if (typeof window === 'undefined') return null;
 
     const { StreamChat } = await import('stream-chat');
@@ -24,15 +31,20 @@ class MessagingPresence {
       await client.connectUser({ id: session.userId, name: session.userName }, session.token);
     }
 
+    const requestId = ++this.requestId;
     this.client = client;
     this.organizationId = organizationId;
+    this.allowedCids = new Set(channelIds);
     this.listen(client);
 
     await client.queryChannels(
-      { members: { $in: [session.userId] }, organization_id: organizationId },
+      presenceChannelFilter(session.userId, organizationId, channelIds),
       { last_message_at: -1 },
       { watch: true, state: true, limit: 30 }
     );
+
+    if (requestId !== this.requestId) return client;
+
     this.refreshUnread();
 
     return client;
@@ -69,18 +81,7 @@ class MessagingPresence {
       return;
     }
 
-    const channels = Object.values(client.activeChannels);
-    let unread = 0;
-
-    for (const channel of channels) {
-      const data = channel.data as { organization_id?: string } | undefined;
-
-      if (data?.organization_id !== organizationId) continue;
-
-      unread += channel.countUnread();
-    }
-
-    this.unreadCount = unread;
+    this.unreadCount = unreadInListedChannels(Object.values(client.activeChannels), this.allowedCids, organizationId);
   }
 }
 

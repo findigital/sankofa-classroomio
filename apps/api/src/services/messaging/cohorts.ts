@@ -120,8 +120,16 @@ export async function syncCohortChannels(
 
   const visible = reconciledDirectMessage ? await gateway.queryMemberChannels(profileId, organizationId) : channels;
   const named = await labelDirectChannels(organizationId, profileId, visible, gateway, directMembers);
+  const courseImages = new Map(
+    rosters.flatMap((cohort) => (cohort.courseImage ? [[cohort.groupId, cohort.courseImage] as const] : []))
+  );
 
-  return named.filter((channel) => isListedCohortChannel(channel, publishedGroupIds));
+  return named
+    .filter((channel) => isListedCohortChannel(channel, publishedGroupIds))
+    .map((channel) => ({
+      ...channel,
+      image: channel.cohortId ? (courseImages.get(channel.cohortId) ?? null) : null
+    }));
 }
 
 export async function listDirectCandidates(

@@ -21,6 +21,7 @@ export type CohortRoster = {
   groupId: string;
   name: string;
   courseName: string;
+  courseImage: string | null;
   fellowDmEnabled: boolean;
   members: CohortRosterMember[];
 };
@@ -360,6 +361,9 @@ async function cohortRows(organizationId: string, profileId: string | null, dbCl
       groupId: schema.group.id,
       name: schema.group.name,
       courseTitle: schema.course.title,
+      courseImage: sql<
+        string | null
+      >`nullif(coalesce(nullif(${schema.course.bannerImage}, ''), nullif(${schema.course.logo}, '')), '')`,
       fellowDmEnabled: schema.messagingCohortSetting.fellowDmEnabled
     })
     .from(schema.group)
@@ -371,6 +375,14 @@ async function cohortRows(organizationId: string, profileId: string | null, dbCl
   }
 
   return query.where(and(...filters));
+}
+
+function firstCourseImage(images: Map<string, string> | undefined) {
+  if (!images || images.size === 0) return null;
+
+  const [first] = [...images.entries()].sort((left, right) => left[0].localeCompare(right[0]));
+
+  return first?.[1] ?? null;
 }
 
 /** Cohorts in the org. When `profileId` is set, only cohorts that person belongs to. */
@@ -429,6 +441,7 @@ export async function listCohortRosters(
 
     const seen = new Set<string>();
     const titlesByGroup = new Map<string, Set<string>>();
+    const imagesByGroup = new Map<string, Map<string, string>>();
 
     for (const cohort of cohorts) {
       const titles = titlesByGroup.get(cohort.groupId) ?? new Set<string>();
@@ -437,6 +450,14 @@ export async function listCohortRosters(
       if (title) titles.add(title);
 
       titlesByGroup.set(cohort.groupId, titles);
+
+      const image = cohort.courseImage?.trim();
+
+      if (!image) continue;
+
+      const images = imagesByGroup.get(cohort.groupId) ?? new Map<string, string>();
+      images.set(title || image, image);
+      imagesByGroup.set(cohort.groupId, images);
     }
 
     return cohorts.flatMap((cohort) => {
@@ -447,12 +468,14 @@ export async function listCohortRosters(
       const courseName = [...(titlesByGroup.get(cohort.groupId) ?? [])]
         .sort((left, right) => left.localeCompare(right))
         .join(', ');
+      const courseImage = firstCourseImage(imagesByGroup.get(cohort.groupId));
 
       return [
         {
           groupId: cohort.groupId,
           name: cohort.name,
           courseName: courseName || cohort.name,
+          courseImage,
           fellowDmEnabled: cohort.fellowDmEnabled ?? false,
           members: membersByGroup.get(cohort.groupId) ?? []
         }

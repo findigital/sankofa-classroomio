@@ -3,6 +3,8 @@ export type InboxChannel = {
   channelId: string;
   name: string;
   purpose: string;
+  cohortId: string | null;
+  image: string | null;
 };
 
 export type InboxDirectoryPerson = {

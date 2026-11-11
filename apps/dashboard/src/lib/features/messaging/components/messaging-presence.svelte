@@ -22,7 +22,15 @@
 
       if (!session) return;
 
-      await messagingPresence.connect(session, organizationId);
+      if (messagingApi.channels === null) {
+        await messagingApi.loadChannels({ notify: false });
+      }
+
+      if (cancelled) return;
+
+      const channelIds = (messagingApi.channels ?? []).map((channel) => `${channel.channelType}:${channel.channelId}`);
+
+      await messagingPresence.connect(session, organizationId, channelIds);
 
       if (!cancelled) connectedOrgId = organizationId;
     })().catch(() => undefined);

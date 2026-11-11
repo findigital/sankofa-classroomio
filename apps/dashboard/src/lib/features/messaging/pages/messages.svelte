@@ -64,7 +64,11 @@
 
     if (!browser || !session || !organizationId) return;
 
-    await messagingPresence.connect(session, organizationId);
+    if (messagingApi.channels === null) await messagingApi.loadChannels();
+
+    const channelIds = (messagingApi.channels ?? []).map((channel) => channelKey(channel));
+
+    await messagingPresence.connect(session, organizationId, channelIds);
   }
 
   async function saveStaff() {
@@ -173,7 +177,9 @@
         channelType: channel.channelType,
         channelId: channel.channelId,
         name: channel.name ?? '',
-        purpose: channel.purpose
+        purpose: channel.purpose,
+        cohortId: channel.cohortId,
+        image: channel.image ?? null
       })),
       directory: directory.map((person) => ({
         profileId: person.profileId,
@@ -219,7 +225,7 @@
   });
 </script>
 
-<div class="messaging-page flex h-[calc(100dvh-4rem)] min-h-0 flex-col overflow-hidden">
+<div class="messaging-page flex h-[calc(100dvh-4rem)] min-h-0 w-full flex-col overflow-hidden">
   <Page.Root class="flex min-h-0 flex-1 flex-col overflow-hidden">
     <Page.Header>
       <Page.HeaderContent>
@@ -435,7 +441,12 @@
 
     .messaging-page :global([data-slot='page-body']) {
       gap: 0.5rem;
-      padding-bottom: 0.5rem;
+      padding-bottom: 0;
+    }
+
+    .messaging-page :global([data-testid='messaging-inbox']) {
+      width: 100%;
+      min-width: 0;
     }
   }
 </style>

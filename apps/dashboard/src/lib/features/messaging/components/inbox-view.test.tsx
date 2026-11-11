@@ -20,7 +20,16 @@ const harness = vi.hoisted(() => {
 
   return {
     client,
-    channelProps: { current: {} as { doSendMessageRequest?: (channel: unknown, message: unknown) => Promise<unknown> } }
+    channelProps: {
+      current: {} as { doSendMessageRequest?: (channel: unknown, message: unknown) => Promise<unknown> }
+    },
+    messageListProps: { current: {} as { maxTimeBetweenGroupedMessages?: number } },
+    threadListProps: { current: {} as { maxTimeBetweenGroupedMessages?: number } },
+    previewChannel: null as null | {
+      data: { name?: string; own_capabilities?: string[] };
+      update: ReturnType<typeof vi.fn>;
+      updatePartial: ReturnType<typeof vi.fn>;
+    }
   };
 });
 
@@ -63,9 +72,20 @@ vi.mock('stream-chat-react', () => ({
     const channel = {
       type: 'mentor_dm',
       id: 'mdm',
-      data: { name: 'mentor_dm' },
-      state: { unreadCount: 2 }
+      data: { name: 'mentor_dm', own_capabilities: ['read-channel', 'send-reaction'] },
+      state: {
+        unreadCount: 2,
+        members: {
+          me: { user: { id: 'me' } },
+          ada: { user: { id: 'ada-fellow' } }
+        }
+      },
+      getClient: () => harness.client,
+      on: vi.fn(() => ({ unsubscribe: vi.fn() })),
+      update: vi.fn(),
+      updatePartial: vi.fn()
     };
+    harness.previewChannel = channel;
     const PreviewComponent = Preview;
 
     if (!PreviewComponent) return null;
@@ -99,16 +119,20 @@ vi.mock('stream-chat-react', () => ({
   },
   Window: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
   ChannelHeader: () => <h2>Conversation</h2>,
+  MessageSimple: () => null,
   MessageList: ({
     customMessageActions,
+    maxTimeBetweenGroupedMessages,
     messageActions
   }: {
     customMessageActions?: Record<
       string,
       (message: { id: string; text: string; user: { id: string; name: string } }) => void
     >;
+    maxTimeBetweenGroupedMessages?: number;
     messageActions?: string[];
   }) => {
+    harness.messageListProps.current = { maxTimeBetweenGroupedMessages };
     const message = { id: 'm1', text: 'Hello from the thread', user: { id: 'other', name: 'Ada' } };
     const actions = customMessageActions ?? {};
 
@@ -130,9 +154,20 @@ vi.mock('stream-chat-react', () => ({
     );
   },
   MessageInput: () => <textarea aria-label="Message" />,
-  Thread: () => null
+  Thread: ({
+    additionalMessageListProps,
+    messageActions
+  }: {
+    additionalMessageListProps?: { maxTimeBetweenGroupedMessages?: number };
+    messageActions?: string[];
+  }) => {
+    harness.threadListProps.current = additionalMessageListProps ?? {};
+
+    return <div data-testid="messaging-stream-thread">{(messageActions ?? []).join(',')}</div>;
+  }
 }));
 
+import { senderColorVariable } from '../utils/avatar-color';
 import { InboxView, type InboxViewProps } from './inbox-view';
 
 function installMatchMedia(matches: boolean) {
@@ -164,7 +199,9 @@ function props(overrides: Partial<InboxViewProps> = {}): InboxViewProps {
         channelType: 'mentor_dm',
         channelId: 'mdm',
         name: 'Bea Fellow',
-        purpose: 'mentor_dm'
+        purpose: 'mentor_dm',
+        cohortId: null,
+        image: null
       }
     ],
     directory: [],
@@ -196,6 +233,9 @@ describe('Stream inbox', () => {
   beforeEach(() => {
     installMatchMedia(false);
     harness.channelProps.current = {};
+    harness.messageListProps.current = {};
+    harness.threadListProps.current = {};
+    harness.previewChannel = null;
   });
 
   it('keeps the channel list and the thread in separate panes', async () => {
@@ -206,6 +246,14 @@ describe('Stream inbox', () => {
 
     expect(list.textContent).toContain('Bea Fellow');
     expect(list.textContent).toContain('BF');
+    expect(list.querySelector('[data-testid="messaging-channel-avatar"]')?.getAttribute('style')).toContain(
+      senderColorVariable('ada-fellow')
+    );
+    expect(harness.previewChannel?.data.own_capabilities).toEqual(
+      expect.arrayContaining(['read-channel', 'send-reaction', 'send-reply'])
+    );
+    expect(harness.previewChannel?.update).not.toHaveBeenCalled();
+    expect(harness.previewChannel?.updatePartial).not.toHaveBeenCalled();
     expect(list.textContent).toContain('2');
     expect(thread.textContent).toContain('Choose a conversation');
     expect(thread.textContent).not.toContain('Hello from the thread');
@@ -221,6 +269,9 @@ describe('Stream inbox', () => {
     fireEvent.click(screen.getByRole('button', { name: /Bea Fellow/ }));
 
     expect(thread.textContent).toContain('Hello from the thread');
+    expect(thread.getAttribute('data-channel-kind')).toBe('direct');
+    expect(harness.messageListProps.current.maxTimeBetweenGroupedMessages).toBe(5 * 60 * 1000);
+    expect(harness.threadListProps.current.maxTimeBetweenGroupedMessages).toBe(5 * 60 * 1000);
     expect(thread.querySelector('.str-chat__message--me')).toBeTruthy();
     expect(thread.querySelector('.str-chat__message--other')).toBeTruthy();
     expect(screen.getByTestId('message-actions').textContent).toBe('react,reply');
@@ -248,6 +299,31 @@ describe('Stream inbox', () => {
 
     expect(onSend).toHaveBeenCalledWith('mentor_dm', 'mdm', 'Hi', { id: clientMessageId, parentId });
     expect(sent).toMatchObject({ message: { id: 'msg-1', parent_id: parentId, text: 'Hi' } });
+    expect(screen.getByTestId('messaging-stream-thread').textContent).toContain('reply');
+  });
+
+  it('shows a course image on the cohort mark when one is available', async () => {
+    render(
+      <InboxView
+        {...props({
+          channels: [
+            {
+              channelType: 'mentor_dm',
+              channelId: 'mdm',
+              name: 'Bea Fellow',
+              purpose: 'discussion',
+              cohortId: 'cohort-1',
+              image: 'https://cdn.example/react.png'
+            }
+          ]
+        })}
+      />
+    );
+
+    const avatar = await screen.findByTestId('messaging-channel-avatar');
+
+    expect(avatar.tagName).toBe('IMG');
+    expect(avatar.getAttribute('src')).toBe('https://cdn.example/react.png');
   });
 
   it('uses the channel list as its own screen on a narrow viewport and returns from the thread', async () => {
@@ -284,7 +360,9 @@ describe('Stream inbox', () => {
               channelType: 'mentor_dm',
               channelId: 'mdm',
               name: 'Bea Fellow',
-              purpose: 'announcement'
+              purpose: 'announcement',
+              cohortId: null,
+              image: null
             }
           ]
         })}

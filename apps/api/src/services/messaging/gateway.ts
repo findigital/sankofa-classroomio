@@ -26,6 +26,7 @@ export type MessagingChannelSummary = {
   cohortId: string | null;
   memberCount: number;
   lastMessageAt: string | null;
+  image?: string | null;
 };
 
 export type EnsureMessagingChannel = {
