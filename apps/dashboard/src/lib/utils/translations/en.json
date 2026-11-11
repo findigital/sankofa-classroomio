@@ -3780,7 +3780,7 @@
         },
         "submission_status": {
           "submitted": "Submitted",
-          "in_progress": "In Progress",
+          "in_progress": "Awaiting review",
           "graded": "Graded"
         },
         "workflow": {

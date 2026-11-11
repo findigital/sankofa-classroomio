@@ -68,6 +68,7 @@
               profile: {
                 id: submission.groupmember.profile.id ?? '',
                 fullname: submission.groupmember.profile.fullname ?? '',
+                username: submission.groupmember.profile.username ?? '',
                 avatarUrl: submission.groupmember.profile.avatarUrl ?? ''
               }
             }

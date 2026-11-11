@@ -12,6 +12,7 @@
 
   import { getQuestionsForSection, questionnaire } from '../store';
   import { t } from '$lib/utils/functions/translations';
+  import { formatSubmittedDate } from '$features/course/utils/submissions-utils';
   import type { Question } from '$features/course/types';
   import type { AnswerData } from '@cio/question-types';
   import { toExerciseQuestionModel } from '../question-type-utils';
@@ -196,7 +197,8 @@
     const createdAt = (submission as SubmissionListItem & { createdAt?: string | Date | null }).createdAt;
     if (!createdAt) return t.get('course.navItem.lessons.exercises.all_exercises.analytics.individual.date_unknown');
 
-    return new Date(createdAt).toLocaleString();
+    const formatted = formatSubmittedDate(createdAt instanceof Date ? createdAt.toISOString() : createdAt);
+    return formatted || t.get('course.navItem.lessons.exercises.all_exercises.analytics.individual.date_unknown');
   }
 
   function getStatusLabel(submission: SubmissionListItem & { gradingState?: string | null }) {

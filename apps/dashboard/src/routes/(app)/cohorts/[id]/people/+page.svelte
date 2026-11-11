@@ -21,6 +21,7 @@
   import { onDestroy, untrack } from 'svelte';
   import { DebouncedSearch } from '$lib/utils/functions/debounced-search.svelte';
   import { t } from '$lib/utils/functions/translations';
+  import { profileDisplayName } from '$lib/utils/functions/profile-display-name';
   import { shortenName } from '$lib/utils/functions/string';
   import { ROLE } from '@cio/utils/constants';
   import { ROLE_LABEL } from '$lib/utils/constants/roles';
@@ -326,7 +327,7 @@
                             {#if person.profile.avatarUrl}
                               <Avatar.Image
                                 src={person.profile.avatarUrl}
-                                alt={person.profile.fullname ? person.profile.fullname : 'User'}
+                                alt={profileDisplayName(person.profile) || 'User'}
                               />
                             {/if}
                             <Avatar.Fallback>
@@ -336,7 +337,7 @@
                           <div class="flex flex-col items-start lg:flex-row lg:items-center">
                             <div class="mr-2">
                               <p class="text-base font-normal dark:text-white">
-                                {person.profile.fullname}
+                                {profileDisplayName(person.profile)}
                               </p>
                               <p class="ui:text-primary line-clamp-1 text-xs">
                                 {obscureEmail(getEmail(person))}

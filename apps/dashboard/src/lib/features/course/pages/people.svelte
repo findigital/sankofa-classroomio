@@ -35,6 +35,7 @@
   } from '$features/course/utils/types';
   import { courseApi } from '$features/course/api';
   import { t } from '$lib/utils/functions/translations';
+  import { profileDisplayName } from '$lib/utils/functions/profile-display-name';
   import UserIcon from '@lucide/svelte/icons/user';
   import { shortenName } from '$lib/utils/functions/string';
   import { peopleApi } from '$features/course/api';
@@ -341,7 +342,7 @@
                         {#if getMemberAvatarUrl(person)}
                           <Avatar.Image
                             src={getMemberAvatarUrl(person)}
-                            alt={person.profile.fullname ? person.profile.fullname : 'User'}
+                            alt={profileDisplayName(person.profile) || 'User'}
                           />
                         {/if}
                         <Avatar.Fallback>
@@ -351,7 +352,7 @@
                       <div class="flex flex-col items-start lg:flex-row lg:items-center">
                         <div class="mr-2">
                           <p class="flex items-center gap-1.5 text-base font-normal dark:text-white">
-                            <span class="truncate">{person.profile.fullname}</span>
+                            <span class="truncate">{profileDisplayName(person.profile)}</span>
                             {#if roleLabel}
                               <Badge variant="secondary" class="shrink-0 px-1.5 py-0 text-[10px] leading-4 font-medium">
                                 {$t(roleLabel)}

@@ -33,14 +33,18 @@ export function getMaxPoints(questions: Array<{ points: number }>): number {
 }
 
 /**
- * Formats a date string for display
+ * Formats a submission timestamp in the viewer's local timezone.
  * @param date ISO date string
- * @returns Formatted date string
+ * @returns Formatted date string, or an empty string when the value cannot be parsed
  */
-export function formatSubmittedDate(date: string): string {
-  const d = new Date(date);
+export function formatSubmittedDate(date: string | null | undefined): string {
+  if (!date) return '';
+
+  const parsed = new Date(date);
+  if (Number.isNaN(parsed.getTime())) return '';
+
   return new Intl.DateTimeFormat('en-US', {
     dateStyle: 'full',
     timeStyle: 'medium'
-  }).format(d);
+  }).format(parsed);
 }
