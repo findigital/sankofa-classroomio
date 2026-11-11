@@ -1422,9 +1422,43 @@
       "not_available": "N / A"
     },
     "upload": {
-      "videos": "Carica video",
-      "documents": "Carica documenti",
-      "more_options": "Altre opzioni di caricamento"
+      "files": "Carica file",
+      "add_video_link": "Aggiungi un link video",
+      "more_options": "Altre opzioni di caricamento",
+      "dialog_title": "Carica file",
+      "drag_drop": "Trascina qui i file, oppure fai clic per sfogliare",
+      "limits": "Video e documenti. Fino a {count} file alla volta, {size} ciascuno.",
+      "limits_by_kind": "Fino a {count} file alla volta. Video fino a {videoSize}, documenti fino a {documentSize}.",
+      "add_more": "Aggiungi altri file",
+      "minimize": "Riduci a icona",
+      "maximize": "Apri la finestra di caricamento",
+      "expand": "Mostra file",
+      "collapse": "Nascondi file",
+      "close": "Chiudi",
+      "done": "Fatto",
+      "keep_in_background": "Continua in background",
+      "upgrade": "Passa a un piano superiore per caricare file nella tua libreria multimediale",
+      "status": {
+        "queued": "In attesa",
+        "completed": "Completato",
+        "failed": "Non riuscito",
+        "retry": "Riprova",
+        "remove": "Rimuovi file",
+        "uploading_progress": "Caricamento {percent}%",
+        "size_progress": "{uploaded} di {total}"
+      },
+      "summary": {
+        "uploading": "{done} file su {total} caricati",
+        "completed": "{count} caricamenti completati",
+        "failed": "{count} caricamenti su {total} non riusciti"
+      },
+      "errors": {
+        "unsupported_type": "{name} non è un video o un documento supportato.",
+        "too_large": "{name} supera {size}.",
+        "too_many": "Puoi caricare fino a {count} file alla volta.",
+        "generic": "Caricamento non riuscito"
+      },
+      "switch_organization_confirm": "Cambiare organizzazione annulla i caricamenti in corso. Cambiare comunque?"
     },
     "storage": {
       "total_bytes": "Spazio di archiviazione totale",
@@ -2494,7 +2528,11 @@
       "preview": "Corso in anteprima",
       "preview_missing_slug": "Genera e salva uno slug del corso prima dell'anteprima.",
       "view_as_student": "Visualizza come studente",
-      "view_course_site": "Visualizza il sito del corso"
+      "view_course_site": "Visualizza il sito del corso",
+      "assistant_pop_out": "Apri la chat in una finestra",
+      "assistant_close_floating": "Chiudi la chat fluttuante",
+      "assistant_tip": "Suggerimento: utilizza l'icona a comparsa per far fluttuare l'assistente mentre lavori.",
+      "assistant_tip_dismiss": "Ignora suggerimento"
     },
     "view_course_site": {
       "unpublished_title": "Pubblica il tuo corso",
@@ -6028,6 +6066,11 @@
     "titles": {
       "ai_assistant": "Assistente AI",
       "transcript": "Trascrizione"
+    },
+    "floating": {
+      "resize_aria": "Ridimensiona la finestra dell'assistente",
+      "expand_aria": "Espandi al pannello laterale",
+      "dock_hint": "Rilascia per attraccare lateralmente"
     }
   },
   "cohorts": {
@@ -6539,7 +6582,10 @@
     "consent": {
       "page_title": "Collega un'app a ClassroomIO",
       "title": "Collega {client} a ClassroomIO",
-      "workspace": "Spazio di lavoro: {workspace}",
+      "subtitle": "Scegli lo spazio di lavoro a cui {client} può accedere.",
+      "workspace_label": "Spazio di lavoro",
+      "no_workspaces_title": "Nessuno spazio di lavoro disponibile",
+      "no_workspaces_description": "Solo gli amministratori dello spazio di lavoro possono collegare le app. Chiedi a un amministratore o accedi con un account amministratore.",
       "permissions_heading": "{client} potrà:",
       "stay_connected": "Rimani connesso finché non rimuovi l'accesso",
       "admin_note": "Solo gli amministratori dello spazio di lavoro possono collegare le app. L'accesso segue le tue autorizzazioni da amministratore e termina se le perdi.",
@@ -6550,14 +6596,9 @@
       "error_title": "Questa richiesta di connessione non è valida",
       "error_description": "Torna all'app che volevi collegare e ricomincia."
     },
-    "select_organization": {
-      "title": "Scegli uno spazio di lavoro",
-      "subtitle": "Scegli lo spazio di lavoro a cui {client} può accedere.",
-      "empty_title": "Nessuno spazio di lavoro disponibile",
-      "empty_description": "Solo gli amministratori dello spazio di lavoro possono collegare le app. Chiedi a un amministratore o accedi con un account amministratore."
-    },
     "error": {
-      "generic": "Qualcosa è andato storto. Riprova."
+      "generic": "Qualcosa è andato storto. Riprova.",
+      "retry": "Riprova"
     },
     "scope_group": {
       "courses": {

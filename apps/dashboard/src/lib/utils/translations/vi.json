@@ -3077,7 +3077,11 @@
       "preview": "Xem trước khóa học",
       "preview_missing_slug": "Tạo và lưu slug khóa học trước khi xem trước.",
       "view_as_student": "Xem với tư cách sinh viên",
-      "view_course_site": "Xem trang khóa học"
+      "view_course_site": "Xem trang khóa học",
+      "assistant_pop_out": "Trò chuyện bật ra",
+      "assistant_close_floating": "Đóng trò chuyện nổi",
+      "assistant_tip": "Mẹo: sử dụng biểu tượng bật ra để di chuyển trợ lý trong khi bạn làm việc.",
+      "assistant_tip_dismiss": "Mẹo loại bỏ"
     },
     "view_course_site": {
       "unpublished_title": "Xuất bản khóa học của bạn",
@@ -3794,9 +3798,43 @@
       "refresh": "Làm cho khỏe lại"
     },
     "upload": {
-      "videos": "Tải video lên",
-      "documents": "Tải tài liệu lên",
-      "more_options": "Thêm tùy chọn tải lên"
+      "files": "Tải tệp lên",
+      "add_video_link": "Thêm liên kết video",
+      "more_options": "Tùy chọn tải lên khác",
+      "dialog_title": "Tải tệp lên",
+      "drag_drop": "Kéo và thả tệp vào đây, hoặc nhấp để chọn",
+      "limits": "Video và tài liệu. Tối đa {count} tệp mỗi lần, mỗi tệp {size}.",
+      "limits_by_kind": "Tối đa {count} tệp mỗi lần. Video tối đa {videoSize}, tài liệu tối đa {documentSize}.",
+      "add_more": "Thêm tệp",
+      "minimize": "Thu nhỏ",
+      "maximize": "Mở cửa sổ tải lên",
+      "expand": "Hiện tệp",
+      "collapse": "Ẩn tệp",
+      "close": "Đóng",
+      "done": "Xong",
+      "keep_in_background": "Tiếp tục ở chế độ nền",
+      "upgrade": "Nâng cấp để tải tệp lên thư viện phương tiện của bạn",
+      "status": {
+        "queued": "Đang chờ",
+        "completed": "Hoàn tất",
+        "failed": "Thất bại",
+        "retry": "Thử lại",
+        "remove": "Xóa tệp",
+        "uploading_progress": "Đang tải lên {percent}%",
+        "size_progress": "{uploaded} trên {total}"
+      },
+      "summary": {
+        "uploading": "Đã tải lên {done} trên {total} tệp",
+        "completed": "Đã tải lên xong {count} tệp",
+        "failed": "{count} trên {total} lượt tải lên thất bại"
+      },
+      "errors": {
+        "unsupported_type": "{name} không phải là video hoặc tài liệu được hỗ trợ.",
+        "too_large": "{name} lớn hơn {size}.",
+        "too_many": "Bạn có thể tải lên tối đa {count} tệp mỗi lần.",
+        "generic": "Tải lên thất bại"
+      },
+      "switch_organization_confirm": "Chuyển tổ chức sẽ hủy các tệp đang tải lên. Vẫn chuyển?"
     },
     "storage": {
       "total_bytes": "Tổng dung lượng lưu trữ",
@@ -5778,6 +5816,11 @@
     "titles": {
       "ai_assistant": "Trợ lý AI",
       "transcript": "Bản ghi"
+    },
+    "floating": {
+      "resize_aria": "Thay đổi kích thước cửa sổ trợ lý",
+      "expand_aria": "Mở rộng sang bảng điều khiển bên",
+      "dock_hint": "Thả để gắn sang một bên"
     }
   },
   "compliance": {
@@ -6569,7 +6612,10 @@
     "consent": {
       "page_title": "Kết nối ứng dụng với ClassroomIO",
       "title": "Kết nối {client} với ClassroomIO",
-      "workspace": "Không gian làm việc: {workspace}",
+      "subtitle": "Chọn không gian làm việc mà {client} có thể truy cập.",
+      "workspace_label": "Không gian làm việc",
+      "no_workspaces_title": "Không có không gian làm việc nào",
+      "no_workspaces_description": "Chỉ quản trị viên không gian làm việc mới có thể kết nối ứng dụng. Hãy nhờ quản trị viên hoặc đăng nhập bằng tài khoản quản trị.",
       "permissions_heading": "{client} sẽ có thể:",
       "stay_connected": "Giữ kết nối cho đến khi bạn gỡ quyền truy cập",
       "admin_note": "Chỉ quản trị viên không gian làm việc mới có thể kết nối ứng dụng. Quyền truy cập theo quyền quản trị của bạn và sẽ kết thúc nếu bạn mất quyền đó.",
@@ -6580,14 +6626,9 @@
       "error_title": "Yêu cầu kết nối này không hợp lệ",
       "error_description": "Hãy quay lại ứng dụng bạn đang kết nối và bắt đầu lại."
     },
-    "select_organization": {
-      "title": "Chọn không gian làm việc",
-      "subtitle": "Chọn không gian làm việc mà {client} có thể truy cập.",
-      "empty_title": "Không có không gian làm việc nào",
-      "empty_description": "Chỉ quản trị viên không gian làm việc mới có thể kết nối ứng dụng. Hãy nhờ quản trị viên hoặc đăng nhập bằng tài khoản quản trị."
-    },
     "error": {
-      "generic": "Đã xảy ra lỗi. Vui lòng thử lại."
+      "generic": "Đã xảy ra lỗi. Vui lòng thử lại.",
+      "retry": "Thử lại"
     },
     "scope_group": {
       "courses": {
