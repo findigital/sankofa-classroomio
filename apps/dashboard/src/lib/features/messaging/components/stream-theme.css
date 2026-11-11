@@ -94,6 +94,9 @@
   --str-chat__on-unread-badge-color: var(--primary-foreground);
   --str-chat__channel-preview-unread-badge-background-color: var(--primary);
   --str-chat__channel-preview-unread-badge-color: var(--primary-foreground);
+  --str-chat__date-separator-color: var(--muted-foreground);
+  --str-chat__date-separator-line-color: var(--border);
+  --str-chat__date-separator-background-color: transparent;
   color: var(--foreground);
   font-family: var(--font-cio, var(--font-sans));
   font-size: var(--text-sm, 0.875rem);
@@ -151,4 +154,168 @@
 .messaging-inbox .str-chat__cta-button:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 50%, transparent);
+}
+
+.messaging-inbox {
+  --messaging-sender-0: oklch(from var(--primary) 0.42 c h);
+  --messaging-sender-1: oklch(from var(--primary) 0.42 c calc(h + 45));
+  --messaging-sender-2: oklch(from var(--primary) 0.42 c calc(h + 90));
+  --messaging-sender-3: oklch(from var(--primary) 0.42 c calc(h + 135));
+  --messaging-sender-4: oklch(from var(--primary) 0.42 c calc(h + 180));
+  --messaging-sender-5: oklch(from var(--primary) 0.42 c calc(h + 225));
+  --messaging-sender-6: oklch(from var(--primary) 0.42 c calc(h + 270));
+  --messaging-sender-7: oklch(from var(--primary) 0.42 c calc(h + 315));
+  --messaging-sender-0-label: oklch(from var(--primary) 0.38 c h);
+  --messaging-sender-1-label: oklch(from var(--primary) 0.38 c calc(h + 45));
+  --messaging-sender-2-label: oklch(from var(--primary) 0.38 c calc(h + 90));
+  --messaging-sender-3-label: oklch(from var(--primary) 0.38 c calc(h + 135));
+  --messaging-sender-4-label: oklch(from var(--primary) 0.38 c calc(h + 180));
+  --messaging-sender-5-label: oklch(from var(--primary) 0.38 c calc(h + 225));
+  --messaging-sender-6-label: oklch(from var(--primary) 0.38 c calc(h + 270));
+  --messaging-sender-7-label: oklch(from var(--primary) 0.38 c calc(h + 315));
+}
+
+.dark .messaging-inbox {
+  --messaging-sender-0-label: oklch(from var(--primary) 0.78 c h);
+  --messaging-sender-1-label: oklch(from var(--primary) 0.78 c calc(h + 45));
+  --messaging-sender-2-label: oklch(from var(--primary) 0.78 c calc(h + 90));
+  --messaging-sender-3-label: oklch(from var(--primary) 0.78 c calc(h + 135));
+  --messaging-sender-4-label: oklch(from var(--primary) 0.78 c calc(h + 180));
+  --messaging-sender-5-label: oklch(from var(--primary) 0.78 c calc(h + 225));
+  --messaging-sender-6-label: oklch(from var(--primary) 0.78 c calc(h + 270));
+  --messaging-sender-7-label: oklch(from var(--primary) 0.78 c calc(h + 315));
+}
+
+.messaging-sender {
+  --str-chat__avatar-background-color: var(--messaging-sender-fill);
+  --str-chat__avatar-color: var(--primary-foreground);
+}
+
+.messaging-sender-0 {
+  --messaging-sender-fill: var(--messaging-sender-0);
+  --messaging-sender-label: var(--messaging-sender-0-label);
+}
+
+.messaging-sender-1 {
+  --messaging-sender-fill: var(--messaging-sender-1);
+  --messaging-sender-label: var(--messaging-sender-1-label);
+}
+
+.messaging-sender-2 {
+  --messaging-sender-fill: var(--messaging-sender-2);
+  --messaging-sender-label: var(--messaging-sender-2-label);
+}
+
+.messaging-sender-3 {
+  --messaging-sender-fill: var(--messaging-sender-3);
+  --messaging-sender-label: var(--messaging-sender-3-label);
+}
+
+.messaging-sender-4 {
+  --messaging-sender-fill: var(--messaging-sender-4);
+  --messaging-sender-label: var(--messaging-sender-4-label);
+}
+
+.messaging-sender-5 {
+  --messaging-sender-fill: var(--messaging-sender-5);
+  --messaging-sender-label: var(--messaging-sender-5-label);
+}
+
+.messaging-sender-6 {
+  --messaging-sender-fill: var(--messaging-sender-6);
+  --messaging-sender-label: var(--messaging-sender-6-label);
+}
+
+.messaging-sender-7 {
+  --messaging-sender-fill: var(--messaging-sender-7);
+  --messaging-sender-label: var(--messaging-sender-7-label);
+}
+
+.messaging-inbox .str-chat__message--other {
+  --messaging-received-bubble: color-mix(in oklch, var(--messaging-sender-fill, transparent) 8%, var(--muted));
+}
+
+.dark .messaging-inbox .str-chat__message--other {
+  --messaging-received-bubble: color-mix(in oklch, var(--messaging-sender-fill, transparent) 12%, var(--secondary));
+}
+
+.messaging-inbox .str-chat__message--other .str-chat__message-bubble {
+  background-color: var(--messaging-received-bubble);
+  color: var(--foreground);
+}
+
+.messaging-inbox .str-chat__message--me .str-chat__message-bubble {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.messaging-inbox .str-chat__message-bubble {
+  position: relative;
+  overflow: visible;
+}
+
+.messaging-inbox .str-chat__li--top .str-chat__message-bubble,
+.messaging-inbox .str-chat__li--middle .str-chat__message-bubble,
+.messaging-inbox .str-chat__li--bottom .str-chat__message-bubble,
+.messaging-inbox .str-chat__li--single .str-chat__message-bubble {
+  border-radius: var(--radius);
+}
+
+.messaging-inbox .str-chat__li--bottom .str-chat__message--me .str-chat__message-bubble,
+.messaging-inbox .str-chat__li--single .str-chat__message--me .str-chat__message-bubble {
+  border-end-end-radius: 0.3rem;
+}
+
+.messaging-inbox .str-chat__li--bottom .str-chat__message--other .str-chat__message-bubble,
+.messaging-inbox .str-chat__li--single .str-chat__message--other .str-chat__message-bubble {
+  border-end-start-radius: 0.3rem;
+}
+
+.messaging-inbox .str-chat__li--bottom .str-chat__message--me .str-chat__message-bubble::after,
+.messaging-inbox .str-chat__li--single .str-chat__message--me .str-chat__message-bubble::after {
+  content: '';
+  position: absolute;
+  right: -0.35rem;
+  bottom: 0;
+  border-width: 0.45rem 0 0 0.45rem;
+  border-style: solid;
+  border-color: transparent transparent transparent var(--primary);
+}
+
+.messaging-inbox .str-chat__li--bottom .str-chat__message--other .str-chat__message-bubble::after,
+.messaging-inbox .str-chat__li--single .str-chat__message--other .str-chat__message-bubble::after {
+  content: '';
+  position: absolute;
+  left: -0.35rem;
+  bottom: 0;
+  border-width: 0.45rem 0.45rem 0 0;
+  border-style: solid;
+  border-color: transparent var(--messaging-received-bubble) transparent transparent;
+}
+
+.messaging-inbox .str-chat__li--top .str-chat__message,
+.messaging-inbox .str-chat__li--middle .str-chat__message {
+  margin-block-end: 0.125rem;
+}
+
+.messaging-inbox .str-chat__li--bottom .str-chat__message,
+.messaging-inbox .str-chat__li--single .str-chat__message {
+  margin-block-end: 0.85rem;
+}
+
+.messaging-inbox .str-chat__message-simple-name {
+  color: var(--messaging-sender-label, var(--foreground));
+  font-weight: 600;
+}
+
+.messaging-inbox__thread[data-channel-kind='direct'] .str-chat__message-simple-name {
+  display: none;
+}
+
+.messaging-inbox .str-chat__message-simple-timestamp {
+  color: var(--muted-foreground);
+}
+
+.messaging-inbox .str-chat__channel-preview-messenger--unread .str-chat__channel-preview-messenger--name {
+  font-weight: 700;
 }

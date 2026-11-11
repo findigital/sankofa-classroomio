@@ -23,6 +23,8 @@ const harness = vi.hoisted(() => {
     channelProps: {
       current: {} as { doSendMessageRequest?: (channel: unknown, message: unknown) => Promise<unknown> }
     },
+    messageListProps: { current: {} as { maxTimeBetweenGroupedMessages?: number } },
+    threadListProps: { current: {} as { maxTimeBetweenGroupedMessages?: number } },
     previewChannel: null as null | {
       data: { name?: string; own_capabilities?: string[] };
       update: ReturnType<typeof vi.fn>;
@@ -71,7 +73,14 @@ vi.mock('stream-chat-react', () => ({
       type: 'mentor_dm',
       id: 'mdm',
       data: { name: 'mentor_dm', own_capabilities: ['read-channel', 'send-reaction'] },
-      state: { unreadCount: 2 },
+      state: {
+        unreadCount: 2,
+        members: {
+          me: { user: { id: 'me' } },
+          ada: { user: { id: 'ada-fellow' } }
+        }
+      },
+      getClient: () => harness.client,
       on: vi.fn(() => ({ unsubscribe: vi.fn() })),
       update: vi.fn(),
       updatePartial: vi.fn()
@@ -110,16 +119,20 @@ vi.mock('stream-chat-react', () => ({
   },
   Window: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
   ChannelHeader: () => <h2>Conversation</h2>,
+  MessageSimple: () => null,
   MessageList: ({
     customMessageActions,
+    maxTimeBetweenGroupedMessages,
     messageActions
   }: {
     customMessageActions?: Record<
       string,
       (message: { id: string; text: string; user: { id: string; name: string } }) => void
     >;
+    maxTimeBetweenGroupedMessages?: number;
     messageActions?: string[];
   }) => {
+    harness.messageListProps.current = { maxTimeBetweenGroupedMessages };
     const message = { id: 'm1', text: 'Hello from the thread', user: { id: 'other', name: 'Ada' } };
     const actions = customMessageActions ?? {};
 
@@ -141,11 +154,20 @@ vi.mock('stream-chat-react', () => ({
     );
   },
   MessageInput: () => <textarea aria-label="Message" />,
-  Thread: ({ messageActions }: { messageActions?: string[] }) => (
-    <div data-testid="messaging-stream-thread">{(messageActions ?? []).join(',')}</div>
-  )
+  Thread: ({
+    additionalMessageListProps,
+    messageActions
+  }: {
+    additionalMessageListProps?: { maxTimeBetweenGroupedMessages?: number };
+    messageActions?: string[];
+  }) => {
+    harness.threadListProps.current = additionalMessageListProps ?? {};
+
+    return <div data-testid="messaging-stream-thread">{(messageActions ?? []).join(',')}</div>;
+  }
 }));
 
+import { senderColorVariable } from '../utils/avatar-color';
 import { InboxView, type InboxViewProps } from './inbox-view';
 
 function installMatchMedia(matches: boolean) {
@@ -211,6 +233,8 @@ describe('Stream inbox', () => {
   beforeEach(() => {
     installMatchMedia(false);
     harness.channelProps.current = {};
+    harness.messageListProps.current = {};
+    harness.threadListProps.current = {};
     harness.previewChannel = null;
   });
 
@@ -222,8 +246,8 @@ describe('Stream inbox', () => {
 
     expect(list.textContent).toContain('Bea Fellow');
     expect(list.textContent).toContain('BF');
-    expect(list.querySelector('[data-testid="messaging-channel-avatar"]')?.getAttribute('style')).toMatch(
-      /var\(--(chart-[2-5]|sidebar-primary)\)/
+    expect(list.querySelector('[data-testid="messaging-channel-avatar"]')?.getAttribute('style')).toContain(
+      senderColorVariable('ada-fellow')
     );
     expect(harness.previewChannel?.data.own_capabilities).toEqual(
       expect.arrayContaining(['read-channel', 'send-reaction', 'send-reply'])
@@ -245,6 +269,9 @@ describe('Stream inbox', () => {
     fireEvent.click(screen.getByRole('button', { name: /Bea Fellow/ }));
 
     expect(thread.textContent).toContain('Hello from the thread');
+    expect(thread.getAttribute('data-channel-kind')).toBe('direct');
+    expect(harness.messageListProps.current.maxTimeBetweenGroupedMessages).toBe(5 * 60 * 1000);
+    expect(harness.threadListProps.current.maxTimeBetweenGroupedMessages).toBe(5 * 60 * 1000);
     expect(thread.querySelector('.str-chat__message--me')).toBeTruthy();
     expect(thread.querySelector('.str-chat__message--other')).toBeTruthy();
     expect(screen.getByTestId('message-actions').textContent).toBe('react,reply');

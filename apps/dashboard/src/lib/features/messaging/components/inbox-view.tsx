@@ -9,11 +9,13 @@ import {
   Chat,
   MessageInput,
   MessageList,
+  MessageSimple,
   Thread,
   ThreadHeader as StreamThreadHeader,
   Window,
   useChatContext,
   type ChannelPreviewUIComponentProps,
+  type MessageUIComponentProps,
   type ThreadHeaderProps
 } from 'stream-chat-react';
 import 'stream-chat-react/dist/css/v2/index.css';
@@ -21,7 +23,7 @@ import 'stream-chat-react/dist/css/v2/index.css';
 import './stream-theme.css';
 import './inbox.css';
 
-import { cohortMarkColor } from '../utils/avatar-color';
+import { channelColorKey, senderColorIndex, senderColorVariable } from '../utils/avatar-color';
 import type { InboxViewProps } from '../utils/inbox-types';
 
 export type { InboxViewProps } from '../utils/inbox-types';
@@ -30,6 +32,7 @@ type InboxPreviewValue = {
   names: Map<string, string>;
   images: Map<string, string>;
   cohortIds: Map<string, string>;
+  purposes: Map<string, string>;
   onOpen: (channel: Channel) => void;
   emptyLabel: string;
   selectLabel: string;
@@ -47,6 +50,7 @@ const InboxPreview = createContext<InboxPreviewValue | null>(null);
 
 const NARROW_QUERY = '(max-width: 767px)';
 const MESSAGE_ACTIONS = ['react', 'reply'] as const;
+const GROUP_WINDOW_MS = 5 * 60 * 1000;
 const STREAM_THEME_LIGHT = 'str-chat__theme-light';
 const STREAM_THEME_DARK = 'str-chat__theme-dark';
 
@@ -58,6 +62,29 @@ function narrowNow() {
 
 function channelKey(channel: { type?: string; id?: string }) {
   return `${channel.type ?? ''}:${channel.id ?? ''}`;
+}
+
+function channelMemberIds(channel: Channel) {
+  const members = channel.state?.members ?? {};
+  const ids: string[] = [];
+
+  for (const member of Object.values(members)) {
+    const id = member.user?.id;
+
+    if (id) ids.push(id);
+  }
+
+  return ids;
+}
+
+function SenderMessage(props: MessageUIComponentProps) {
+  const index = senderColorIndex(props.message.user?.id || 'unknown');
+
+  return (
+    <div className={`messaging-sender messaging-sender-${index}`} style={{ display: 'contents' }}>
+      <MessageSimple {...props} />
+    </div>
+  );
 }
 
 function channelInitials(name: string) {
@@ -190,7 +217,7 @@ function CohortAvatar({ image, name, colorKey }: { image?: string; name?: string
       className="messaging-inbox__mark"
       data-testid="messaging-channel-avatar"
       aria-hidden="true"
-      style={{ background: cohortMarkColor(colorKey), color: 'var(--primary-foreground)' }}
+      style={{ background: senderColorVariable(colorKey), color: 'var(--primary-foreground)' }}
     >
       {channelInitials(name ?? '')}
     </span>
@@ -208,7 +235,14 @@ function NamedPreview(props: ChannelPreviewUIComponentProps) {
   const title = preview?.names.get(key);
   const image = preview?.images.get(key) || channelImage(props.channel);
   const cohortId = preview?.cohortIds.get(key) || (props.channel.data as { cohort_id?: string } | undefined)?.cohort_id;
-  const colorKey = cohortId || key;
+  const purpose = preview?.purposes.get(key) || (props.channel.data as { purpose?: string } | undefined)?.purpose;
+  const colorKey = channelColorKey({
+    purpose,
+    cohortId,
+    memberIds: channelMemberIds(props.channel),
+    selfId: props.channel.getClient()?.userID,
+    fallback: key
+  });
 
   return (
     <div onClick={() => preview?.onOpen(props.channel)}>
@@ -293,6 +327,16 @@ function InboxPanes(props: InboxViewProps) {
     return map;
   }, [props.channels]);
 
+  const purposes = useMemo(() => {
+    const map = new Map<string, string>();
+
+    for (const channel of props.channels) {
+      if (channel.purpose) map.set(`${channel.channelType}:${channel.channelId}`, channel.purpose);
+    }
+
+    return map;
+  }, [props.channels]);
+
   const allowedKey = props.channels.map((channel) => `${channel.channelType}:${channel.channelId}`).join('\n');
 
   const onOpen = useCallback((channel: Channel) => {
@@ -306,12 +350,13 @@ function InboxPanes(props: InboxViewProps) {
       names,
       images,
       cohortIds,
+      purposes,
       onOpen,
       emptyLabel: props.labels.empty,
       selectLabel: props.labels.select,
       backLabel: props.labels.back
     }),
-    [cohortIds, images, names, onOpen, props.labels.back, props.labels.empty, props.labels.select]
+    [cohortIds, images, names, onOpen, props.labels.back, props.labels.empty, props.labels.select, purposes]
   );
 
   const filters = useMemo(() => {
@@ -482,6 +527,7 @@ function InboxPanes(props: InboxViewProps) {
   const purpose = listed?.purpose ?? (activeChannel?.data as { purpose?: string } | undefined)?.purpose;
   const canCompose =
     Boolean(activeKey) && props.disclosureAccepted && (purpose !== 'announcement' || props.canPostAnnouncements);
+  const channelKind = purpose === 'fellow_dm' || purpose === 'mentor_dm' ? 'direct' : 'group';
   const showList = !narrow || !openedKey;
   const showThread = !narrow || Boolean(openedKey);
 
@@ -527,11 +573,16 @@ function InboxPanes(props: InboxViewProps) {
         {showThread ? (
           <section
             className="messaging-inbox__thread"
+            data-channel-kind={channelKind}
             data-compose={canCompose ? 'true' : 'false'}
             data-testid="messaging-thread"
           >
             {activeKey ? (
-              <StreamChannel ThreadHeader={InboxThreadHeader} doSendMessageRequest={sendThroughApi}>
+              <StreamChannel
+                Message={SenderMessage}
+                ThreadHeader={InboxThreadHeader}
+                doSendMessageRequest={sendThroughApi}
+              >
                 <Window>
                   <div className="messaging-inbox__header" data-testid="messaging-channel-header">
                     {narrow && openedKey ? (
@@ -573,12 +624,17 @@ function InboxPanes(props: InboxViewProps) {
                       </div>
                     ) : null}
                   </div>
-                  <MessageList customMessageActions={messageActions} messageActions={[...MESSAGE_ACTIONS]} />
+                  <MessageList
+                    customMessageActions={messageActions}
+                    maxTimeBetweenGroupedMessages={GROUP_WINDOW_MS}
+                    messageActions={[...MESSAGE_ACTIONS]}
+                  />
                   {canCompose ? <MessageInput /> : null}
                 </Window>
                 <Thread
                   additionalMessageListProps={{
                     customMessageActions: messageActions,
+                    maxTimeBetweenGroupedMessages: GROUP_WINDOW_MS,
                     messageActions: [...MESSAGE_ACTIONS]
                   }}
                   messageActions={[...MESSAGE_ACTIONS]}
