@@ -3,13 +3,13 @@ import { env } from '@cio/core/config/env';
 import {
   cohortBelongsToOrg,
   cohortIncludesCourse,
-  courseBelongsToOrg,
   listFellowPace,
   listPaceFilters,
+  publishedCourseBelongsToOrg,
   type FellowPaceFellow
 } from '@cio/db/queries/organization/fellow-pace';
 import { ROLE } from '@cio/utils/constants';
-import { fellowsVisibleToViewer } from '@cio/utils/functions/fellow-pace';
+import { fellowsVisibleToViewer, paceFellowForViewer } from '@cio/utils/functions/fellow-pace';
 import type { TFellowPaceQuery } from '@cio/utils/validation/organization';
 
 export type PaceViewer = {
@@ -27,7 +27,7 @@ export async function getFellowPace(organizationId: string, viewer: PaceViewer, 
   }
 
   if (query.courseId) {
-    const courseInOrg = await courseBelongsToOrg(organizationId, query.courseId);
+    const courseInOrg = await publishedCourseBelongsToOrg(organizationId, query.courseId);
 
     if (!courseInOrg) {
       throw new AppError('Course not found', ErrorCodes.FELLOW_SCOPE_NOT_FOUND, 404);
@@ -59,7 +59,9 @@ export async function getFellowPace(organizationId: string, viewer: PaceViewer, 
     mentorProfileId,
     quietDays
   });
-  const fellows: FellowPaceFellow[] = fellowsVisibleToViewer(rows, viewer);
+  const fellows: FellowPaceFellow[] = fellowsVisibleToViewer(rows, viewer).map((fellow) =>
+    paceFellowForViewer(fellow, viewer.roleId)
+  );
   const filters = await listPaceFilters(organizationId);
 
   return { quietDays, fellows, courses: filters.courses, cohorts: filters.cohorts };

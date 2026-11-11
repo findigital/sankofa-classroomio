@@ -12,6 +12,7 @@ import {
   decideDirectMessage,
   directChannelId,
   directMessageDenyCode,
+  directMessageDisplayName,
   selectSafeguardingStaff,
   type DirectMessageDenyReason,
   type MessagingParticipant
@@ -114,7 +115,7 @@ export async function openDirectMessage(
 
   await gateway.upsertUsers(members.map(toStreamPerson));
 
-  return gateway.ensureChannel({
+  const opened = await gateway.ensureChannel({
     channelType: decision.channelType,
     channelId,
     organizationId,
@@ -123,6 +124,65 @@ export async function openDirectMessage(
     createdById: requesterId,
     memberIds: decision.memberIds,
     protectedMemberIds: [requesterId, targetId]
+  });
+  const name = directMessageDisplayName(requesterId, members);
+
+  return name ? { ...opened, name } : opened;
+}
+
+/**
+ * Replaces direct-message names with the other participant's name for this viewer.
+ * Cohort channel names are already the same for everyone.
+ */
+export async function labelDirectChannels(
+  organizationId: string,
+  viewerId: string,
+  channels: MessagingChannelSummary[],
+  gateway: StreamGateway,
+  knownMembers: Map<string, string[]> = new Map()
+): Promise<MessagingChannelSummary[]> {
+  const directChannels = channels.filter(
+    (channel) => channel.purpose === 'fellow_dm' || channel.purpose === 'mentor_dm'
+  );
+
+  if (directChannels.length === 0) return channels;
+
+  const membersByChannel = new Map(knownMembers);
+
+  for (const channel of directChannels) {
+    const key = `${channel.channelType}:${channel.channelId}`;
+
+    if (membersByChannel.has(key)) continue;
+
+    const inspected = await gateway.inspectChannel(channel.channelType, channel.channelId);
+
+    if (!inspected) continue;
+
+    membersByChannel.set(key, inspected.memberIds);
+  }
+
+  const profileIds = [...new Set([...membersByChannel.values()].flat())];
+
+  if (profileIds.length === 0) return channels;
+
+  const profiles = await listMessagingProfiles(organizationId, profileIds);
+  const profilesById = new Map(profiles.map((profile) => [profile.profileId, profile]));
+
+  return channels.map((channel) => {
+    if (channel.purpose !== 'fellow_dm' && channel.purpose !== 'mentor_dm') return channel;
+
+    const memberIds = membersByChannel.get(`${channel.channelType}:${channel.channelId}`);
+
+    if (!memberIds) return channel;
+
+    const people = memberIds.flatMap((profileId) => {
+      const profile = profilesById.get(profileId);
+
+      return profile ? [profile] : [];
+    });
+    const name = directMessageDisplayName(viewerId, people);
+
+    return name ? { ...channel, name } : channel;
   });
 }
 

@@ -62,6 +62,7 @@ function channelClient(members: string[], memberCount: number) {
   const removeMembers = vi.fn().mockResolvedValue({});
   const query = vi.fn().mockResolvedValue({ channel: { member_count: memberCount }, messages: [] });
   const create = vi.fn().mockRejectedValue({ code: 4, message: 'already exists' });
+  const updatePartial = vi.fn().mockResolvedValue({});
   const client = {
     channel: vi.fn((_type: string, id: string) => ({
       id,
@@ -71,7 +72,8 @@ function channelClient(members: string[], memberCount: number) {
       query,
       queryMembers,
       addMembers,
-      removeMembers
+      removeMembers,
+      updatePartial
     }))
   } as unknown as StreamChat;
 

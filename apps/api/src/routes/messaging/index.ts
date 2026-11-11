@@ -217,7 +217,7 @@ export const messagingRouter = new Hono()
   .get('/admin/channels', authMiddleware, orgAdminMiddleware, async (c) => {
     try {
       const member = viewer(c);
-      const data = await listOrganizationChannels(member.organizationId, getStreamGateway());
+      const data = await listOrganizationChannels(member.organizationId, member.profileId, getStreamGateway());
 
       return c.json({ success: true, data }, 200);
     } catch (error) {

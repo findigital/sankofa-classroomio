@@ -6,8 +6,10 @@ import {
   CLIENT_DENIED_PERMISSIONS,
   channelTypeDefinitions,
   channelTypeUpdate,
+  cohortChannelDisplayName,
   decideDirectMessage,
   directChannelId,
+  directMessageDisplayName,
   isListedCohortChannel,
   planUnreadMessageDigest,
   reviewMessageText,
@@ -229,6 +231,23 @@ describe('reviewMessageText', () => {
         { phrase: 'bad word', action: 'block' }
       ])
     ).toEqual({ action: 'block', phrase: 'bad word' });
+  });
+});
+
+describe('channel display names', () => {
+  const mentor = { profileId: 'mentor', roleId: ROLE.TUTOR, name: 'Ada Mentor' };
+  const fellow = { profileId: 'fellow', roleId: ROLE.STUDENT, name: 'Bea Fellow' };
+  const staff = { profileId: 'staff', roleId: ROLE.ADMIN, name: 'Cam Admin' };
+
+  it('names a direct message for the other participant', () => {
+    expect(directMessageDisplayName('mentor', [mentor, fellow, staff])).toBe('Bea Fellow');
+    expect(directMessageDisplayName('fellow', [mentor, fellow, staff])).toBe('Ada Mentor');
+    expect(directMessageDisplayName('staff', [mentor, fellow, staff])).toBe('Ada Mentor, Bea Fellow');
+  });
+
+  it('names a cohort channel from the course', () => {
+    expect(cohortChannelDisplayName('React Basics', 'announcement')).toBe('React Basics Announcements');
+    expect(cohortChannelDisplayName('React Basics', 'discussion')).toBe('React Basics Discussion');
   });
 });
 

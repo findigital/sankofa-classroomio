@@ -50,6 +50,31 @@ export function fellowsVisibleToViewer<T extends { mentors: { profileId: string 
   return fellows.filter((fellow) => fellow.mentors.some((mentor) => mentor.profileId === viewer.profileId));
 }
 
+const EMAIL_ADDRESS = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function withoutEmail(value: string): string {
+  return EMAIL_ADDRESS.test(value.trim()) ? '' : value;
+}
+
+/**
+ * Tutors do not receive email addresses. Admins keep the full record.
+ */
+export function paceFellowForViewer<
+  T extends { email: string | null; name: string; mentors: { profileId: string; name: string }[] }
+>(fellow: T, roleId: number): T {
+  if (roleId !== ROLE.TUTOR) return fellow;
+
+  return {
+    ...fellow,
+    email: null,
+    name: withoutEmail(fellow.name),
+    mentors: fellow.mentors.map((mentor) => ({
+      ...mentor,
+      name: withoutEmail(mentor.name)
+    }))
+  };
+}
+
 /** Full record for admins, the minor flag for an assigned tutor, otherwise deny. */
 export function safeguardingAccess(roleId: number | null, assignedToViewer: boolean): 'full' | 'minor' | 'deny' {
   if (roleId === ROLE.ADMIN) return 'full';

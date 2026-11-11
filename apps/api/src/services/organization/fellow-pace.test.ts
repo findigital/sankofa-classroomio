@@ -6,7 +6,7 @@ import { ErrorCodes } from '@cio/utils/errors';
 const mocks = vi.hoisted(() => ({
   listFellowPace: vi.fn(),
   listPaceFilters: vi.fn(),
-  courseBelongsToOrg: vi.fn(),
+  publishedCourseBelongsToOrg: vi.fn(),
   cohortBelongsToOrg: vi.fn(),
   cohortIncludesCourse: vi.fn()
 }));
@@ -42,7 +42,7 @@ function fellow(profileId: string, mentorProfileId: string) {
 describe('getFellowPace', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.courseBelongsToOrg.mockResolvedValue(true);
+    mocks.publishedCourseBelongsToOrg.mockResolvedValue(true);
     mocks.cohortBelongsToOrg.mockResolvedValue(true);
     mocks.cohortIncludesCourse.mockResolvedValue(true);
     mocks.listPaceFilters.mockResolvedValue({ courses: [], cohorts: [] });
@@ -58,8 +58,9 @@ describe('getFellowPace', () => {
     expect(mocks.listFellowPace).toHaveBeenCalledWith(
       expect.objectContaining({ organizationId: ORG_ID, mentorProfileId: MENTOR_ID })
     );
-    expect(result.fellows).toEqual([assigned]);
+    expect(result.fellows).toEqual([{ ...assigned, email: null }]);
     expect(result.fellows.some((row) => row.profileId === 'fellow-b')).toBe(false);
+    expect(result.fellows.every((row) => row.email == null)).toBe(true);
   });
 
   it('does not filter an admin by mentor', async () => {
@@ -71,6 +72,20 @@ describe('getFellowPace', () => {
 
     expect(mocks.listFellowPace).toHaveBeenCalledWith(expect.objectContaining({ mentorProfileId: null }));
     expect(result.fellows).toEqual([assigned, unassigned]);
+    expect(result.fellows[0]?.email).toBe(assigned.email);
+  });
+
+  it('rejects a course that is not published', async () => {
+    mocks.publishedCourseBelongsToOrg.mockResolvedValue(false);
+
+    await expect(
+      getFellowPace(ORG_ID, { profileId: MENTOR_ID, roleId: ROLE.TUTOR }, { courseId: 'draft-course' })
+    ).rejects.toMatchObject({
+      code: ErrorCodes.FELLOW_SCOPE_NOT_FOUND,
+      statusCode: 404
+    });
+
+    expect(mocks.listFellowPace).not.toHaveBeenCalled();
   });
 
   it('rejects a student before querying', async () => {

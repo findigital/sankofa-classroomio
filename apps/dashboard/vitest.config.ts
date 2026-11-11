@@ -6,10 +6,22 @@ import path from 'node:path';
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  plugins: [svelte()],
+  plugins: [
+    svelte({
+      hot: false,
+      dynamicCompileOptions() {
+        return { generate: 'client', css: 'injected' };
+      }
+    })
+  ],
   resolve: {
     alias: [
       // The `sveltekit()` vite plugin is not active under vitest, so kit aliases are declared here.
+      // Node's default `svelte` export is the server runtime. Component tests mount the client build.
+      { find: /^svelte$/, replacement: path.resolve(currentDir, 'node_modules/svelte/src/index-client.js') },
+      { find: '$app/environment', replacement: path.resolve(currentDir, 'src/test-stubs/app-environment.ts') },
+      { find: '$env/dynamic/public', replacement: path.resolve(currentDir, 'src/test-stubs/env-dynamic-public.ts') },
+      { find: '$env/static/public', replacement: path.resolve(currentDir, 'src/test-stubs/env-static-public.ts') },
       { find: '$lib', replacement: path.resolve(currentDir, 'src/lib') },
       { find: '$features', replacement: path.resolve(currentDir, 'src/lib/features') },
       { find: '$mail', replacement: path.resolve(currentDir, 'src/mail') },

@@ -24,8 +24,8 @@ const ADULT_ID = '11111111-1111-4111-8111-111111111111';
 const MINOR_ID = '22222222-2222-4222-8222-222222222222';
 const STAFF_ID = '44444444-4444-4444-8444-444444444444';
 
-function profile(profileId: string, roleId: number, isMinor: boolean) {
-  return { profileId, roleId, isMinor, name: 'Member', avatarUrl: null };
+function profile(profileId: string, roleId: number, isMinor: boolean, name = 'Member') {
+  return { profileId, roleId, isMinor, name, avatarUrl: null };
 }
 
 function gateway(): StreamGateway {
@@ -89,8 +89,8 @@ describe('openDirectMessage', () => {
 
   it('adds a staff member when an assigned mentor messages a minor', async () => {
     queries.listMessagingProfiles.mockResolvedValue([
-      profile(MENTOR_ID, ROLE.TUTOR, false),
-      profile(MINOR_ID, ROLE.STUDENT, true)
+      profile(MENTOR_ID, ROLE.TUTOR, false, 'Ada Mentor'),
+      profile(MINOR_ID, ROLE.STUDENT, true, 'Bea Fellow')
     ]);
     queries.mentorPairAssigned.mockResolvedValue(true);
     const stream = gateway();
@@ -104,7 +104,9 @@ describe('openDirectMessage', () => {
       lastMessageAt: null
     });
 
-    await openDirectMessage(ORG_ID, MENTOR_ID, MINOR_ID, stream);
+    const opened = await openDirectMessage(ORG_ID, MENTOR_ID, MINOR_ID, stream);
+
+    expect(opened?.name).toBe('Bea Fellow');
 
     expect(stream.ensureChannel).toHaveBeenCalledWith(
       expect.objectContaining({

@@ -2,6 +2,7 @@ import { StreamChat, type Channel, type Message } from 'stream-chat';
 
 declare module 'stream-chat' {
   interface CustomChannelData {
+    name?: string;
     organization_id?: string;
     purpose?: string;
     cohort_id?: string;
@@ -208,6 +209,10 @@ export class StreamServerGateway implements StreamGateway {
     }
 
     await reconcileChannelMembers(channel, input);
+
+    if (input.purpose === 'announcement' || input.purpose === 'discussion') {
+      await channel.updatePartial({ set: { name: input.name } });
+    }
 
     const loaded = await channel.query({ state: true, watch: false, messages: { limit: 0 } });
     const memberCount = typeof loaded.channel.member_count === 'number' ? loaded.channel.member_count : 0;

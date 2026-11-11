@@ -145,8 +145,12 @@ and `PUBLIC_MESSAGING_ENABLED` on the dashboard. The API also needs `STREAM_API_
 `STREAM_API_SECRET` (server only). `PUBLIC_SERVER_URL` is the base for the Stream
 `before_message_send` webhook. Unread email digests are not sent; the API keeps a deferred
 hook until SMTP is configured and delivery is implemented. Fellows open Messages at `/lms/messages`.
-Tutors and admins open it from the organization sidebar. Cohort channels are created only for
-published courses. Loading the conversation list updates those cohort channels and re-checks
+Tutors and admins open it from the organization sidebar. A direct message is named for the other
+fellow or mentor in the thread. Safeguarding staff and other admins in a supervised adult–minor
+thread see the fellow and mentor names together. A cohort channel is named with the published
+course title or titles (comma-separated when a group has more than one), plus Announcements or
+Discussion. If no course title is available, the cohort name is used instead. Cohort channels are
+created only for published courses. Loading the conversation list updates those cohort channels and re-checks
 each direct message that person belongs to. Opening a direct message from the directory, or
 opening an existing direct-message thread, re-checks that pair. Stream membership is then set
 to the computed member set: missing people are added and people who no longer belong are

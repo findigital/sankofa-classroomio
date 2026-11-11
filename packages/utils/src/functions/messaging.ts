@@ -110,6 +110,32 @@ export function channelTypeUpdate(definition: ChannelTypeDefinition): ChannelTyp
   };
 }
 
+/** Same label for every viewer: the course title plus Announcements or Discussion. */
+export function cohortChannelDisplayName(courseName: string, purpose: 'announcement' | 'discussion'): string {
+  const title = courseName.trim();
+  const suffix = purpose === 'announcement' ? 'Announcements' : 'Discussion';
+
+  return title ? `${title} ${suffix}` : suffix;
+}
+
+/**
+ * Name a direct message for one viewer.
+ * A participant sees the other participant. Staff see both participants.
+ */
+export function directMessageDisplayName(
+  viewerId: string,
+  members: Array<{ profileId: string; roleId: number; name: string }>
+): string {
+  const participants = members.filter((member) => member.roleId === ROLE.STUDENT || member.roleId === ROLE.TUTOR);
+  const others = participants.filter((member) => member.profileId !== viewerId);
+  const shown = others.length > 0 ? others : participants;
+
+  return shown
+    .map((member) => member.name.trim())
+    .filter(Boolean)
+    .join(', ');
+}
+
 export function cohortChannelId(purpose: 'announcement' | 'discussion', groupId: string): string {
   const prefix = purpose === 'announcement' ? 'ann' : 'dis';
 

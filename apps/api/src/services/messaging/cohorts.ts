@@ -9,10 +9,10 @@ import {
 } from '@cio/db/queries/messaging';
 import { ROLE } from '@cio/utils/constants';
 import { AppError, ErrorCodes } from '@api/utils/errors';
-import { cohortChannelId, isListedCohortChannel } from '@cio/utils/functions/messaging';
+import { cohortChannelDisplayName, cohortChannelId, isListedCohortChannel } from '@cio/utils/functions/messaging';
 
 import { assertMessagingAvailable } from './availability';
-import { reconcileExistingDirectMessage } from './direct';
+import { labelDirectChannels, reconcileExistingDirectMessage } from './direct';
 import { type MessagingChannelSummary, type StreamGateway, type StreamPerson } from './gateway';
 
 export type DirectCandidate = {
@@ -69,7 +69,7 @@ export async function syncCohortChannels(
       channelType: 'cohort_announcement',
       channelId: cohortChannelId('announcement', cohort.groupId),
       organizationId,
-      name: cohort.name,
+      name: cohortChannelDisplayName(cohort.courseName || cohort.name, 'announcement'),
       purpose: 'announcement',
       cohortId: cohort.groupId,
       createdById,
@@ -80,7 +80,7 @@ export async function syncCohortChannels(
       channelType: 'cohort_discussion',
       channelId: cohortChannelId('discussion', cohort.groupId),
       organizationId,
-      name: cohort.name,
+      name: cohortChannelDisplayName(cohort.courseName || cohort.name, 'discussion'),
       purpose: 'discussion',
       cohortId: cohort.groupId,
       createdById,
@@ -91,6 +91,7 @@ export async function syncCohortChannels(
   const publishedGroupIds = new Set(rosters.map((cohort) => cohort.groupId));
   const channels = await gateway.queryMemberChannels(profileId, organizationId);
   let reconciledDirectMessage = false;
+  const directMembers = new Map<string, string[]>();
 
   for (const channel of channels) {
     if (channel.purpose !== 'fellow_dm' && channel.purpose !== 'mentor_dm') continue;
@@ -98,6 +99,8 @@ export async function syncCohortChannels(
     const inspected = await gateway.inspectChannel(channel.channelType, channel.channelId);
 
     if (!inspected) continue;
+
+    directMembers.set(`${channel.channelType}:${channel.channelId}`, inspected.memberIds);
 
     const reconciled = await reconcileExistingDirectMessage(
       organizationId,
@@ -110,8 +113,9 @@ export async function syncCohortChannels(
   }
 
   const visible = reconciledDirectMessage ? await gateway.queryMemberChannels(profileId, organizationId) : channels;
+  const named = await labelDirectChannels(organizationId, profileId, visible, gateway, directMembers);
 
-  return visible.filter((channel) => isListedCohortChannel(channel, publishedGroupIds));
+  return named.filter((channel) => isListedCohortChannel(channel, publishedGroupIds));
 }
 
 export async function listDirectCandidates(

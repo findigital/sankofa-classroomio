@@ -11,7 +11,7 @@ import {
 } from '@cio/utils/functions/messaging';
 
 import { assertMessagingAvailable } from './availability';
-import { reconcileExistingDirectMessage } from './direct';
+import { labelDirectChannels, reconcileExistingDirectMessage } from './direct';
 import { type MessagingChannelSummary, type StreamGateway } from './gateway';
 import { createKeywordFlag, keywordsFor } from './moderation';
 
@@ -156,12 +156,14 @@ export async function exportMessagingChannel(
 
 export async function listOrganizationChannels(
   organizationId: string,
+  viewerId: string,
   gateway: StreamGateway
 ): Promise<MessagingChannelSummary[]> {
   assertMessagingAvailable();
 
   const publishedGroupIds = new Set(await listPublishedMessagingGroupIds(organizationId));
   const channels = await gateway.queryOrganizationChannels(organizationId);
+  const listed = channels.filter((channel) => isListedCohortChannel(channel, publishedGroupIds));
 
-  return channels.filter((channel) => isListedCohortChannel(channel, publishedGroupIds));
+  return labelDirectChannels(organizationId, viewerId, listed, gateway);
 }
