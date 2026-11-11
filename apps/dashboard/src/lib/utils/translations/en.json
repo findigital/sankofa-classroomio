@@ -2198,6 +2198,7 @@
     "people": "People",
     "goto_lms": "Go to LMS",
     "goto_dashboard": "Dashboard",
+    "go_to_dashboard": "Go to dashboard",
     "join_academy": "Join Academy",
     "goto_home": "Go to ClassroomIO Home",
     "login": "Login",
@@ -2553,7 +2554,7 @@
   "course": {
     "creator": {
       "heading": "What course do you want to create?",
-      "placeholder": "Ask ClassroomIO to create a course for you...",
+      "placeholder": "Describe the course you want to create...",
       "drafting": {
         "heading": "Drafting your course idea",
         "subtext": "We're turning your prompt into a course title and workspace.",
@@ -5441,7 +5442,10 @@
   "explore": {
     "heading": "Explore our courses",
     "empty_heading": "No course available",
-    "empty_description": "There are currently no published course available"
+    "empty_description": "There are currently no published course available",
+    "all_enrolled_heading": "You're enrolled in all available courses",
+    "all_enrolled_description": "Every published course is already on your account.",
+    "my_courses": "My courses"
   },
   "snackbar": {
     "success": "Success",

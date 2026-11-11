@@ -27,6 +27,7 @@ export class CoursesApi extends BaseApiWithErrors {
   recommendedCoursesPagination = $state<{ page: number; limit: number; total: number; totalPages: number } | null>(
     null
   );
+  recommendedAllEnrolled = $state(false);
   private activeOrgCoursesRequestController: AbortController | null = null;
 
   cancelOrgCoursesRequest() {
@@ -154,6 +155,7 @@ export class CoursesApi extends BaseApiWithErrors {
     };
 
     const requestId = ++this.recommendedRequestId;
+    this.recommendedAllEnrolled = false;
 
     await this.execute<GetRecommendedCoursesRequest>({
       requestFn: () =>
@@ -170,6 +172,7 @@ export class CoursesApi extends BaseApiWithErrors {
         if ('pagination' in response && response.pagination) {
           this.recommendedCoursesPagination = response.pagination as typeof this.recommendedCoursesPagination;
         }
+        this.recommendedAllEnrolled = 'allEnrolled' in response && response.allEnrolled === true;
         this.errors = {};
       },
       onError: (result) => {

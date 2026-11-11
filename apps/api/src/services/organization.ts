@@ -48,6 +48,7 @@ import {
   getExercisesBySiteName,
   getExploreCourses,
   getLessonsBySiteName,
+  listCourseOutlinePreviews,
   getOrgCourses,
   countPublishedCourseTypesBySiteName,
   getPublishedCoursesBySiteName,
@@ -415,10 +416,11 @@ export async function getPublicCourses(
       limit,
       offset
     );
-    const tagsByCourseId = await getCourseTagsByCourseIdsForOrganization(
-      org.id,
-      courses.map((course) => course.id)
-    );
+    const courseIds = courses.map((course) => course.id);
+    const [tagsByCourseId, outlineByCourseId] = await Promise.all([
+      getCourseTagsByCourseIdsForOrganization(org.id, courseIds),
+      listCourseOutlinePreviews(courseIds)
+    ]);
     const memberLinks = await memberCourseLinksForViewer({
       orgId: org.id,
       settings: org.settings,
@@ -431,6 +433,7 @@ export async function getPublicCourses(
       courses: courses.map((course) => ({
         ...course,
         tags: tagsByCourseId[course.id] ?? [],
+        outline: outlineByCourseId[course.id] ?? [],
         memberCourse: memberLinks.get(course.id) ?? null
       })),
       hasMoreCourses: offset + courses.length < totalCourses,

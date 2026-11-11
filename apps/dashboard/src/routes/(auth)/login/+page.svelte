@@ -115,12 +115,13 @@
             }
 
             if (oauthAuthorizeUrl) {
-              window.location.href = oauthAuthorizeUrl;
+              window.location.replace(oauthAuthorizeUrl);
               return;
             }
 
-            const redirect = redirectUrl || '/';
-            window.location.href = redirect.startsWith('/') ? redirect : `/?redirect=${encodeURIComponent(redirect)}`;
+            if (redirectUrl && redirectUrl.startsWith('/') && !redirectUrl.startsWith('//')) {
+              window.location.replace(redirectUrl);
+            }
           }
         }
       );

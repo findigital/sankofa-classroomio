@@ -110,7 +110,11 @@
             class="ui:bg-[var(--landing-accent)] ui:text-[var(--landing-accent-fg)] ui:px-6 ui:md:px-8 ui:py-24 ui:md:py-32"
           >
             <div class="ui:max-w-[1320px] ui:mx-auto">
-              <div class="ui:grid ui:grid-cols-1 ui:lg:grid-cols-[1.15fr_1fr] ui:gap-12 ui:lg:gap-20 ui:items-center">
+              <div
+                class="ui:grid ui:grid-cols-1 ui:gap-12 ui:lg:gap-20 ui:items-center {featured.outline?.length
+                  ? 'ui:lg:grid-cols-[1.15fr_1fr]'
+                  : ''}"
+              >
                 <div>
                   {#if featuredTypeMeta}
                     <span
@@ -158,60 +162,58 @@
                   </div>
                 </div>
 
-                <div
-                  class="ui:relative ui:overflow-hidden ui:rounded-3xl ui:h-[440px] ui:md:h-[480px]"
-                  style="
+                {#if featured.outline && featured.outline.length > 0}
+                  <div
+                    class="ui:relative ui:overflow-hidden ui:rounded-3xl ui:h-[440px] ui:md:h-[480px]"
+                    style="
                   background:
                     radial-gradient(50% 60% at 40% 40%, rgba(255,255,255,0.55) 0%, transparent 70%),
                     radial-gradient(60% 70% at 70% 65%, rgba(255,255,255,0.32) 0%, transparent 70%),
                     radial-gradient(40% 50% at 25% 75%, rgba(255,235,210,0.5) 0%, transparent 70%),
                     linear-gradient(135deg, #b0a8a0 0%, #d4cabd 50%, #c8c0b5 100%);
                 "
-                >
-                  <div
-                    class="ui:absolute ui:left-1/2 ui:top-1/2 ui:w-[80%] ui:overflow-hidden ui:rounded-2xl ui:p-6"
-                    style="
+                  >
+                    <div
+                      class="ui:absolute ui:left-1/2 ui:top-1/2 ui:w-[80%] ui:overflow-hidden ui:rounded-2xl ui:p-6"
+                      style="
                     transform: translate(-50%, -50%);
                     background: #0c1320;
                     color: #fff;
                     box-shadow: 0 30px 60px -20px rgba(0,0,0,0.35);
                   "
-                  >
-                    <p class="ui:m-0 ui:mb-1 ui:text-[16px] ui:font-semibold">
-                      {labels?.courseOutlineHeading ?? 'Course outline'}
-                    </p>
-                    <p class="ui:m-0 ui:mb-5 ui:text-[13px]" style="color: #8a93a0;">
-                      {labels?.courseOutlineDescription ?? 'Pick up where you left off — anytime.'}
-                    </p>
-                    <div class="ui:flex ui:flex-col ui:gap-2">
-                      {#each Array.from({ length: Math.min(featured.lessonCount ?? 4, 4) }) as _, idx (idx)}
-                        <div
-                          class="ui:flex ui:items-center ui:gap-3 ui:rounded-lg ui:px-3.5 ui:py-3"
-                          style="background: #131c2c;"
-                        >
-                          <span
-                            class="ui:inline-flex ui:items-center ui:justify-center ui:size-6 ui:rounded ui:text-[11px] ui:font-semibold ui:tabular-nums"
-                            style="background: #2a3548; color: #fff;"
+                    >
+                      <p class="ui:m-0 ui:mb-1 ui:text-[16px] ui:font-semibold">
+                        {labels?.courseOutlineHeading ?? 'Course outline'}
+                      </p>
+                      <p class="ui:m-0 ui:mb-5 ui:text-[13px]" style="color: #8a93a0;">
+                        {labels?.courseOutlineDescription ?? 'Pick up where you left off — anytime.'}
+                      </p>
+                      <div class="ui:flex ui:flex-col ui:gap-2">
+                        {#each featured.outline as item, idx (`${item.label}-${idx}`)}
+                          <div
+                            class="ui:flex ui:items-center ui:gap-3 ui:rounded-lg ui:px-3.5 ui:py-3"
+                            style="background: #131c2c;"
                           >
-                            {String(idx + 1).padStart(2, '0')}
-                          </span>
-                          <span class="ui:flex-1 ui:text-[13.5px] ui:font-medium" style="color: #fff;">
-                            {idx === 0
-                              ? 'Foundations & setup'
-                              : idx === 1
-                                ? 'Core concepts'
-                                : idx === 2
-                                  ? 'Hands-on practice'
-                                  : 'Capstone project'}
-                          </span>
-                          <span class="ui:text-[11.5px] ui:tabular-nums" style="color: #6c7585;">
-                            {idx === 0 ? '42 min' : idx === 1 ? '1h 12m' : idx === 2 ? '58 min' : '2h 30m'}
-                          </span>
-                        </div>
-                      {/each}
+                            <span
+                              class="ui:inline-flex ui:items-center ui:justify-center ui:size-6 ui:rounded ui:text-[11px] ui:font-semibold ui:tabular-nums"
+                              style="background: #2a3548; color: #fff;"
+                            >
+                              {String(idx + 1).padStart(2, '0')}
+                            </span>
+                            <span class="ui:flex-1 ui:text-[13.5px] ui:font-medium" style="color: #fff;">
+                              {item.label}
+                            </span>
+                            {#if item.duration}
+                              <span class="ui:text-[11.5px] ui:tabular-nums" style="color: #6c7585;">
+                                {item.duration}
+                              </span>
+                            {/if}
+                          </div>
+                        {/each}
+                      </div>
                     </div>
                   </div>
-                </div>
+                {/if}
               </div>
             </div>
           </section>

@@ -2088,7 +2088,8 @@
     "redirecting": "Reindirizzamento",
     "loading_state": "Ti riporto alla pagina successiva, attendi.",
     "org_loading_state": "Ti porto alla tua organizzazione...",
-    "add_organization": "+ Aggiungi organizzazione"
+    "add_organization": "+ Aggiungi organizzazione",
+    "go_to_dashboard": "Vai alla dashboard"
   },
   "markdown_editor": {
     "write": "Scrivere",
@@ -2436,7 +2437,7 @@
   "course": {
     "creator": {
       "heading": "Che corso vuoi creare?",
-      "placeholder": "Chiedi a ClassroomIO di creare un corso per te...",
+      "placeholder": "Descrivi il corso che vuoi creare...",
       "drafting": {
         "heading": "Elaborazione dell'idea del corso",
         "subtext": "Stiamo trasformando il tuo messaggio nel titolo del corso e in uno spazio di lavoro.",
@@ -5324,7 +5325,10 @@
   "explore": {
     "heading": "Esplora i nostri corsi",
     "empty_heading": "Nessun corso disponibile",
-    "empty_description": "Al momento non sono disponibili corsi pubblicati"
+    "empty_description": "Al momento non sono disponibili corsi pubblicati",
+    "all_enrolled_heading": "Sei iscritto a tutti i corsi disponibili",
+    "all_enrolled_description": "Ogni corso pubblicato è già nel tuo account.",
+    "my_courses": "I miei corsi"
   },
   "snackbar": {
     "success": "Successo",

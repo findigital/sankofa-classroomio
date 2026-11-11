@@ -17,6 +17,7 @@ import { ROLE } from '@cio/utils/constants';
 import type { TCourseType } from '@cio/utils/constants/course-type';
 import { db, type DbOrTxClient } from '@db/drizzle';
 import { contentWriteBumpsTimestamp } from './content-timestamp';
+import { takeCourseOutlinePreviews, type CourseOutlinePreview } from './course-outline-preview';
 import { getCourseContentItems, type CourseContentItemRow } from './content';
 import { isExerciseCompletedSql } from './progression';
 import { getUpcomingSessionsForCourseIds, type CourseUpcomingSession } from './session';
@@ -162,6 +163,27 @@ export const getPublishedCoursesBySiteName = async (
     );
   }
 };
+
+export async function listCourseOutlinePreviews(courseIds: string[]): Promise<Record<string, CourseOutlinePreview[]>> {
+  if (courseIds.length === 0) return {};
+
+  try {
+    const rows = await db
+      .select({
+        courseId: schema.lesson.courseId,
+        title: schema.lesson.title,
+        sessionDurationMinutes: schema.lesson.sessionDurationMinutes
+      })
+      .from(schema.lesson)
+      .where(inArray(schema.lesson.courseId, courseIds))
+      .orderBy(asc(schema.lesson.courseId), asc(schema.lesson.order));
+
+    return takeCourseOutlinePreviews(rows);
+  } catch (error) {
+    console.error('listCourseOutlinePreviews error:', error);
+    throw new Error('Failed to list course outline previews');
+  }
+}
 
 export async function countPublishedCourseTypesBySiteName(
   siteName: string
@@ -1317,6 +1339,7 @@ interface GetExploreCoursesOptions {
 export interface GetExploreCoursesResult {
   data: TBaseCourse[];
   total: number;
+  allEnrolled: boolean;
 }
 
 /**
@@ -1337,17 +1360,16 @@ export const getExploreCourses = async ({
   order
 }: GetExploreCoursesOptions): Promise<GetExploreCoursesResult> => {
   try {
-    const whereCondition = and(
+    // Mirrors isSelfEnrollmentAllowed: `->>` yields NULL for JSON null, so COALESCE falls through.
+    const selfEnrollmentOpen = sql`COALESCE(${schema.course.metadata}->>'allowSelfEnrollment', ${schema.course.metadata}->>'allowNewStudent', 'true') != 'false'`;
+    const publishedWhere = and(
       eq(schema.group.organizationId, orgId),
       eq(schema.course.status, 'ACTIVE'),
       eq(schema.course.isPublished, true),
       eq(schema.course.isTemplate, false),
-      isNull(schema.groupmember.id),
-      // Mirrors isSelfEnrollmentAllowed in @cio/utils: current key, then the
-      // legacy allowNewStudent, then open. `->>` yields NULL for a JSON null,
-      // so COALESCE falls through exactly as `??` does.
-      sql`COALESCE(${schema.course.metadata}->>'allowSelfEnrollment', ${schema.course.metadata}->>'allowNewStudent', 'true') != 'false'`
+      selfEnrollmentOpen
     );
+    const whereCondition = and(publishedWhere, isNull(schema.groupmember.id));
 
     const courseSelect = {
       course: schema.course,
@@ -1387,6 +1409,17 @@ export const getExploreCourses = async ({
       countSelect,
       limit ? baseSelect.limit(limit).offset((page - 1) * limit) : baseSelect
     ]);
+    const total = Number(countRows[0]?.total ?? 0);
+    let allEnrolled = false;
+
+    if (total === 0) {
+      const [publishedRow] = await db
+        .select({ total: count(schema.course.id) })
+        .from(schema.course)
+        .innerJoin(schema.group, eq(schema.course.groupId, schema.group.id))
+        .where(publishedWhere);
+      allEnrolled = Number(publishedRow?.total ?? 0) > 0;
+    }
 
     return {
       data: rows.map((row) => ({
@@ -1394,7 +1427,8 @@ export const getExploreCourses = async ({
         lessonCount: Number(row.lessonCount),
         exerciseCount: Number(row.exerciseCount)
       })),
-      total: Number(countRows[0]?.total ?? 0)
+      total,
+      allEnrolled
     };
   } catch (error) {
     console.error('getExploreCourses error:', error);

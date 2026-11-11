@@ -10,6 +10,7 @@
   import SourceOffer from '$features/ui/source-offer.svelte';
   import UpgradeTrigger from './upgrade-trigger.svelte';
   import { WhatsNewCard, WhatsNewModal } from '$features/whats-new/components';
+  import { HIDE_UPSTREAM_PROMOS } from '$lib/utils/constants/promos';
   import SidebarSkeleton from '../sidebar-skeleton.svelte';
 
   const isOrgLoaded = $derived($orgs.length > 0 && $profile.id);
@@ -33,7 +34,9 @@
     </Sidebar.Content>
 
     <Sidebar.Footer class="gap-4!">
-      <WhatsNewCard />
+      {#if !HIDE_UPSTREAM_PROMOS}
+        <WhatsNewCard />
+      {/if}
       <UpgradeTrigger />
       <SidebarFooterMenu />
       <SourceOffer class="px-2 py-1" />
@@ -42,5 +45,7 @@
     <Sidebar.Rail />
   </Sidebar.Root>
 
-  <WhatsNewModal />
+  {#if !HIDE_UPSTREAM_PROMOS}
+    <WhatsNewModal />
+  {/if}
 {/if}

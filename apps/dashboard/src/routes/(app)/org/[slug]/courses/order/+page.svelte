@@ -84,38 +84,40 @@
   </Page.Header>
 
   <Page.Body>
-    {#if !$isOrgAdmin}
-      <p class="ui:text-muted-foreground text-sm">{$t('courses.catalog_order.admin_only')}</p>
-    {:else if isLoading}
-      <div class="flex max-w-2xl flex-col gap-2">
-        {#each [0, 1, 2] as index (index)}
-          <Skeleton class="h-12 w-full" />
-        {/each}
-      </div>
-    {:else if courses.length === 0}
-      <p class="ui:text-muted-foreground text-sm">{$t('courses.catalog_order.empty')}</p>
-    {:else}
-      <div
-        class="flex max-w-2xl flex-col gap-2"
-        use:dndzone={{ items: courses, flipDurationMs: FLIP_DURATION_MS, dropTargetStyle: {} }}
-        onconsider={handleConsider}
-        onfinalize={handleFinalize}
-      >
-        {#each courses as course, index (course.id)}
-          <div class="flex items-center gap-3 rounded-md border px-3 py-2">
-            <GripVerticalIcon
-              class="ui:text-muted-foreground size-4 shrink-0"
-              aria-label={$t('courses.catalog_order.drag')}
-            />
-            <span class="ui:text-muted-foreground w-6 text-sm">{index + 1}</span>
-            <span class="min-w-0 flex-1 truncate text-sm font-medium">{course.title}</span>
-            {#if !course.isPublished}
-              <span class="ui:text-muted-foreground text-xs">{$t('courses.catalog_order.unpublished')}</span>
-            {/if}
-          </div>
-        {/each}
-      </div>
-    {/if}
+    {#snippet child()}
+      {#if !$isOrgAdmin}
+        <p class="ui:text-muted-foreground text-sm">{$t('courses.catalog_order.admin_only')}</p>
+      {:else if isLoading}
+        <div class="flex max-w-2xl flex-col gap-2">
+          {#each [0, 1, 2] as index (index)}
+            <Skeleton class="h-12 w-full" />
+          {/each}
+        </div>
+      {:else if courses.length === 0}
+        <p class="ui:text-muted-foreground text-sm">{$t('courses.catalog_order.empty')}</p>
+      {:else}
+        <div
+          class="flex max-w-2xl flex-col gap-2"
+          use:dndzone={{ items: courses, flipDurationMs: FLIP_DURATION_MS, dropTargetStyle: {} }}
+          onconsider={handleConsider}
+          onfinalize={handleFinalize}
+        >
+          {#each courses as course, index (course.id)}
+            <div class="flex items-center gap-3 rounded-md border px-3 py-2">
+              <GripVerticalIcon
+                class="ui:text-muted-foreground size-4 shrink-0"
+                aria-label={$t('courses.catalog_order.drag')}
+              />
+              <span class="ui:text-muted-foreground w-6 text-sm">{index + 1}</span>
+              <span class="min-w-0 flex-1 truncate text-sm font-medium">{course.title}</span>
+              {#if !course.isPublished}
+                <span class="ui:text-muted-foreground text-xs">{$t('courses.catalog_order.unpublished')}</span>
+              {/if}
+            </div>
+          {/each}
+        </div>
+      {/if}
+    {/snippet}
   </Page.Body>
 
   <Page.SettingsActions

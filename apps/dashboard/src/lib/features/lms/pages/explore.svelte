@@ -16,6 +16,8 @@
   } from '$features/course/utils/constants';
   import CoursePreviewModal from '$features/lms/components/course-preview-modal.svelte';
   import * as Pagination from '@cio/ui/base/pagination';
+  import { Button } from '@cio/ui/base/button';
+  import { resolve } from '$app/paths';
 
   const EXPLORE_LIMIT = 12;
 
@@ -47,6 +49,9 @@
   );
 
   const pagination = $derived(coursesApi.recommendedCoursesPagination);
+  const enrolledInAll = $derived(
+    !coursesApi.isLoading && !searchValue && coursesApi.recommendedAllEnrolled && filteredExploreCourses.length === 0
+  );
 
   function fetchPage(page: number) {
     currentPage = page;
@@ -87,8 +92,8 @@
 
 <CoursesPage
   courses={filteredExploreCourses}
-  emptyTitle={$t('explore.empty_heading')}
-  emptyDescription={$t('explore.empty_description')}
+  emptyTitle={enrolledInAll ? $t('explore.all_enrolled_heading') : $t('explore.empty_heading')}
+  emptyDescription={enrolledInAll ? $t('explore.all_enrolled_description') : $t('explore.empty_description')}
   isExplore={true}
   isLMS={true}
   isLoading={coursesApi.isLoading}
@@ -98,7 +103,13 @@
     selectedCourse = course as RecommendedCourses[number];
     previewOpen = true;
   }}
-/>
+>
+  {#snippet emptyAction()}
+    {#if enrolledInAll}
+      <Button href={resolve('/lms/mylearning', {})}>{$t('explore.my_courses')}</Button>
+    {/if}
+  {/snippet}
+</CoursesPage>
 
 {#if pagination && pagination.totalPages > 1}
   <Pagination.Root

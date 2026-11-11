@@ -1,4 +1,5 @@
 export * from './course';
+export * from './course-outline-preview';
 export * from './course-template';
 export * from './template-sync';
 export * from './root-order';
