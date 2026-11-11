@@ -8,6 +8,7 @@ import {
   HomeIcon,
   LandingPageIcon,
   PeopleIcon,
+  PersonIcon,
   SettingsIcon,
   TagIcon
 } from '@cio/ui/custom/moving-icons';
@@ -15,9 +16,12 @@ import WidgetsIcon from '@cio/ui/custom/moving-icons/widgets.svelte';
 
 import type { AccountOrg } from '$features/app/types';
 import BotIcon from '@lucide/svelte/icons/bot';
+import MessageSquareIcon from '@lucide/svelte/icons/message-square';
 import type { Component } from 'svelte';
 import { isActive } from '$lib/utils/functions/app';
 import { IS_AI_ENABLED } from '$lib/utils/constants/ai';
+import { MESSAGING_ENABLED } from '$lib/utils/constants/messaging';
+import { ROLE } from '@cio/utils/constants';
 import type { PlanLimitResource } from '@cio/utils/plans';
 import type { OrgNavCountKey, OrgNavCounts } from '$features/ui/sidebar/org-sidebar/org-nav-counts.svelte';
 
@@ -52,6 +56,8 @@ export interface NavItemConfig {
   path: string;
   icon?: Component;
   requiresAdmin?: boolean;
+  /** Admins and tutors only. Hidden from fellows. */
+  teamOnly?: boolean;
   disableWhenNotAdmin?: boolean;
   items?: NavItemConfig[];
   useHashUrl?: boolean; // Use '#' as URL (for collapsible items like settings)
@@ -192,6 +198,21 @@ export const baseNavConfig: NavItemConfig[] = [
   },
   {
     group: 'people',
+    titleKey: 'org_navigation.pace',
+    path: '/pace',
+    icon: PersonIcon,
+    teamOnly: true,
+    matchPattern: '^/org/[^/]+/pace(/.*)?$'
+  },
+  {
+    group: 'people',
+    titleKey: 'org_navigation.messages',
+    path: '/messages',
+    icon: MessageSquareIcon,
+    matchPattern: '^/org/[^/]+/messages(/.*)?$'
+  },
+  {
+    group: 'people',
     titleKey: 'org_navigation.community',
     path: '/community',
     icon: CommunityIcon,
@@ -272,6 +293,14 @@ function isAiSettingsPath(path: string | undefined): boolean {
   return path.includes('ai-tutor') || path.includes('ai-credits');
 }
 
+function isVisibleNavItem(config: NavItemConfig, isOrgAdmin: boolean | null, roleId: number): boolean {
+  if (config.teamOnly && roleId !== ROLE.ADMIN && roleId !== ROLE.TUTOR) return false;
+
+  if (config.requiresAdmin && !isOrgAdmin && !config.disableWhenNotAdmin) return false;
+
+  return true;
+}
+
 function isHomePath(path: string): boolean {
   return path === '';
 }
@@ -279,9 +308,13 @@ function isHomePath(path: string): boolean {
 /**
  * Nav config with the Home item and AI-related settings tabs removed when AI is turned off.
  */
-const resolvedNavConfig = IS_AI_ENABLED
+const featureNavConfig = MESSAGING_ENABLED
   ? baseNavConfig
-  : baseNavConfig
+  : baseNavConfig.filter((config) => config.path !== '/messages');
+
+const resolvedNavConfig = IS_AI_ENABLED
+  ? featureNavConfig
+  : featureNavConfig
       .filter((config) => !isHomePath(config.path))
       .map((config) => ({
         ...config,
@@ -303,11 +336,11 @@ export function getOrgNavigationItems(
 
   for (const config of resolvedNavConfig) {
     // Skip admin-only items if user is not admin
-    if (config.requiresAdmin && !isOrgAdmin && !config.disableWhenNotAdmin) {
+    if (!isVisibleNavItem(config, isOrgAdmin, currentOrg.roleId)) {
       continue;
     }
 
-    const visibleSubConfigs = config.items?.filter((sub) => !sub.requiresAdmin || isOrgAdmin) ?? [];
+    const visibleSubConfigs = config.items?.filter((sub) => isVisibleNavItem(sub, isOrgAdmin, currentOrg.roleId)) ?? [];
 
     if (config.items && visibleSubConfigs.length === 0) {
       continue;
@@ -397,11 +430,11 @@ export function getOrgNavigationGroups(
       continue;
     }
 
-    if (config.requiresAdmin && !isOrgAdmin && !config.disableWhenNotAdmin) {
+    if (!isVisibleNavItem(config, isOrgAdmin, currentOrg.roleId)) {
       continue;
     }
 
-    const visibleSubConfigs = config.items?.filter((sub) => !sub.requiresAdmin || isOrgAdmin) ?? [];
+    const visibleSubConfigs = config.items?.filter((sub) => isVisibleNavItem(sub, isOrgAdmin, currentOrg.roleId)) ?? [];
 
     if (config.items && visibleSubConfigs.length === 0) {
       continue;

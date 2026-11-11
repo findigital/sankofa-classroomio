@@ -8,6 +8,7 @@ import { connectRedis } from '@cio/core/utils/redis/redis';
 import { env } from '@cio/core/config/env';
 import { preloadVerifiedCustomDomainOriginsRegistry } from '@api/utils/origins';
 import { registerProcessErrorGuards } from '@api/process-error-guards';
+import { ensureStreamMessagingSetup } from '@api/services/messaging/setup';
 import { serve } from '@hono/node-server';
 import { showRoutes } from 'hono/dev';
 
@@ -25,6 +26,10 @@ async function startServer() {
   });
 
   serve({ fetch: app.fetch, port: API_PORT });
+
+  void ensureStreamMessagingSetup().catch((error) => {
+    console.error('Messaging setup failed:', error);
+  });
 
   if (env.NODE_ENV !== 'production') {
     showRoutes(app, { colorize: true });

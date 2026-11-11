@@ -535,6 +535,24 @@
     },
     "oauth": {
       "revoked": "Dostęp aplikacji usunięty"
+    },
+    "pace": {
+      "load_failed": "Could not load fellow pace.",
+      "save_failed": "Could not save.",
+      "saved": "Safeguarding record saved.",
+      "mentors_saved": "Mentor assignments saved."
+    },
+    "messaging": {
+      "load_failed": "Could not load messages.",
+      "send_failed": "Could not send that message.",
+      "sent": "Message sent.",
+      "blocked": "That message was blocked.",
+      "flagged": "Message flagged.",
+      "muted": "Person muted.",
+      "exported": "Transcript ready.",
+      "keyword_saved": "Keyword saved.",
+      "saved": "Saved.",
+      "accepted": "Notice accepted."
     }
   },
   "explore": {
@@ -3681,7 +3699,9 @@
     "back_to_app": "Powrót do aplikacji",
     "create": "Utwórz",
     "distribute": "Rozpowszechniaj",
-    "tools": "Narzędzia"
+    "tools": "Narzędzia",
+    "pace": "Fellow pace",
+    "messages": "Messages"
   },
   "media_manager": {
     "page_title": "Menedżer mediów",
@@ -6730,5 +6750,114 @@
     },
     "close": "Zamknij",
     "dismiss": "Rozumiem"
+  },
+  "pace": {
+    "page_title": "Fellow pace",
+    "heading": "Fellow pace",
+    "subtitle": "Flags fellows with no activity for {days} days, or with work still outstanding after its due date.",
+    "forbidden": "Fellows cannot view this page.",
+    "empty": "No fellows match this cohort and course.",
+    "loading": "Loading…",
+    "ratio": "{completed}/{required}",
+    "last_activity_never": "No activity yet",
+    "last_activity_today": "Today",
+    "last_activity_days": "{days} days ago",
+    "minor_yes": "Under 18",
+    "minor_no": "18 or over",
+    "filters": {
+      "all_cohorts": "All cohorts",
+      "all_courses": "All courses",
+      "quiet_days": "Quiet after (days)"
+    },
+    "columns": {
+      "fellow": "Fellow",
+      "mentors": "Mentors",
+      "last_activity": "Last activity",
+      "lessons": "Lessons",
+      "exercises": "Exercises",
+      "overdue": "Overdue",
+      "flags": "Pace",
+      "minor": "Under 18"
+    },
+    "flags": {
+      "on_pace": "On pace",
+      "gone_quiet": "Gone quiet",
+      "overdue": "Overdue"
+    },
+    "consent": {
+      "none": "None",
+      "pending": "Pending",
+      "granted": "Granted",
+      "revoked": "Revoked"
+    },
+    "mentors": {
+      "open": "Assign mentors",
+      "title": "Assign mentors",
+      "description": "Choose a tutor and the fellows they can see on this page.",
+      "pick": "Choose a mentor",
+      "search": "Search fellows",
+      "save": "Save assignments",
+      "empty": "No tutors are available to assign.",
+      "unassigned": "Unassigned"
+    },
+    "safeguarding": {
+      "open": "Safeguarding",
+      "title": "Safeguarding for {name}",
+      "description": "Guardian contact and consent are visible to organization admins only.",
+      "guardian_heading": "Guardian",
+      "is_minor": "Under 18",
+      "guardian_name": "Guardian name",
+      "guardian_email": "Guardian email",
+      "guardian_phone": "Guardian phone",
+      "consent_heading": "Consent",
+      "consent_status": "Consent status",
+      "consent_date": "Consent date",
+      "notes": "Notes",
+      "audit_heading": "Change history",
+      "audit_empty": "No changes have been recorded.",
+      "audit_unknown": "Unknown editor",
+      "audit_unchanged": "Record saved",
+      "field": {
+        "isMinor": "Under 18",
+        "guardianName": "Guardian name",
+        "guardianEmail": "Guardian email",
+        "guardianPhone": "Guardian phone",
+        "consentStatus": "Consent status",
+        "consentAt": "Consent date",
+        "notes": "Notes"
+      }
+    }
+  },
+  "messaging": {
+    "page_title": "Messages",
+    "heading": "Messages",
+    "subtitle": "Cohort announcements, discussion, and direct messages.",
+    "notice": {
+      "body": "Organization administrators can read messages in this organization, including direct messages.",
+      "accept": "I understand"
+    },
+    "channels": "Your conversations",
+    "all_channels": "All conversations",
+    "empty": "No conversations yet.",
+    "select": "Choose a conversation.",
+    "compose": "Write a message",
+    "send": "Send",
+    "flag": "Flag",
+    "mute": "Mute",
+    "export": "Export",
+    "export_csv": "CSV",
+    "directory": "Direct message",
+    "open": "Open",
+    "keywords": "Keyword list",
+    "keyword_phrase": "Phrase",
+    "keyword_add": "Add keyword",
+    "keyword_flag": "Flag",
+    "keyword_block": "Block",
+    "keyword_remove": "Remove",
+    "cohorts": "Fellow direct messages",
+    "fellow_dm": "Allow fellows in this cohort to message each other",
+    "activity": "Recent activity",
+    "activity_empty": "No messaging activity yet.",
+    "disabled": "Messaging is turned off."
   }
 }

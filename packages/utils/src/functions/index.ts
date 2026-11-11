@@ -21,3 +21,5 @@ export * from './course-banner-image';
 export * from './whisper-language';
 export * from './live-session';
 export * from './lesson-note';
+export * from './fellow-pace';
+export * from './messaging';

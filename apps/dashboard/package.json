@@ -77,6 +77,7 @@
     "posthog-js": "^1.180.1",
     "sirv": "^2.0.3",
     "standardwebhooks": "1.0.0",
+    "stream-chat": "^9.55.0",
     "stripe": "^14.22.0",
     "svelte-awesome-color-picker": "^3.1.4",
     "svelte-meta-tags": "^3.1.2",

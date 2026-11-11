@@ -1,4 +1,5 @@
 export * from './audience';
+export * from './fellow-pace';
 export * from './audience-import';
 export * from './organization';
 export * from './student-home';

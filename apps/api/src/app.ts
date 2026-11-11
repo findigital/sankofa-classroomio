@@ -39,6 +39,7 @@ import { logger } from 'hono/logger';
 import { hlsRouter } from '@api/routes/hls';
 import { mailRouter } from '@api/routes/mail';
 import { mediaRouter } from '@api/routes/media';
+import { messagingRouter } from '@api/routes/messaging';
 import { transcriptsRouter } from '@api/routes/transcripts';
 import { mountQueueDashboard } from '@api/routes/admin/queues';
 import { onboardingRouter } from '@api/routes/onboarding';
@@ -266,6 +267,7 @@ export const app = new Hono()
   .route('/transcripts', transcriptsRouter)
   .route('/mail', mailRouter)
   .route('/media', mediaRouter)
+  .route('/messaging', messagingRouter)
   .route('/jobs', jobsRouter)
   .route('/license', licenseRouter)
   .route('/organization', organizationRouter)

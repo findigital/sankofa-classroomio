@@ -1,0 +1,36 @@
+---
+title: Fellow pace
+description: How long a fellow can go without activity before the staff pace view marks them gone quiet.
+---
+
+Organization admins and tutors open **Fellow pace** from the organization sidebar. The page lists each fellow's last activity, required lessons and exercises, and overdue work. A fellow is **gone quiet** when they have no activity for a set number of days, and **overdue** when a required exercise's due date has passed with no submission.
+
+## Environment variable
+
+Set this on the **API** service only. The dashboard does not read it.
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `FELLOW_QUIET_DAYS` | `14` | Days without activity before a fellow is flagged gone quiet |
+
+Leave it unset to use 14. The value must be a whole number from 1 to 365. An empty value uses the default. Any other value stops the API from booting.
+
+```bash title=".env"
+FELLOW_QUIET_DAYS=14
+```
+
+Staff can pass a different `quietDays` value on the pace request. That override applies to the one request and does not change the environment default. The page's quiet-days field is that override.
+
+Restart the API after changing the variable.
+
+## Who can see what
+
+- **Admins** see every active fellow, assign mentors, and edit guardian and consent records.
+- **Tutors** see only fellows an admin has assigned to them. They see the under-18 flag and not guardian contact, consent, or notes.
+- **Students** cannot open the page or the fellow pace API.
+
+Mentor assignment is separate from course and cohort membership. A tutor who teaches a course still only sees assigned fellows on this page.
+
+## Database
+
+Migration `0052_fellow_pace_safeguarding` adds the safeguarding, audit, and mentor-assignment tables. It does not alter existing course or member columns. Apply migrations before starting the API that serves this page.
