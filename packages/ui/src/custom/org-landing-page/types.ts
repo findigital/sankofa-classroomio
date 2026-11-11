@@ -185,6 +185,8 @@ export interface OrgLandingPageLabels {
   enrollLabel?: string;
   /** Displayed in place of the price when cost is 0. Default: "Free". */
   freeLabel?: string;
+  /** When true, course cards omit the price, including the free label. */
+  hidePrice?: boolean;
   /** Tag/badge prefix for a featured course (editorial hero, vibrant featured panel). Default: "Featured". */
   featuredLabel?: string;
   /** Filter chip label for "show all" in templates that render a filter bar. Default: "All". */
@@ -361,6 +363,8 @@ export interface CourseLandingPageLabels {
   reviewsAverageLabel?: (count: number) => string;
   pricingEyebrow?: string;
   freeLabel?: string;
+  /** When true, the course page omits the price, including the free label. */
+  hidePrice?: boolean;
   pricingRewardLabel?: string;
   chipsSkillsEyebrow?: string;
   chipsSkillsHeading?: string;
@@ -461,4 +465,16 @@ export interface OrgLandingPageProps {
   footer: OrgLandingPageFooterConfig;
   /** Optional UI-chrome string overrides (eyebrows, CTA labels, plural-aware meta). */
   labels?: OrgLandingPageLabels;
+  /**
+   * When set, landing themes that render catalog chips use these tag groups
+   * instead of course type. Course type chips appear only when `showCourseTypeFilter` is true.
+   */
+  catalogFilters?: {
+    showCourseTypeFilter: boolean;
+    tagGroups: Array<{
+      id: string;
+      name: string;
+      tags: Array<{ id: string; name: string; slug: string }>;
+    }>;
+  };
 }

@@ -32,6 +32,9 @@ export type PublicOrg = Pick<
       locale?: TLocale;
       enforced?: boolean;
     };
+    hideCoursePricing?: boolean;
+    showCourseTypeFilter?: boolean;
+    catalogFilterTagGroupIds?: string[] | null;
   };
   customization: {
     auth?: {

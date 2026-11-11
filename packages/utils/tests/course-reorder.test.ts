@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { ZCourseReorder } from '../src/validation/organization/organization';
+import { ZCourseCatalogOrder, ZCourseReorder } from '../src/validation/organization/organization';
 
 const COURSE_ID = '3f2504e0-4f89-11d3-9a0c-0305e82c3301';
 const OTHER_COURSE_ID = 'b2f0a5d4-8c1e-4a6b-9d3f-2e7c8a1b4d5e';
@@ -80,5 +80,16 @@ describe('ZCourseReorder', () => {
 
     expect(nonZeroStart.success).toBe(false);
     expect(gap.success).toBe(false);
+  });
+});
+
+describe('ZCourseCatalogOrder', () => {
+  it('accepts more than four courses', () => {
+    const courses = Array.from({ length: 5 }, (_, index) => ({
+      id: `00000000-0000-4000-8000-00000000000${index + 1}`,
+      order: index
+    }));
+
+    expect(ZCourseCatalogOrder.safeParse({ courses }).success).toBe(true);
   });
 });

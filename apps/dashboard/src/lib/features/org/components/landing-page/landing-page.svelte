@@ -10,7 +10,8 @@
   import {
     buildOrgLandingPageProps,
     importThemeComponent,
-    normalizeLandingPageSettings
+    normalizeLandingPageSettings,
+    withCatalogLockedLabels
   } from '$features/org/utils/landing-page';
   import { user, profile } from '$lib/utils/store/user';
   import { resolveOrgLandingAuthAction } from '$features/org/utils/org-landing-auth-action';
@@ -46,13 +47,16 @@
   );
 
   const landingPageProps = $derived(
-    buildOrgLandingPageProps(
-      org,
-      normalizeLandingPageSettings(org.landingpage),
-      orgApi.publicCourses,
-      orgApi.hasMorePublicCourses,
-      authAction,
-      { coursesLoaded: hasLoadedCourses, learnerAccount }
+    withCatalogLockedLabels(
+      buildOrgLandingPageProps(
+        org,
+        normalizeLandingPageSettings(org.landingpage),
+        orgApi.publicCourses,
+        orgApi.hasMorePublicCourses,
+        authAction,
+        { coursesLoaded: hasLoadedCourses, learnerAccount }
+      ),
+      orgApi.catalogLocked
     )
   );
 

@@ -37,7 +37,8 @@
         "caption": "आपके पाठ्यक्रम, छात्र और सेटिंग्स तैयार की जा रही हैं।"
       }
     },
-    "back": "वापस"
+    "back": "वापस",
+    "source_offer": "View source code"
   },
   "validations": {
     "generic": {
@@ -439,7 +440,9 @@
       "tag_updated": "टैग अपडेट किया गया",
       "course_tags_updated": "पाठ्यक्रम टैग अपडेट किए गए",
       "fetch_failed": "टैग लोड करने में विफल",
-      "save_failed": "टैग परिवर्तन सहेजने में विफल"
+      "save_failed": "टैग परिवर्तन सहेजने में विफल",
+      "tag_deleted": "Tag deleted",
+      "delete_failed": "Failed to delete tag"
     },
     "error_update": "अद्यतन करने में विफल",
     "token_auth": {
@@ -3302,7 +3305,18 @@
       "empty_tags": "कोई टैग उपलब्ध नहीं है"
     },
     "page_subtitle": "जहाँ पाठ पाठ्यक्रम बनते हैं और पाठ्यक्रम नामांकन बनते हैं।",
-    "load_more": "और लोड करें"
+    "load_more": "और लोड करें",
+    "catalog_order": {
+      "action": "Reorder courses",
+      "title": "Course order",
+      "description": "Drag courses into the order people should see. The catalog and home page use this order, then the date the course was created. Saving featured courses on the landing page replaces this order.",
+      "saved": "Course order saved",
+      "save_failed": "Could not save course order",
+      "unpublished": "Unpublished",
+      "empty": "There are no courses to order yet.",
+      "admin_only": "Only an organization admin can reorder courses.",
+      "drag": "Drag to reorder"
+    }
   },
   "ai": {
     "help_me": "मुझे लिखने में मदद करें",
@@ -4380,6 +4394,23 @@
         "internal_enrollment_only": {
           "label": "केवल आंतरिक नामांकन",
           "description": "सक्षम होने पर, आपके संगठन के केवल मौजूदा सदस्य ही आपके पाठ्यक्रमों में नामांकन कर सकते हैं। बाकी सभी को आमंत्रित किया जाना चाहिए - वे पाठ्यक्रम पृष्ठ से अपना नामांकन नहीं करा सकते, भले ही पाठ्यक्रम नए छात्रों के लिए खुला हो।"
+        },
+        "members_only_catalog": {
+          "label": "Members-only catalog",
+          "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
+        },
+        "hide_course_pricing": {
+          "label": "Hide course prices",
+          "description": "Hide prices, the pricing filter, and Free labels on the catalog and course cards. Prices stay hidden until you turn this off."
+        },
+        "show_course_type_filter": {
+          "label": "Show course type filter",
+          "description": "Show course types that have published courses, such as live class and self-paced, as catalog filters."
+        },
+        "catalog_filter_groups": {
+          "label": "Catalog filter groups",
+          "description": "Choose which tag groups appear as catalog filters. Every group is included until you pick a subset.",
+          "empty": "Tag groups will show up here after they are created."
         }
       },
       "login": {
@@ -4943,7 +4974,7 @@
     },
     "filters": {
       "title": "टैग द्वारा फ़िल्टर करें",
-      "help": "पाठ्यक्रमों को फ़िल्टर करने के लिए एक या अधिक टैग चुनें",
+      "help": "Filter by the options shown, or search by name",
       "empty": "अभी तक कोई टैग उपलब्ध नहीं है",
       "tags_title": "टैग",
       "types_title": "प्रकार",
@@ -4954,6 +4985,11 @@
       "pricing_paid": "भुगतान किया गया",
       "selected": "चयनित:",
       "save_changes": "परिवर्तन सहेजें"
+    },
+    "catalog_locked": {
+      "title": "This catalog is for members",
+      "description": "Only members of this academy can browse courses here. Sign in with a member account, or ask an administrator for access.",
+      "sign_in": "Sign in"
     }
   },
   "tags_admin": {
@@ -5002,12 +5038,17 @@
       "edit_tag": "टैग संपादित करें",
       "save": "सहेजें",
       "cancel": "रद्द करें",
-      "actions_menu": "क्रियाएँ टैग करें"
+      "actions_menu": "क्रियाएँ टैग करें",
+      "delete_tag": "Delete tag"
     },
     "common": {
       "not_available": "एन/ए"
     },
-    "page_subtitle": "फ़िल्टर और सूचियों को आसानी से स्कैन करने योग्य रखने के लिए लेबल से पाठ्यक्रम व्यवस्थित करें।"
+    "page_subtitle": "फ़िल्टर और सूचियों को आसानी से स्कैन करने योग्य रखने के लिए लेबल से पाठ्यक्रम व्यवस्थित करें।",
+    "delete": {
+      "title": "Delete tag",
+      "description": "Delete {name}? It will be removed from courses and catalog filters."
+    }
   },
   "invite": {
     "organization": {

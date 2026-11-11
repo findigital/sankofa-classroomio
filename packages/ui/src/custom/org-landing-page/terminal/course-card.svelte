@@ -1,5 +1,7 @@
 <script lang="ts">
   import type { CourseItem, OrgLandingPageLabels } from '../types';
+  import { landingCoursePriceLabel } from '../landing-page-utils';
+  import CourseTagPills from '../course-tag-pills.svelte';
 
   interface Props {
     course: CourseItem;
@@ -23,15 +25,7 @@
       .replace(/^-+|-+$/g, '');
   }
 
-  function priceLabel(c: CourseItem): string {
-    if (c.price) return c.price;
-    if (!c.cost) return labels?.freeLabel ?? 'Free';
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: c.currency ?? 'USD',
-      maximumFractionDigits: 0
-    }).format(c.cost);
-  }
+  const priceLabel = $derived(landingCoursePriceLabel(course, labels, { maximumFractionDigits: 0 }));
 </script>
 
 <a
@@ -62,11 +56,14 @@
   <p class="ui:text-[13.5px] ui:leading-[1.5] ui:m-0 ui:flex-1 ui:line-clamp-3 ui:text-[var(--landing-fg-muted)]">
     {course.description}
   </p>
+  <div class="ui:mt-3">
+    <CourseTagPills tags={course.tags} />
+  </div>
   <div
     class="ui:flex ui:items-center ui:justify-between ui:pt-3.5 ui:font-mono ui:text-[12px]"
     style="border-top: 1px dashed var(--landing-border-soft);"
   >
-    <span class="ui:text-[var(--landing-fg)]">{priceLabel(course)}</span>
+    {#if priceLabel}<span class="ui:text-[var(--landing-fg)]">{priceLabel}</span>{/if}
     <span aria-hidden="true" class="ui:text-[var(--landing-fg-muted)]">→</span>
   </div>
 </a>

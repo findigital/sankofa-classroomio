@@ -349,6 +349,20 @@ export async function updateTag(
   }
 }
 
+export async function deleteTag(orgId: string, tagId: string, dbClient: DbOrTxClient = db): Promise<TTag | null> {
+  try {
+    const [result] = await dbClient
+      .delete(schema.tag)
+      .where(and(eq(schema.tag.organizationId, orgId), eq(schema.tag.id, tagId)))
+      .returning();
+
+    return result ?? null;
+  } catch (error) {
+    console.error('deleteTag error:', error);
+    throw new Error('Failed to delete tag');
+  }
+}
+
 export async function getTagGroupsWithTags(
   orgId: string,
   options: GetTagGroupsWithTagsOptions = {}

@@ -260,6 +260,11 @@
             {/if}
           {/snippet}
           {#snippet filterControls()}
+            {#if $isOrgAdmin}
+              <Button variant="secondary" onclick={() => goto(`${$currentOrgPath}/courses/order`)}>
+                {$t('courses.catalog_order.action')}
+              </Button>
+            {/if}
             <CourseFilterPopover
               bind:sortKey
               bind:selectedOrder

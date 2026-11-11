@@ -37,7 +37,8 @@
         "caption": "Préparation de vos cours, étudiants et paramètres."
       }
     },
-    "back": "Retour"
+    "back": "Retour",
+    "source_offer": "View source code"
   },
   "validations": {
     "generic": {
@@ -439,7 +440,9 @@
       "tag_updated": "Balise mise à jour",
       "course_tags_updated": "Balises de cours mises à jour",
       "fetch_failed": "Échec du chargement des balises",
-      "save_failed": "Échec de l'enregistrement des modifications de balise"
+      "save_failed": "Échec de l'enregistrement des modifications de balise",
+      "tag_deleted": "Tag deleted",
+      "delete_failed": "Failed to delete tag"
     },
     "error_update": "Échec de la mise à jour",
     "token_auth": {
@@ -3302,7 +3305,18 @@
       "empty_tags": "Aucune balise disponible"
     },
     "page_subtitle": "Là où les leçons deviennent des cours et les cours deviennent des inscriptions.",
-    "load_more": "Charger plus"
+    "load_more": "Charger plus",
+    "catalog_order": {
+      "action": "Reorder courses",
+      "title": "Course order",
+      "description": "Drag courses into the order people should see. The catalog and home page use this order, then the date the course was created. Saving featured courses on the landing page replaces this order.",
+      "saved": "Course order saved",
+      "save_failed": "Could not save course order",
+      "unpublished": "Unpublished",
+      "empty": "There are no courses to order yet.",
+      "admin_only": "Only an organization admin can reorder courses.",
+      "drag": "Drag to reorder"
+    }
   },
   "ai": {
     "help_me": "Aide-moi à écrire",
@@ -4380,6 +4394,23 @@
         "internal_enrollment_only": {
           "label": "Inscription interne uniquement",
           "description": "Lorsque cette option est activée, seuls les membres existants de votre organisation peuvent s'inscrire à vos cours. Tous les autres doivent être invités : ils ne peuvent pas s'inscrire eux-mêmes à partir d'une page de cours, même lorsque le cours est ouvert à de nouveaux étudiants."
+        },
+        "members_only_catalog": {
+          "label": "Members-only catalog",
+          "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
+        },
+        "hide_course_pricing": {
+          "label": "Hide course prices",
+          "description": "Hide prices, the pricing filter, and Free labels on the catalog and course cards. Prices stay hidden until you turn this off."
+        },
+        "show_course_type_filter": {
+          "label": "Show course type filter",
+          "description": "Show course types that have published courses, such as live class and self-paced, as catalog filters."
+        },
+        "catalog_filter_groups": {
+          "label": "Catalog filter groups",
+          "description": "Choose which tag groups appear as catalog filters. Every group is included until you pick a subset.",
+          "empty": "Tag groups will show up here after they are created."
         }
       },
       "login": {
@@ -4943,7 +4974,7 @@
     },
     "filters": {
       "title": "Filtrer par balises",
-      "help": "Sélectionnez une ou plusieurs balises pour filtrer les cours",
+      "help": "Filter by the options shown, or search by name",
       "empty": "Aucun tag disponible pour l'instant",
       "tags_title": "Étiquettes",
       "types_title": "Espèces",
@@ -4954,6 +4985,11 @@
       "pricing_paid": "Prix",
       "selected": "Sélectionné :",
       "save_changes": "Enregistrer les modifications"
+    },
+    "catalog_locked": {
+      "title": "This catalog is for members",
+      "description": "Only members of this academy can browse courses here. Sign in with a member account, or ask an administrator for access.",
+      "sign_in": "Sign in"
     }
   },
   "tags_admin": {
@@ -5002,12 +5038,17 @@
       "edit_tag": "Modifier la balise",
       "save": "Enregistrer",
       "cancel": "Annuler",
-      "actions_menu": "Actions de balise"
+      "actions_menu": "Actions de balise",
+      "delete_tag": "Delete tag"
     },
     "common": {
       "not_available": "N/D"
     },
-    "page_subtitle": "Organisez les cours avec des étiquettes pour que les filtres et les listes restent faciles à parcourir."
+    "page_subtitle": "Organisez les cours avec des étiquettes pour que les filtres et les listes restent faciles à parcourir.",
+    "delete": {
+      "title": "Delete tag",
+      "description": "Delete {name}? It will be removed from courses and catalog filters."
+    }
   },
   "invite": {
     "organization": {

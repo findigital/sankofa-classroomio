@@ -5,6 +5,7 @@
   import * as Avatar from '@cio/ui/base/avatar';
   import { t } from '$lib/utils/functions/translations';
   import { currentOrg } from '$lib/utils/store/org';
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { GoogleIconColored } from '$features/ui/icons';
   import { authClient } from '$lib/utils/services/auth/client';
   import { snackbar } from '$features/ui/snackbar/store';
@@ -80,6 +81,7 @@
 
   const authBackgroundUrl = $derived($currentOrg.customization.auth?.backgroundImage?.trim() ?? '');
   const brandName = $derived(logoName ?? $currentOrg.name);
+  const brandLabel = $derived(brandName || appBrandName());
   const brandAvatarUrl = $derived(logoName !== undefined ? logoUrl : $currentOrg.avatarUrl);
   const showBlockFooter = $derived(page.data.isOrgSite === false);
 </script>
@@ -106,13 +108,10 @@
     <Card.Root class="ui:notch-cutout w-full shadow-none">
       {#if !showOnlyContent || showLogo}
         <Card.Header class="flex flex-col items-center gap-4">
-          <a href={resolve(ROUTE.HOME, {})} class="inline-flex" aria-label={brandName ? brandName : 'ClassroomIO'}>
+          <a href={resolve(ROUTE.HOME, {})} class="inline-flex" aria-label={brandLabel}>
             <Avatar.Root>
-              <Avatar.Image
-                src={brandAvatarUrl ? brandAvatarUrl : '/logo-192.png'}
-                alt={brandName ? brandName : 'ClassroomIO'}
-              />
-              <Avatar.Fallback>{brandName ? brandName : 'ClassroomIO'}</Avatar.Fallback>
+              <Avatar.Image src={brandAvatarUrl ? brandAvatarUrl : '/logo-192.png'} alt={brandLabel} />
+              <Avatar.Fallback>{brandLabel}</Avatar.Fallback>
             </Avatar.Root>
           </a>
 

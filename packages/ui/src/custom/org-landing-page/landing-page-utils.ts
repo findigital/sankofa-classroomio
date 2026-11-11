@@ -22,6 +22,22 @@ export function getCourseCoverImage(course: CourseItem): string {
   return DEFAULT_COURSE_BANNER_IMAGE;
 }
 
+export function landingCoursePriceLabel(
+  course: Pick<CourseItem, 'price' | 'cost' | 'currency'>,
+  labels?: { freeLabel?: string; hidePrice?: boolean },
+  options?: { maximumFractionDigits?: number }
+): string | null {
+  if (labels?.hidePrice) return null;
+  if (course.price) return course.price;
+  if (!course.cost) return labels?.freeLabel ?? 'Free';
+
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: course.currency || 'USD',
+    ...(options?.maximumFractionDigits !== undefined ? { maximumFractionDigits: options.maximumFractionDigits } : {})
+  }).format(course.cost);
+}
+
 export function getPrimaryCourseTag(course: CourseItem) {
   return course.tags?.[0];
 }

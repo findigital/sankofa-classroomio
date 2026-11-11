@@ -5,6 +5,7 @@ import {
   issuePublicHlsCookieService
 } from '@api/services/course/public-course';
 import { lessonMarkdownRouter } from './lesson-markdown';
+import { publicCourseReadOptions, viewerFromAuth } from '@api/services/course/course-visibility';
 
 import { Hono } from '@api/utils/hono';
 import { handleError } from '@api/utils/errors';
@@ -21,7 +22,8 @@ export const publicCourseRouter = new Hono()
   .get('/:courseSlug', zValidator('param', ZPublicCourseBySlugParam), async (c) => {
     try {
       const { courseSlug } = c.req.valid('param');
-      const tree = await getPublicCourseTreeService(courseSlug);
+      const options = await publicCourseReadOptions(courseSlug, viewerFromAuth(c.get('user'), c.get('orgRoles')));
+      const tree = await getPublicCourseTreeService(courseSlug, options);
 
       if (!tree) {
         return c.json(
@@ -42,7 +44,8 @@ export const publicCourseRouter = new Hono()
   .get('/:courseSlug/item/:itemSlug', zValidator('param', ZPublicCourseItemParam), async (c) => {
     try {
       const { courseSlug, itemSlug } = c.req.valid('param');
-      const item = await getPublicCourseItemService(courseSlug, itemSlug);
+      const options = await publicCourseReadOptions(courseSlug, viewerFromAuth(c.get('user'), c.get('orgRoles')));
+      const item = await getPublicCourseItemService(courseSlug, itemSlug, options);
 
       if (!item) {
         return c.json(
@@ -76,7 +79,8 @@ export const publicCourseRouter = new Hono()
       try {
         const { courseSlug, itemSlug } = c.req.valid('param');
         const { assetId } = c.req.valid('query');
-        const result = await issuePublicHlsCookieService(courseSlug, itemSlug, assetId);
+        const options = await publicCourseReadOptions(courseSlug, viewerFromAuth(c.get('user'), c.get('orgRoles')));
+        const result = await issuePublicHlsCookieService(courseSlug, itemSlug, assetId, options);
 
         setCookie(c, result.cookieName, result.token, {
           path: '/',

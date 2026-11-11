@@ -96,6 +96,7 @@ export { default as CourseLandingChips } from './course-chips.svelte';
 export { default as CourseLandingInstructor } from './course-instructor.svelte';
 export { default as CourseLandingReviews } from './course-reviews.svelte';
 export { default as CourseLandingPricing } from './course-pricing.svelte';
+export { default as CourseTagPills } from './course-tag-pills.svelte';
 export {
   setLandingPageEditContext,
   getLandingPageEditContext,

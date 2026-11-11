@@ -1,6 +1,7 @@
 <script lang="ts">
   import * as ButtonGroup from '@cio/ui/base/button-group';
   import { Button } from '@cio/ui/base/button';
+  import * as Dialog from '@cio/ui/base/dialog';
   import * as DropdownMenu from '@cio/ui/base/dropdown-menu';
   import * as Page from '@cio/ui/base/page';
   import * as Table from '@cio/ui/base/table';
@@ -28,6 +29,7 @@
 
   let editingTag = $state<OrganizationTag | null>(null);
   let editingGroup = $state<OrganizationTagGroup | null>(null);
+  let tagToDelete = $state<OrganizationTag | null>(null);
 
   $effect(() => {
     tagApi.tagGroups = initialTagGroups;
@@ -55,6 +57,17 @@
     tagApi.reset();
     editingGroup = group;
     isTagGroupModalOpen = true;
+  }
+
+  function openDeleteTagDialog(tag: OrganizationTag) {
+    tagToDelete = tag;
+  }
+
+  async function confirmDeleteTag() {
+    if (!tagToDelete) return;
+
+    const deleted = await tagApi.deleteTag(tagToDelete.id);
+    if (deleted) tagToDelete = null;
   }
 
   function getTagCoursesHref(tagSlug: string) {
@@ -198,6 +211,9 @@
                             <DropdownMenu.Item onclick={() => openEditTagModal(tag)}>
                               {$t('tags_admin.actions.edit_tag')}
                             </DropdownMenu.Item>
+                            <DropdownMenu.Item variant="destructive" onclick={() => openDeleteTagDialog(tag)}>
+                              {$t('tags_admin.actions.delete_tag')}
+                            </DropdownMenu.Item>
                           </DropdownMenu.Content>
                         </DropdownMenu.Root>
                       </Table.Cell>
@@ -212,6 +228,30 @@
     {/snippet}
   </Page.Body>
 </Page.Root>
+
+<Dialog.Root
+  open={tagToDelete !== null}
+  onOpenChange={(isOpen) => {
+    if (!isOpen) tagToDelete = null;
+  }}
+>
+  <Dialog.Content>
+    <Dialog.Header>
+      <Dialog.Title>{$t('tags_admin.delete.title')}</Dialog.Title>
+      <Dialog.Description>
+        {$t('tags_admin.delete.description', { name: tagToDelete?.name ?? '' })}
+      </Dialog.Description>
+    </Dialog.Header>
+    <Dialog.Footer>
+      <Button variant="outline" size="sm" onclick={() => (tagToDelete = null)}>
+        {$t('tags_admin.actions.cancel')}
+      </Button>
+      <Button variant="destructive" size="sm" onclick={confirmDeleteTag} loading={tagApi.isLoading}>
+        {$t('tags_admin.actions.delete_tag')}
+      </Button>
+    </Dialog.Footer>
+  </Dialog.Content>
+</Dialog.Root>
 
 <TagFormModal bind:open={isTagModalOpen} mode={editingTag ? 'edit' : 'create'} tag={editingTag} />
 <TagGroupFormModal bind:open={isTagGroupModalOpen} mode={editingGroup ? 'edit' : 'create'} group={editingGroup} />

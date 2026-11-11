@@ -462,7 +462,8 @@
       "untitled_lesson": "Lezione senza titolo",
       "format": "Formato"
     },
-    "back": "Indietro"
+    "back": "Indietro",
+    "source_offer": "View source code"
   },
   "compliance": {
     "title": "Conformità",
@@ -910,6 +911,23 @@
         "internal_enrollment_only": {
           "label": "Solo iscrizione interna",
           "description": "Se abilitato, solo i membri esistenti della tua organizzazione possono iscriversi ai tuoi corsi. Tutti gli altri devono essere invitati: non possono iscriversi dalla pagina di un corso, anche quando il corso è aperto a nuovi studenti."
+        },
+        "members_only_catalog": {
+          "label": "Members-only catalog",
+          "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
+        },
+        "hide_course_pricing": {
+          "label": "Hide course prices",
+          "description": "Hide prices, the pricing filter, and Free labels on the catalog and course cards. Prices stay hidden until you turn this off."
+        },
+        "show_course_type_filter": {
+          "label": "Show course type filter",
+          "description": "Show course types that have published courses, such as live class and self-paced, as catalog filters."
+        },
+        "catalog_filter_groups": {
+          "label": "Catalog filter groups",
+          "description": "Choose which tag groups appear as catalog filters. Every group is included until you pick a subset.",
+          "empty": "Tag groups will show up here after they are created."
         }
       },
       "sso": {
@@ -1577,7 +1595,8 @@
       "edit_group": "Modifica gruppo",
       "edit_tag": "Modifica etichetta",
       "save": "Salva",
-      "cancel": "Annulla"
+      "cancel": "Annulla",
+      "delete_tag": "Delete tag"
     },
     "table": {
       "tag": "Etichetta",
@@ -1613,6 +1632,10 @@
       "search_category": "Cerca categoria",
       "no_results": "Nessuna categoria trovata",
       "no_groups": "Crea un gruppo di tag prima di creare i tag"
+    },
+    "delete": {
+      "title": "Delete tag",
+      "description": "Delete {name}? It will be removed from courses and catalog filters."
     }
   },
   "public_courses": {
@@ -1622,7 +1645,7 @@
     "clear_filters": "Cancella filtri",
     "filters": {
       "title": "Filtro",
-      "help": "Filtra i corsi per tipologia, tag o cerca per nome",
+      "help": "Filter by the options shown, or search by name",
       "tags_title": "Tag",
       "types_title": "Tipi",
       "pricing_title": "Prezzi",
@@ -1641,6 +1664,11 @@
     "catalog_empty": {
       "title": "Nessun corso ancora pubblicato",
       "description": "Torna presto per nuovi corsi."
+    },
+    "catalog_locked": {
+      "title": "This catalog is for members",
+      "description": "Only members of this academy can browse courses here. Sign in with a member account, or ask an administrator for access.",
+      "sign_in": "Sign in"
     }
   },
   "org_navigation": {
@@ -2352,6 +2380,17 @@
       "error": {
         "failed_to_clone": "Impossibile clonare il corso"
       }
+    },
+    "catalog_order": {
+      "action": "Reorder courses",
+      "title": "Course order",
+      "description": "Drag courses into the order people should see. The catalog and home page use this order, then the date the course was created. Saving featured courses on the landing page replaces this order.",
+      "saved": "Course order saved",
+      "save_failed": "Could not save course order",
+      "unpublished": "Unpublished",
+      "empty": "There are no courses to order yet.",
+      "admin_only": "Only an organization admin can reorder courses.",
+      "drag": "Drag to reorder"
     }
   },
   "course": {
@@ -5446,7 +5485,9 @@
       "tag_updated": "Etichetta aggiornata",
       "course_tags_updated": "Tag del corso aggiornati",
       "fetch_failed": "Impossibile caricare i tag",
-      "save_failed": "Impossibile salvare le modifiche ai tag"
+      "save_failed": "Impossibile salvare le modifiche ai tag",
+      "tag_deleted": "Tag deleted",
+      "delete_failed": "Failed to delete tag"
     },
     "landing_page_settings": {
       "error": {

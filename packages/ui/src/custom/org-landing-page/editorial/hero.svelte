@@ -4,7 +4,7 @@
   import SecondaryActionButton from '../secondary-action-button.svelte';
   import CoursePrimaryAction from '../course-primary-action.svelte';
   import EditableLandingSection from '../editable-section.svelte';
-  import { getCourseTypeLandingMeta } from '../landing-page-utils';
+  import { getCourseTypeLandingMeta, landingCoursePriceLabel } from '../landing-page-utils';
 
   interface Props {
     hero: OrgLandingPageProps['hero'];
@@ -30,11 +30,6 @@
         ]
       : []
   );
-
-  function formatCost(cost?: number, currency = 'USD'): string {
-    if (!cost) return labels?.freeLabel ?? 'Free';
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(cost);
-  }
 </script>
 
 {@render navigation()}
@@ -100,7 +95,7 @@
         </div>
 
         {#if featured}
-          {@const cost = featured.cost ?? 0}
+          {@const featuredPrice = landingCoursePriceLabel(featured, labels, { maximumFractionDigits: 0 })}
           {@const seats = featured.totalStudents ?? 0}
           <div
             class="ui:relative ui:overflow-hidden ui:rounded-xl"
@@ -176,9 +171,14 @@
                 class="ui:flex ui:items-center ui:justify-between ui:px-5 ui:py-3 ui:bg-[var(--landing-bg)]"
                 style="border-top: 1px solid var(--landing-border-soft);"
               >
-                <span class="ui:text-sm ui:font-semibold ui:text-[var(--landing-fg)]" style="letter-spacing: -0.01em;">
-                  {formatCost(cost, featured.currency)}
-                </span>
+                {#if featuredPrice}
+                  <span
+                    class="ui:text-sm ui:font-semibold ui:text-[var(--landing-fg)]"
+                    style="letter-spacing: -0.01em;"
+                  >
+                    {featuredPrice}
+                  </span>
+                {/if}
                 {#if seats > 0}
                   <span class="ui:text-[12.5px] ui:text-[var(--landing-fg-muted)]"
                     >{(labels?.enrolledLabel ?? ((n: number) => `${n.toLocaleString()} enrolled`))(seats)}</span

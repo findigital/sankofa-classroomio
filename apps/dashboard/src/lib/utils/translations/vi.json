@@ -37,7 +37,8 @@
         "caption": "Đang chuẩn bị khóa học, học viên và cài đặt của bạn."
       }
     },
-    "back": "Quay lại"
+    "back": "Quay lại",
+    "source_offer": "View source code"
   },
   "validations": {
     "generic": {
@@ -439,7 +440,9 @@
       "tag_updated": "Đã cập nhật thẻ",
       "course_tags_updated": "Đã cập nhật thẻ khóa học",
       "fetch_failed": "Không tải được thẻ",
-      "save_failed": "Không lưu được các thay đổi về thẻ"
+      "save_failed": "Không lưu được các thay đổi về thẻ",
+      "tag_deleted": "Tag deleted",
+      "delete_failed": "Failed to delete tag"
     },
     "error_update": "Không thể cập nhật",
     "token_auth": {
@@ -3302,7 +3305,18 @@
       "empty_tags": "Không có thẻ nào"
     },
     "page_subtitle": "Nơi các bài học trở thành khóa học và khóa học trở thành đăng ký.",
-    "load_more": "Tải thêm"
+    "load_more": "Tải thêm",
+    "catalog_order": {
+      "action": "Reorder courses",
+      "title": "Course order",
+      "description": "Drag courses into the order people should see. The catalog and home page use this order, then the date the course was created. Saving featured courses on the landing page replaces this order.",
+      "saved": "Course order saved",
+      "save_failed": "Could not save course order",
+      "unpublished": "Unpublished",
+      "empty": "There are no courses to order yet.",
+      "admin_only": "Only an organization admin can reorder courses.",
+      "drag": "Drag to reorder"
+    }
   },
   "ai": {
     "help_me": "Giúp tôi viết",
@@ -4380,6 +4394,23 @@
         "internal_enrollment_only": {
           "label": "Chỉ đăng ký nội bộ",
           "description": "Khi được bật, chỉ những thành viên hiện tại trong tổ chức của bạn mới có thể đăng ký các khóa học của bạn. Mọi người khác phải được mời — họ không thể tự đăng ký từ trang khóa học, ngay cả khi khóa học mở cho sinh viên mới."
+        },
+        "members_only_catalog": {
+          "label": "Members-only catalog",
+          "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
+        },
+        "hide_course_pricing": {
+          "label": "Hide course prices",
+          "description": "Hide prices, the pricing filter, and Free labels on the catalog and course cards. Prices stay hidden until you turn this off."
+        },
+        "show_course_type_filter": {
+          "label": "Show course type filter",
+          "description": "Show course types that have published courses, such as live class and self-paced, as catalog filters."
+        },
+        "catalog_filter_groups": {
+          "label": "Catalog filter groups",
+          "description": "Choose which tag groups appear as catalog filters. Every group is included until you pick a subset.",
+          "empty": "Tag groups will show up here after they are created."
         }
       },
       "login": {
@@ -4943,7 +4974,7 @@
     },
     "filters": {
       "title": "Lọc theo thẻ",
-      "help": "Chọn một hoặc nhiều thẻ để lọc các khóa học",
+      "help": "Filter by the options shown, or search by name",
       "empty": "Chưa có thẻ nào",
       "tags_title": "Thẻ",
       "types_title": "Các loại",
@@ -4954,6 +4985,11 @@
       "pricing_paid": "Đã trả tiền",
       "selected": "Đã chọn:",
       "save_changes": "Lưu thay đổi"
+    },
+    "catalog_locked": {
+      "title": "This catalog is for members",
+      "description": "Only members of this academy can browse courses here. Sign in with a member account, or ask an administrator for access.",
+      "sign_in": "Sign in"
     }
   },
   "tags_admin": {
@@ -5002,12 +5038,17 @@
       "edit_tag": "Chỉnh sửa thẻ",
       "save": "Lưu",
       "cancel": "Hủy bỏ",
-      "actions_menu": "Hành động gắn thẻ"
+      "actions_menu": "Hành động gắn thẻ",
+      "delete_tag": "Delete tag"
     },
     "common": {
       "not_available": "N/A"
     },
-    "page_subtitle": "Sắp xếp khóa học bằng nhãn để bộ lọc và danh sách dễ quét hơn."
+    "page_subtitle": "Sắp xếp khóa học bằng nhãn để bộ lọc và danh sách dễ quét hơn.",
+    "delete": {
+      "title": "Delete tag",
+      "description": "Delete {name}? It will be removed from courses and catalog filters."
+    }
   },
   "invite": {
     "organization": {

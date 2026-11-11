@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { OrgLandingPageLabels, OrgLandingPageProps, CourseItem } from '../types';
   import type { Snippet } from 'svelte';
+  import { landingCoursePriceLabel } from '../landing-page-utils';
   import { safeHref } from '../safe-href';
   import { Button } from '../../../base/button';
   import CoursePrimaryAction from '../course-primary-action.svelte';
@@ -35,15 +36,8 @@
   const numberFormatter = new Intl.NumberFormat('en-US');
   const learnersFormatted = $derived(numberFormatter.format(learnersCount));
 
-  function priceLabel(course: CourseItem): string {
-    if (course.price) return course.price;
-    if (!course.cost) return 'Free';
-
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: course.currency ?? 'USD',
-      maximumFractionDigits: 0
-    }).format(course.cost);
+  function priceLabel(course: CourseItem): string | null {
+    return landingCoursePriceLabel(course, labels, { maximumFractionDigits: 0 });
   }
 
   function durationLabel(course: CourseItem): string {
@@ -231,7 +225,7 @@
                   <span class="ui:text-[var(--landing-fg-faint)]">{row.n}</span>
                   <span class="ui:truncate ui:flex-1" style="color: var(--landing-accent);">{row.slug}</span>
                   <span class="ui:text-[12px] ui:text-[var(--landing-fg-muted)]">{row.duration}</span>
-                  <span class="ui:text-[12px] ui:w-20 ui:text-right">{row.price}</span>
+                  {#if row.price}<span class="ui:text-[12px] ui:w-20 ui:text-right">{row.price}</span>{/if}
                 </div>
               {/each}
             </div>

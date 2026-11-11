@@ -12,7 +12,7 @@ import {
   type UpcomingSessionReminderRow
 } from '@cio/db/queries/course';
 import { EmailPreferenceLookupCache } from '@cio/db/queries/notifications';
-import { buildEmailBranding, buildEmailFromName, buildSessionIcs } from '@cio/email';
+import { buildEmailBranding, buildOrgEmailFromName, buildSessionIcs } from '@cio/email';
 import { enqueueEmailSend, toEmailJobId } from '@cio/jobs';
 import {
   LIVE_SESSION_REMINDER_MAX_OFFSET_MINUTES,
@@ -275,7 +275,7 @@ async function enqueueReminder(params: SendableDelivery & { locale: EmailLocale;
           joinUrl: recipient.callUrl,
           branding
         },
-        from: buildEmailFromName(`${recipient.organizationName} (via ClassroomIO.com)`),
+        from: buildOrgEmailFromName(recipient.organizationName),
         organizationId: recipient.organizationId,
         locale,
         reminderDeliveryId: delivery.id,

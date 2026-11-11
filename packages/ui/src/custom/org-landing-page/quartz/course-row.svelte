@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { CourseItem, OrgLandingPageLabels } from '../types';
-  import { getCourseCoverImage, getCourseTypeLandingMeta, getPrimaryCourseTag } from '../landing-page-utils';
+  import { getCourseCoverImage, getCourseTypeLandingMeta, landingCoursePriceLabel } from '../landing-page-utils';
+  import CourseTagPills from '../course-tag-pills.svelte';
   import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
 
   interface Props {
@@ -12,7 +13,6 @@
   let { course, disableCourseLinks = false, labels }: Props = $props();
 
   const courseTypeMeta = $derived(getCourseTypeLandingMeta(course));
-  const primaryTag = $derived(getPrimaryCourseTag(course));
   const cover = $derived(getCourseCoverImage(course));
 
   const href = $derived.by(() => {
@@ -21,16 +21,7 @@
     return course.link || (course.slug ? `/course/${course.slug}` : undefined);
   });
 
-  const priceLabel = $derived.by(() => {
-    if (course.price) return course.price;
-    if (!course.cost) return labels?.freeLabel ?? 'Free';
-
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: course.currency || 'USD',
-      maximumFractionDigits: 0
-    }).format(course.cost);
-  });
+  const priceLabel = $derived(landingCoursePriceLabel(course, labels, { maximumFractionDigits: 0 }));
 
   const lessonsLabel = $derived.by(() => {
     if (!course.lessonCount) return undefined;
@@ -62,16 +53,7 @@
   </div>
 
   <div class="ui:flex ui:flex-col ui:p-7 ui:@2xl:px-8">
-    {#if primaryTag}
-      <span
-        class="ui:inline-flex ui:items-center ui:gap-1.5 ui:self-start ui:mb-3.5 ui:px-2.5 ui:py-0.5 ui:rounded-[var(--landing-radius-pill)] ui:border ui:border-[var(--landing-border)] ui:text-xs ui:text-[var(--landing-fg-muted)]"
-      >
-        {#if primaryTag.color}
-          <span class="ui:h-1.5 ui:w-1.5 ui:rounded-full" style={`background-color: ${primaryTag.color}`}></span>
-        {/if}
-        {primaryTag.name}
-      </span>
-    {/if}
+    <CourseTagPills class="ui:mb-3.5" tags={course.tags} />
 
     <h3
       class="ui:m-0 ui:mb-2.5 ui:text-2xl ui:text-[var(--landing-fg)] ui:[font-weight:var(--landing-heading-weight)] ui:[letter-spacing:var(--landing-heading-tracking)]"
@@ -91,7 +73,8 @@
         {#if courseTypeMeta}<span>{courseTypeMeta.label}</span>{/if}
       </span>
       <span class="ui:flex ui:items-center ui:gap-5">
-        <span class="ui:text-[15px] ui:font-semibold ui:text-[var(--landing-fg)]">{priceLabel}</span>
+        {#if priceLabel}<span class="ui:text-[15px] ui:font-semibold ui:text-[var(--landing-fg)]">{priceLabel}</span
+          >{/if}
         <span
           class="ui:inline-flex ui:items-center ui:gap-1.5 ui:text-[13.5px] ui:font-medium ui:text-[var(--landing-fg)]"
         >

@@ -5,6 +5,8 @@ const envSchema = z.object({
   SMTP_PASSWORD: z.string().optional(),
   SMTP_PORT: z.string().optional(),
   SMTP_SENDER: z.string().optional(),
+  SUPPORT_EMAIL: z.string().optional(),
+  EMAIL_VIA_SUFFIX: z.string().optional(),
   SMTP_USER: z.string().optional(),
   ZOHO_TOKEN: z.string().optional()
 });

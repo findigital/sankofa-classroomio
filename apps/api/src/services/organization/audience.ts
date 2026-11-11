@@ -14,7 +14,7 @@ import type {
 } from '@cio/utils/validation/organization';
 import { addGroupMembers, enrollUsersInCourseGroups, getExistingGroupMembers } from '@cio/db/queries/group';
 import { invalidateOrgStats } from '@cio/core/utils/redis/org-stats-cache';
-import { buildEmailFromName, buildEmailBranding } from '@cio/email';
+import { buildOrgEmailFromName, buildEmailBranding } from '@cio/email';
 import { enqueueTransactionalEmail } from '@api/services/jobs';
 import {
   addCohortMember,
@@ -208,7 +208,7 @@ async function enrollAudienceStudentProfilesInCourses(
               customMessage: welcomeMessageByGroupId.get(p.groupId) ?? undefined,
               branding: buildEmailBranding(organization)
             },
-            from: buildEmailFromName(`${organization.name} (via ClassroomIO.com)`),
+            from: buildOrgEmailFromName(organization.name),
             idempotencyKey: `audience-course-welcome:${p.groupId}:${p.profileId}`,
             ics: icsByGroupId.get(p.groupId),
             preference: { organizationId: orgId, recipientProfileId: p.profileId }
@@ -326,7 +326,7 @@ async function enrollAudienceStudentProfilesInCohorts(
                 loginUrl,
                 branding: buildEmailBranding(organization)
               },
-              from: buildEmailFromName(`${organization.name} (via ClassroomIO.com)`),
+              from: buildOrgEmailFromName(organization.name),
               idempotencyKey: `audience-cohort-welcome:${pair.cohortId}:${pair.profileId}`,
               preference: { organizationId: orgId, recipientProfileId: pair.profileId }
             });
@@ -433,7 +433,7 @@ async function createStudentOrgInvitesAndSendEmails(input: {
             courseNames: accessNamesLabel,
             branding: buildEmailBranding(organization)
           },
-          from: buildEmailFromName(`${organization.name} (via ClassroomIO.com)`),
+          from: buildOrgEmailFromName(organization.name),
           organizationId: orgId,
           idempotencyKey: `student-org-invite:${invite.id}`
         });
@@ -835,7 +835,7 @@ export async function resendAudienceInvite(orgId: string, data: TAudienceInviteB
         courseNames: accessNamesLabel,
         branding: buildEmailBranding(organization)
       },
-      from: buildEmailFromName(`${organization.name} (via ClassroomIO.com)`),
+      from: buildOrgEmailFromName(organization.name),
       organizationId: orgId,
       idempotencyKey: `student-org-invite:${invite.id}`
     });

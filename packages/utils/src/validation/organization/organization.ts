@@ -88,6 +88,39 @@ export const ZCourseReorder = z.object({
 });
 export type TCourseReorder = z.infer<typeof ZCourseReorder>;
 
+export const ZCourseCatalogOrder = z.object({
+  courses: z
+    .array(
+      z.object({
+        id: z.string().uuid(),
+        order: z.number().int().min(0)
+      })
+    )
+    .min(1)
+    .max(500)
+    .superRefine((courses, ctx) => {
+      const uniqueIds = new Set(courses.map((course) => course.id));
+      if (uniqueIds.size !== courses.length) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['courses'],
+          message: 'Course ids must be unique'
+        });
+      }
+
+      const expectedOrders = Array.from({ length: courses.length }, (_, index) => index);
+      const actualOrders = courses.map((course) => course.order).sort((a, b) => a - b);
+      if (actualOrders.some((order, index) => order !== expectedOrders[index])) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['courses'],
+          message: 'Orders must form a contiguous sequence starting at 0'
+        });
+      }
+    })
+});
+export type TCourseCatalogOrder = z.infer<typeof ZCourseCatalogOrder>;
+
 export const ZGetOrgSetup = z.object({
   siteName: z.string().min(1)
 });
@@ -197,6 +230,10 @@ export const ZUpdateOrganization = z.object({
         })
         .optional(),
       internalEnrollmentOnly: z.boolean().optional(),
+      membersOnlyCatalog: z.boolean().optional(),
+      hideCoursePricing: z.boolean().optional(),
+      showCourseTypeFilter: z.boolean().optional(),
+      catalogFilterTagGroupIds: z.array(z.string().uuid()).max(100).nullable().optional(),
       language: z
         .object({
           locale: z.enum(['en', 'hi', 'fr', 'pt', 'de', 'vi', 'ru', 'es', 'pl', 'da', 'tr', 'it']).optional(),

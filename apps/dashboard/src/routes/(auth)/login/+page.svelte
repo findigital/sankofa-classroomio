@@ -4,6 +4,7 @@
   import { t } from '$lib/utils/functions/translations';
   import { authValidation } from '$lib/utils/functions/validator';
   import { currentOrg } from '$lib/utils/store/org';
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { authClient } from '$lib/utils/services/auth/client';
   import { page } from '$app/state';
   import { resolve } from '$app/paths';
@@ -135,7 +136,7 @@
 </script>
 
 <svelte:head>
-  <title>Welcome back to {$currentOrg.name || 'ClassroomIO'}</title>
+  <title>Welcome back to {$currentOrg.name || appBrandName()}</title>
 </svelte:head>
 
 {#snippet getPasswordAuthAlternative()}

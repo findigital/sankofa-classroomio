@@ -7,6 +7,7 @@
   import { getRequestBaseUrl } from '$lib/utils/services/api';
   import type { Snippet } from 'svelte';
   import type { PublicOrg } from '$features/app/types';
+  import SourceOffer from '$features/ui/source-offer.svelte';
 
   interface Props {
     children?: Snippet;
@@ -45,3 +46,4 @@
 {:else}
   {@render children?.()}
 {/if}
+<SourceOffer />

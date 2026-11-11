@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import { classroomio, type InferResponseType } from '$lib/utils/services/api';
-import { safeServerApi } from '$lib/utils/services/api/server';
+import { getVisitorHeaders, safeServerApi } from '$lib/utils/services/api/server';
 import { resolveStudentHomeRedirect } from '$features/org/api/student-home.server';
 
 type GetPublicCoursesRequest = typeof classroomio.organization.courses.public.$get;
@@ -20,7 +20,8 @@ export const load = async ({ parent, cookies }) => {
       org: null,
       orgSiteName: '',
       courses: [],
-      hasMoreCourses: false
+      hasMoreCourses: false,
+      catalogLocked: false
     };
   }
 
@@ -31,23 +32,30 @@ export const load = async ({ parent, cookies }) => {
       org,
       orgSiteName,
       courses: [],
-      hasMoreCourses: false
+      hasMoreCourses: false,
+      catalogLocked: false
     };
   }
 
   const coursesResult = await safeServerApi<GetPublicCoursesSuccess>(() =>
-    classroomio.organization.courses.public.$get({
-      query: { siteName }
-    })
+    classroomio.organization.courses.public.$get(
+      {
+        query: { siteName }
+      },
+      getVisitorHeaders(cookies)
+    )
   );
 
-  const courseData = coursesResult.ok ? coursesResult.body.data : { courses: [], hasMoreCourses: false };
+  const courseData = coursesResult.ok
+    ? coursesResult.body.data
+    : { courses: [], hasMoreCourses: false, catalogLocked: false };
 
   return {
     isOrgSite: true as const,
     org,
     orgSiteName,
     courses: courseData.courses,
-    hasMoreCourses: courseData.hasMoreCourses
+    hasMoreCourses: courseData.hasMoreCourses,
+    catalogLocked: courseData.catalogLocked
   };
 };

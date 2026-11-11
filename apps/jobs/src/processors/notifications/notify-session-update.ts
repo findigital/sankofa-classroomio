@@ -3,7 +3,7 @@ import { getCourseMembers } from '@cio/db/queries/course/people';
 import { getLessonById } from '@cio/db/queries/lesson';
 import { EmailPreferenceLookupCache } from '@cio/db/queries/notifications';
 import { ROLE } from '@cio/utils/constants';
-import { buildEmailBranding, buildEmailFromName, buildSessionIcs } from '@cio/email';
+import { buildEmailBranding, buildOrgEmailFromName, buildSessionIcs } from '@cio/email';
 import { ZNotifyCourseSessionUpdatePayload, enqueueEmailSend } from '@cio/jobs';
 
 import { log } from '../../utils/logger';
@@ -107,7 +107,7 @@ export async function processNotifyCourseSessionUpdate(rawPayload: unknown): Pro
             joinUrl: lesson.callUrl,
             branding
           },
-          from: buildEmailFromName(`${orgName} (via ClassroomIO.com)`),
+          from: buildOrgEmailFromName(orgName),
           ics,
           organizationId: orgData.orgId,
           locale

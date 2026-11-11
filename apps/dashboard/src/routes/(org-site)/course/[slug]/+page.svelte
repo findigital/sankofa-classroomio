@@ -3,10 +3,11 @@
 
   import { CourseLandingPage } from '$features/ui';
   import { PoweredBy } from '$features/ui';
+  import { appBrandName } from '$lib/utils/functions/brand';
 
   let { data } = $props();
 
-  const orgName = $derived(data.org?.name ?? data.course?.org?.name ?? 'ClassroomIO');
+  const orgName = $derived(data.org?.name ?? data.course?.org?.name ?? appBrandName());
   const courseImage = $derived(data.course?.bannerImage || '');
 
   const courseJsonLd = $derived.by(() => {

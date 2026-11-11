@@ -27,6 +27,7 @@ import {
   updateCourse
 } from '@cio/core/services/course/course';
 import { getCourseProgressForRequester } from '@api/services/course/progress-access';
+import { requireCourseSlugAccess, viewerFromAuth } from '@api/services/course/course-visibility';
 import { assertCertificateDownloadAllowed, evaluateCourseCertification } from '@api/services/course/completion';
 import { getCourseTags, replaceCourseTags } from '@api/services/tag';
 
@@ -125,11 +126,9 @@ export const courseRouter = new Hono()
   .get('/slug/:slug', zValidator('param', ZCourseGetBySlugParam), async (c) => {
     try {
       const { slug } = c.req.valid('param');
-      const course = await getCourse(undefined, slug);
-
-      if (!course.isPublished) {
-        throw new AppError('Course not found', ErrorCodes.COURSE_NOT_FOUND, 404);
-      }
+      const viewer = viewerFromAuth(c.get('user'), c.get('orgRoles'));
+      await requireCourseSlugAccess(slug, viewer);
+      const course = await getCourse(undefined, slug, viewer.userId ?? undefined);
 
       return c.json(
         {

@@ -10,6 +10,8 @@ import type {
   DomainRequestRequest,
   GetAudienceRequest,
   GetLinkInviteRequest,
+  CatalogOrderCourses,
+  GetCatalogOrderRequest,
   GetOrgPublicCoursesRequest,
   GetStudentEmailTemplatesRequest,
   ImportAudienceRequest,
@@ -24,6 +26,7 @@ import type {
   ResendAudienceInviteRequest,
   ResetStudentEmailTemplateRequest,
   ReorderOrgCoursesRequest,
+  SaveCatalogOrderRequest,
   RevokeAudienceInviteRequest,
   SaveStudentEmailTemplateRequest,
   SendStudentEmailTemplateTestRequest,
@@ -80,6 +83,7 @@ class OrgApi extends BaseApiWithErrors {
   audience = $state<OrganizationAudience>([]);
   audiencePagination = $state<OrganizationAudiencePagination | null>(null);
   publicCourses: OrgPublicCourses = $state([]);
+  catalogLocked = $state(false);
   hasMorePublicCourses = $state(false);
   publicCoursesLoadedSiteName: string | null = $state(null);
   joinErrorCode = $state<string | null>(null);
@@ -249,6 +253,7 @@ class OrgApi extends BaseApiWithErrors {
       onSuccess: (response) => {
         this.publicCourses = response.data.courses;
         this.hasMorePublicCourses = response.data.hasMoreCourses;
+        this.catalogLocked = response.data.catalogLocked;
         this.publicCoursesLoadedSiteName = siteName;
       }
     })
@@ -259,6 +264,7 @@ class OrgApi extends BaseApiWithErrors {
         if (this.publicCoursesLoadedSiteName !== siteName) {
           this.publicCourses = [];
           this.hasMorePublicCourses = false;
+          this.catalogLocked = false;
           this.publicCoursesLoadedSiteName = siteName;
         }
 
@@ -298,6 +304,29 @@ class OrgApi extends BaseApiWithErrors {
     }
 
     return response.data.courses;
+  }
+
+  async listCatalogOrder(): Promise<CatalogOrderCourses> {
+    const response = await this.execute<GetCatalogOrderRequest>({
+      requestFn: () => classroomio.organization.courses['catalog-order'].$get(),
+      logContext: 'loading course order'
+    });
+
+    return response?.data ?? [];
+  }
+
+  async saveCatalogOrder(courses: { id: string; order: number }[]) {
+    return this.execute<SaveCatalogOrderRequest>({
+      requestFn: () =>
+        classroomio.organization.courses['catalog-order'].$post({
+          json: { courses }
+        }),
+      logContext: 'saving course order',
+      onSuccess: () => {
+        snackbar.success('courses.catalog_order.saved');
+      },
+      onError: () => snackbar.error('courses.catalog_order.save_failed')
+    });
   }
 
   /**

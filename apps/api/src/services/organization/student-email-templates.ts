@@ -19,7 +19,7 @@ import { canCustomizeStudentEmails } from '@cio/core/services/email/localization
 import { sanitizeHtml } from '@cio/core/utils/sanitize-html';
 import {
   buildEmailBranding,
-  buildEmailFromName,
+  buildOrgEmailFromName,
   renderStudentEmail,
   renderStudentEmailSubject,
   sanitizeEmailSubject
@@ -122,7 +122,7 @@ export async function sendStudentEmailTemplateTest(input: {
     to: input.recipientEmails,
     subject,
     content,
-    from: buildEmailFromName(`${organization.name} (via ClassroomIO.com)`)
+    from: buildOrgEmailFromName(organization.name)
   });
 
   if (result.jobIds.length === 0) {

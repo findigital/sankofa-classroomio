@@ -16,12 +16,68 @@ import {
   type TVideoBlockData
 } from '@cio/utils/validation/block';
 
-/**
- * Queries backing the anonymous public-course surface under
- * `(org-site)/course/[courseSlug]`. Every query in this file assumes the
- * course is already confirmed to be `type = 'PUBLIC'` and `is_published = true`
- * at the service layer; they do not re-check auth.
- */
+export type PublicCourseReadOptions = {
+  includeUnpublished?: boolean;
+};
+
+export type CourseAudienceRow = {
+  id: string;
+  isPublished: boolean;
+  status: string;
+  type: string | null;
+  organizationId: string | null;
+  membersOnlyCatalog: boolean;
+};
+
+export async function getCourseAudienceBySlug(courseSlug: string): Promise<CourseAudienceRow | null> {
+  try {
+    const [row] = await db
+      .select({
+        id: schema.course.id,
+        isPublished: schema.course.isPublished,
+        status: schema.course.status,
+        type: schema.course.type,
+        organizationId: schema.group.organizationId,
+        settings: schema.organization.settings
+      })
+      .from(schema.course)
+      .leftJoin(schema.group, eq(schema.course.groupId, schema.group.id))
+      .leftJoin(schema.organization, eq(schema.organization.id, schema.group.organizationId))
+      .where(and(eq(schema.course.slug, courseSlug), eq(schema.course.isTemplate, false)))
+      .limit(1);
+
+    if (!row) return null;
+
+    const settings = (row.settings ?? {}) as { membersOnlyCatalog?: boolean };
+
+    return {
+      id: row.id,
+      isPublished: Boolean(row.isPublished),
+      status: row.status ?? 'ACTIVE',
+      type: row.type,
+      organizationId: row.organizationId,
+      membersOnlyCatalog: Boolean(settings.membersOnlyCatalog)
+    };
+  } catch (error) {
+    console.error('getCourseAudienceBySlug error:', error);
+    throw new Error(`Failed to resolve course audience for "${courseSlug}"`);
+  }
+}
+
+function isVisiblePublicCourse(
+  row: { type: string | null; isPublished: boolean | null; status: string | null } | undefined,
+  options?: PublicCourseReadOptions
+): boolean {
+  if (!row) return false;
+
+  if (row.type !== 'PUBLIC') return false;
+
+  if (!row.isPublished && !options?.includeUnpublished) return false;
+
+  if (row.status !== 'ACTIVE') return false;
+
+  return true;
+}
 
 export interface PublicCourseHeader {
   id: string;
@@ -116,7 +172,10 @@ export async function getCourseRowBySlug(courseSlug: string): Promise<{
  * Returns `null` when the course does not exist, is not published, or its type
  * is not `PUBLIC`.
  */
-export async function getPublicCourseTreeBySlug(courseSlug: string): Promise<PublicCourseTree | null> {
+export async function getPublicCourseTreeBySlug(
+  courseSlug: string,
+  options?: PublicCourseReadOptions
+): Promise<PublicCourseTree | null> {
   try {
     const [courseRow] = await db
       .select({
@@ -136,11 +195,8 @@ export async function getPublicCourseTreeBySlug(courseSlug: string): Promise<Pub
       .where(and(eq(schema.course.slug, courseSlug), eq(schema.course.isTemplate, false)))
       .limit(1);
 
-    if (!courseRow) return null;
-    if (courseRow.type !== 'PUBLIC') return null;
-    if (!courseRow.isPublished) return null;
-    if (courseRow.status !== 'ACTIVE') return null;
-    if (!courseRow.slug) return null;
+    if (!isVisiblePublicCourse(courseRow, options)) return null;
+    if (!courseRow?.slug) return null;
 
     // Resolve the owning organization (course → group → organization). The
     // public course page shows org name + avatar in the sticky top header so
@@ -387,7 +443,8 @@ export function toPublicLessonVideo(
 
 export async function getPublicCourseItem(
   courseSlug: string,
-  itemSlug: string
+  itemSlug: string,
+  options?: PublicCourseReadOptions
 ): Promise<PublicCourseItemContent | null> {
   try {
     const [courseRow] = await db
@@ -403,10 +460,7 @@ export async function getPublicCourseItem(
       .where(and(eq(schema.course.slug, courseSlug), eq(schema.course.isTemplate, false)))
       .limit(1);
 
-    if (!courseRow) return null;
-    if (courseRow.type !== 'PUBLIC') return null;
-    if (!courseRow.isPublished) return null;
-    if (courseRow.status !== 'ACTIVE') return null;
+    if (!isVisiblePublicCourse(courseRow, options) || !courseRow) return null;
 
     const [lessonRow] = await db
       .select({
@@ -521,7 +575,8 @@ export interface PublicLessonMarkdownSource {
  */
 export async function getPublicLessonMarkdownSource(
   courseSlug: string,
-  itemSlug: string
+  itemSlug: string,
+  options?: PublicCourseReadOptions
 ): Promise<PublicLessonMarkdownSource | null> {
   try {
     const [courseRow] = await db
@@ -537,10 +592,7 @@ export async function getPublicLessonMarkdownSource(
       .where(and(eq(schema.course.slug, courseSlug), eq(schema.course.isTemplate, false)))
       .limit(1);
 
-    if (!courseRow) return null;
-    if (courseRow.type !== 'PUBLIC') return null;
-    if (!courseRow.isPublished) return null;
-    if (courseRow.status !== 'ACTIVE') return null;
+    if (!isVisiblePublicCourse(courseRow, options) || !courseRow) return null;
 
     const [lessonRow] = await db
       .select({

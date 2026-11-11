@@ -2,7 +2,7 @@ import { AppError, ErrorCodes } from '@api/utils/errors';
 
 import { getCourseTeachers } from '@cio/db/queries/course/people';
 import { getCourseWithOrgData } from '@cio/db/queries/course';
-import { buildEmailFromName, buildEmailBranding } from '@cio/email';
+import { buildEmailFromName, buildOrgEmailFromName, buildEmailBranding } from '@cio/email';
 import { enqueueTransactionalEmail } from '@api/services/jobs';
 import { trackServerEvent, SERVER_EVENTS } from '@cio/analytics';
 import { getAppBaseUrl } from '@cio/core/config/dashboard-url';
@@ -91,7 +91,7 @@ export async function createPaymentRequest(data: PaymentRequestData) {
           autoEnrollUrl,
           branding
         },
-        from: buildEmailFromName('ClassroomIO'),
+        from: buildEmailFromName(),
         idempotencyKey: `payment-request:teacher:${data.courseId}:${data.studentEmail}`
       });
     } catch (emailError) {
@@ -108,7 +108,7 @@ export async function createPaymentRequest(data: PaymentRequestData) {
           orgName,
           branding
         },
-        from: buildEmailFromName(`${orgName} - ClassroomIO`),
+        from: buildOrgEmailFromName(orgName),
         replyTo: teacherEmail,
         organizationId: course.orgId,
         idempotencyKey: `payment-request:student:${data.courseId}:${data.studentEmail}`

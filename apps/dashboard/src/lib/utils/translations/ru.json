@@ -37,7 +37,8 @@
         "caption": "Подготавливаем ваши курсы, студентов и настройки."
       }
     },
-    "back": "Назад"
+    "back": "Назад",
+    "source_offer": "View source code"
   },
   "validations": {
     "generic": {
@@ -439,7 +440,9 @@
       "tag_updated": "Тег обновлен",
       "course_tags_updated": "Теги курса обновлены.",
       "fetch_failed": "Не удалось загрузить теги.",
-      "save_failed": "Не удалось сохранить изменения тега."
+      "save_failed": "Не удалось сохранить изменения тега.",
+      "tag_deleted": "Tag deleted",
+      "delete_failed": "Failed to delete tag"
     },
     "error_update": "Не удалось обновить",
     "token_auth": {
@@ -3302,7 +3305,18 @@
       "empty_tags": "Нет доступных тегов"
     },
     "page_subtitle": "Здесь уроки превращаются в курсы, а курсы — в зачисления.",
-    "load_more": "Загрузить больше"
+    "load_more": "Загрузить больше",
+    "catalog_order": {
+      "action": "Reorder courses",
+      "title": "Course order",
+      "description": "Drag courses into the order people should see. The catalog and home page use this order, then the date the course was created. Saving featured courses on the landing page replaces this order.",
+      "saved": "Course order saved",
+      "save_failed": "Could not save course order",
+      "unpublished": "Unpublished",
+      "empty": "There are no courses to order yet.",
+      "admin_only": "Only an organization admin can reorder courses.",
+      "drag": "Drag to reorder"
+    }
   },
   "ai": {
     "help_me": "Помогите мне написать",
@@ -4380,6 +4394,23 @@
         "internal_enrollment_only": {
           "label": "Только внутренняя регистрация",
           "description": "Если эта функция включена, только существующие члены вашей организации смогут записаться на ваши курсы. Все остальные должны быть приглашены — они не могут зарегистрироваться со страницы курса, даже если курс открыт для новых студентов."
+        },
+        "members_only_catalog": {
+          "label": "Members-only catalog",
+          "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
+        },
+        "hide_course_pricing": {
+          "label": "Hide course prices",
+          "description": "Hide prices, the pricing filter, and Free labels on the catalog and course cards. Prices stay hidden until you turn this off."
+        },
+        "show_course_type_filter": {
+          "label": "Show course type filter",
+          "description": "Show course types that have published courses, such as live class and self-paced, as catalog filters."
+        },
+        "catalog_filter_groups": {
+          "label": "Catalog filter groups",
+          "description": "Choose which tag groups appear as catalog filters. Every group is included until you pick a subset.",
+          "empty": "Tag groups will show up here after they are created."
         }
       },
       "login": {
@@ -4943,7 +4974,7 @@
     },
     "filters": {
       "title": "Фильтровать по тегам",
-      "help": "Выберите один или несколько тегов, чтобы отфильтровать курсы.",
+      "help": "Filter by the options shown, or search by name",
       "empty": "Тегов пока нет",
       "tags_title": "Теги",
       "types_title": "Типы",
@@ -4954,6 +4985,11 @@
       "pricing_paid": "Платный",
       "selected": "Выбрано:",
       "save_changes": "Сохранить изменения"
+    },
+    "catalog_locked": {
+      "title": "This catalog is for members",
+      "description": "Only members of this academy can browse courses here. Sign in with a member account, or ask an administrator for access.",
+      "sign_in": "Sign in"
     }
   },
   "tags_admin": {
@@ -5002,12 +5038,17 @@
       "edit_tag": "Изменить тег",
       "save": "Сохранить",
       "cancel": "Отмена",
-      "actions_menu": "Действия с тегами"
+      "actions_menu": "Действия с тегами",
+      "delete_tag": "Delete tag"
     },
     "common": {
       "not_available": "Н/Д"
     },
-    "page_subtitle": "Организуйте курсы с помощью меток, чтобы фильтры и списки было легко просматривать."
+    "page_subtitle": "Организуйте курсы с помощью меток, чтобы фильтры и списки было легко просматривать.",
+    "delete": {
+      "title": "Delete tag",
+      "description": "Delete {name}? It will be removed from courses and catalog filters."
+    }
   },
   "invite": {
     "organization": {

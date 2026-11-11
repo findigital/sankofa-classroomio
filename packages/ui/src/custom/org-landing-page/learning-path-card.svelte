@@ -3,7 +3,7 @@
   import LayersIcon from '@lucide/svelte/icons/layers';
   import ClockIcon from '@lucide/svelte/icons/clock';
   import AwardIcon from '@lucide/svelte/icons/award';
-  import { defaultLearningPathCourseCountLabel } from './landing-page-utils';
+  import { defaultLearningPathCourseCountLabel, landingCoursePriceLabel } from './landing-page-utils';
   import { safeHref } from './safe-href';
 
   interface Props {
@@ -22,10 +22,7 @@
     (labels?.learningPathCourseCountLabel ?? defaultLearningPathCourseCountLabel)(path.courseCount ?? 0)
   );
 
-  function formatCurrency(cost?: number, currency = 'USD') {
-    if (!cost) return labels?.freeLabel ?? 'Free';
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(cost);
-  }
+  const priceLabel = $derived(landingCoursePriceLabel(path, labels));
 </script>
 
 <!--
@@ -92,9 +89,9 @@
             {labels?.learningPathCertificateLabel ?? 'Certificate'}
           </span>
         {/if}
-        <span class="ui:ml-auto ui:font-semibold" style="color: var(--landing-fg)">
-          {path.price || formatCurrency(path.cost, path.currency)}
-        </span>
+        {#if priceLabel}
+          <span class="ui:ml-auto ui:font-semibold" style="color: var(--landing-fg)">{priceLabel}</span>
+        {/if}
       </div>
     </div>
   </div>
