@@ -168,7 +168,7 @@ vi.mock('stream-chat-react', () => ({
   }
 }));
 
-import { senderFillVariable, senderIndexForMember } from '../utils/avatar-color';
+import { senderColorVariable } from '../utils/avatar-color';
 import { InboxView, type InboxViewProps } from './inbox-view';
 
 function installMatchMedia(matches: boolean) {
@@ -251,7 +251,7 @@ describe('Stream inbox', () => {
     expect(list.textContent).toContain('Bea Fellow');
     expect(list.textContent).toContain('BF');
     expect(list.querySelector('[data-testid="messaging-channel-avatar"]')?.getAttribute('style')).toContain(
-      senderFillVariable(senderIndexForMember('ada-fellow', ['staff-amara', 'me', 'ada-fellow']))
+      senderColorVariable('ada-fellow')
     );
     expect(harness.previewChannel?.data.own_capabilities).toEqual(
       expect.arrayContaining(['read-channel', 'send-reaction', 'send-reply'])
@@ -284,7 +284,7 @@ describe('Stream inbox', () => {
         .getByTestId('messaging-dm-header')
         .querySelector('[data-testid="messaging-channel-avatar"]')
         ?.getAttribute('style')
-    ).toContain(senderFillVariable(senderIndexForMember('ada-fellow', ['staff-amara', 'me', 'ada-fellow'])));
+    ).toContain(senderColorVariable('ada-fellow'));
     expect(harness.messageListProps.current.maxTimeBetweenGroupedMessages).toBe(5 * 60 * 1000);
     expect(harness.threadListProps.current.maxTimeBetweenGroupedMessages).toBe(5 * 60 * 1000);
     expect(thread.querySelector('.str-chat__message--me')).toBeTruthy();

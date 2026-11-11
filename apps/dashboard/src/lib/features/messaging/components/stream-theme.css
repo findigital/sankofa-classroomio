@@ -157,70 +157,58 @@
 }
 
 .messaging-inbox {
-  --messaging-sender-0: oklch(from var(--primary) 0.42 c h);
-  --messaging-sender-1: oklch(from var(--primary) 0.42 c calc(h + 22.5));
-  --messaging-sender-2: oklch(from var(--primary) 0.42 c calc(h + 45));
-  --messaging-sender-3: oklch(from var(--primary) 0.42 c calc(h + 67.5));
-  --messaging-sender-4: oklch(from var(--primary) 0.42 c calc(h + 90));
-  --messaging-sender-5: oklch(from var(--primary) 0.42 c calc(h + 112.5));
-  --messaging-sender-6: oklch(from var(--primary) 0.42 c calc(h + 135));
-  --messaging-sender-7: oklch(from var(--primary) 0.42 c calc(h + 157.5));
-  --messaging-sender-8: oklch(from var(--primary) 0.42 c calc(h + 180));
-  --messaging-sender-9: oklch(from var(--primary) 0.42 c calc(h + 202.5));
-  --messaging-sender-10: oklch(from var(--primary) 0.42 c calc(h + 225));
-  --messaging-sender-11: oklch(from var(--primary) 0.42 c calc(h + 247.5));
-  --messaging-sender-12: oklch(from var(--primary) 0.42 c calc(h + 270));
-  --messaging-sender-13: oklch(from var(--primary) 0.42 c calc(h + 292.5));
-  --messaging-sender-14: oklch(from var(--primary) 0.42 c calc(h + 315));
-  --messaging-sender-15: oklch(from var(--primary) 0.42 c calc(h + 337.5));
-  --messaging-sender-0-label: oklch(from var(--primary) 0.38 c h);
-  --messaging-sender-1-label: oklch(from var(--primary) 0.38 c calc(h + 22.5));
-  --messaging-sender-2-label: oklch(from var(--primary) 0.38 c calc(h + 45));
-  --messaging-sender-3-label: oklch(from var(--primary) 0.38 c calc(h + 67.5));
-  --messaging-sender-4-label: oklch(from var(--primary) 0.38 c calc(h + 90));
-  --messaging-sender-5-label: oklch(from var(--primary) 0.38 c calc(h + 112.5));
-  --messaging-sender-6-label: oklch(from var(--primary) 0.38 c calc(h + 135));
-  --messaging-sender-7-label: oklch(from var(--primary) 0.38 c calc(h + 157.5));
-  --messaging-sender-8-label: oklch(from var(--primary) 0.38 c calc(h + 180));
-  --messaging-sender-9-label: oklch(from var(--primary) 0.38 c calc(h + 202.5));
-  --messaging-sender-10-label: oklch(from var(--primary) 0.38 c calc(h + 225));
-  --messaging-sender-11-label: oklch(from var(--primary) 0.38 c calc(h + 247.5));
-  --messaging-sender-12-label: oklch(from var(--primary) 0.38 c calc(h + 270));
-  --messaging-sender-13-label: oklch(from var(--primary) 0.38 c calc(h + 292.5));
-  --messaging-sender-14-label: oklch(from var(--primary) 0.38 c calc(h + 315));
-  --messaging-sender-15-label: oklch(from var(--primary) 0.38 c calc(h + 337.5));
+  --messaging-sender-0: #0e7490;
+  --messaging-sender-1: #1e40af;
+  --messaging-sender-2: #4338ca;
+  --messaging-sender-3: #7e22ce;
+  --messaging-sender-4: #a21caf;
+  --messaging-sender-5: #b91c1c;
+  --messaging-sender-6: #c2410c;
+  --messaging-sender-7: #a16207;
+  --messaging-sender-8: #3f6212;
+  --messaging-sender-9: #166534;
+  --messaging-sender-10: #334155;
+  --messaging-sender-11: #7c2d12;
+  --messaging-sender-0-label: #155e75;
+  --messaging-sender-1-label: #1e3a8a;
+  --messaging-sender-2-label: #3730a3;
+  --messaging-sender-3-label: #6b21a8;
+  --messaging-sender-4-label: #86198f;
+  --messaging-sender-5-label: #991b1b;
+  --messaging-sender-6-label: #9a3412;
+  --messaging-sender-7-label: #854d0e;
+  --messaging-sender-8-label: #3f6212;
+  --messaging-sender-9-label: #14532d;
+  --messaging-sender-10-label: #1e293b;
+  --messaging-sender-11-label: #7c2d12;
 }
 
 .dark .messaging-inbox {
-  --messaging-sender-0-label: oklch(from var(--primary) 0.78 c h);
-  --messaging-sender-1-label: oklch(from var(--primary) 0.78 c calc(h + 22.5));
-  --messaging-sender-2-label: oklch(from var(--primary) 0.78 c calc(h + 45));
-  --messaging-sender-3-label: oklch(from var(--primary) 0.78 c calc(h + 67.5));
-  --messaging-sender-4-label: oklch(from var(--primary) 0.78 c calc(h + 90));
-  --messaging-sender-5-label: oklch(from var(--primary) 0.78 c calc(h + 112.5));
-  --messaging-sender-6-label: oklch(from var(--primary) 0.78 c calc(h + 135));
-  --messaging-sender-7-label: oklch(from var(--primary) 0.78 c calc(h + 157.5));
-  --messaging-sender-8-label: oklch(from var(--primary) 0.78 c calc(h + 180));
-  --messaging-sender-9-label: oklch(from var(--primary) 0.78 c calc(h + 202.5));
-  --messaging-sender-10-label: oklch(from var(--primary) 0.78 c calc(h + 225));
-  --messaging-sender-11-label: oklch(from var(--primary) 0.78 c calc(h + 247.5));
-  --messaging-sender-12-label: oklch(from var(--primary) 0.78 c calc(h + 270));
-  --messaging-sender-13-label: oklch(from var(--primary) 0.78 c calc(h + 292.5));
-  --messaging-sender-14-label: oklch(from var(--primary) 0.78 c calc(h + 315));
-  --messaging-sender-15-label: oklch(from var(--primary) 0.78 c calc(h + 337.5));
+  --messaging-sender-0-label: #67e8f9;
+  --messaging-sender-1-label: #93c5fd;
+  --messaging-sender-2-label: #a5b4fc;
+  --messaging-sender-3-label: #d8b4fe;
+  --messaging-sender-4-label: #f0abfc;
+  --messaging-sender-5-label: #fca5a5;
+  --messaging-sender-6-label: #fdba74;
+  --messaging-sender-7-label: #fcd34d;
+  --messaging-sender-8-label: #bef264;
+  --messaging-sender-9-label: #86efac;
+  --messaging-sender-10-label: #cbd5e1;
+  --messaging-sender-11-label: #f5c4a1;
+}
+
+.messaging-inbox .str-chat__message--other {
+  --messaging-received-bubble: oklch(0.95 0.01 250);
+}
+
+.dark .messaging-inbox .str-chat__message--other {
+  --messaging-received-bubble: oklch(0.32 0.015 250);
 }
 
 .messaging-sender {
   --str-chat__avatar-background-color: var(--messaging-sender-fill);
   --str-chat__avatar-color: var(--primary-foreground);
-}
-
-.messaging-inbox .str-chat__message--other {
-  --messaging-received-bubble: color-mix(in oklch, oklch(0.52 0.04 250) 16%, var(--card));
-}
-
-.dark .messaging-inbox .str-chat__message--other {
-  --messaging-received-bubble: color-mix(in oklch, oklch(0.86 0.03 250) 14%, var(--card));
 }
 
 .messaging-inbox .str-chat__message--other .str-chat__message-bubble {

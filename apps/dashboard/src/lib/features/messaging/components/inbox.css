@@ -72,20 +72,26 @@
   container-name: messaging-channel;
 }
 
+.messaging-inbox__panes:has(.str-chat__thread) .messaging-inbox__list {
+  flex-basis: 16.25rem;
+  width: 16.25rem;
+  min-width: 16.25rem;
+}
+
 .messaging-inbox__thread .str-chat__main-panel {
-  flex: 1 1 26.25rem;
-  min-width: 26.25rem;
+  flex: 1 1 25rem;
+  min-width: 25rem;
 }
 
 .messaging-inbox .str-chat__thread {
-  flex: 0 0 22.5rem;
-  width: 22.5rem;
+  flex: 0 0 20rem;
+  width: 20rem;
   max-width: none;
   background: var(--card);
   border-left: 1px solid var(--border);
 }
 
-@container messaging-channel (max-width: 48.75rem) {
+@container messaging-channel (max-width: 43.75rem) {
   .messaging-inbox__thread .str-chat__main-panel {
     min-width: 0;
   }
@@ -288,5 +294,60 @@
 
   .messaging-inbox .str-chat__close-thread-button {
     display: none;
+  }
+
+  .messaging-inbox .str-chat__channel-header-end {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .messaging-inbox .str-chat__channel-header-title {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .messaging-inbox .str-chat__channel-header-title:has(.messaging-inbox__header-name) {
+    display: flex;
+  }
+
+  .messaging-inbox .str-chat__channel-header-info {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .messaging-inbox__mobile-thread {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 0.5rem;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .messaging-inbox__mobile-thread .str-chat__thread-header,
+  .messaging-inbox__mobile-thread .str-chat__thread-header-details {
+    display: contents;
+  }
+
+  .messaging-inbox__mobile-thread .messaging-inbox__back {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .messaging-inbox__mobile-thread .str-chat__thread-header-title {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .messaging-inbox__mobile-thread .str-chat__thread-header-subtitle {
+    grid-column: 2;
+    grid-row: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }

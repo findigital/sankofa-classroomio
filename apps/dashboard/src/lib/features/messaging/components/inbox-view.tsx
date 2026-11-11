@@ -24,7 +24,6 @@ import {
   ThreadHeader as StreamThreadHeader,
   Window,
   useChatContext,
-  useChannelStateContext,
   useMessageContext,
   type ChannelPreviewUIComponentProps,
   type DateSeparatorProps,
@@ -35,13 +34,7 @@ import 'stream-chat-react/dist/css/v2/index.css';
 import './stream-theme.css';
 import './inbox.css';
 
-import {
-  channelColorKey,
-  senderColorIndex,
-  senderFillVariable,
-  senderIndexForMember,
-  type ChannelColorMember
-} from '../utils/avatar-color';
+import { channelColorKey, senderColorIndex, senderFillVariable, type ChannelColorMember } from '../utils/avatar-color';
 import type { InboxViewProps } from '../utils/inbox-types';
 
 export type { InboxViewProps } from '../utils/inbox-types';
@@ -112,15 +105,8 @@ function senderStyle(index: number): CSSProperties {
 // stream-chat-react renders this with groupedByUser only; the message lives on useMessageContext.
 export function SenderMessage(props: { groupedByUser?: boolean }) {
   const { message } = useMessageContext('SenderMessage');
-  const { channel } = useChannelStateContext('SenderMessage');
-  const members = channelMembers(channel);
-  const userId = message?.user?.id || '';
-  const index = userId
-    ? senderIndexForMember(
-        userId,
-        members.map((member) => member.id)
-      )
-    : 0;
+  const userId = message?.user?.id || 'unknown';
+  const index = senderColorIndex(userId);
 
   return (
     <div className="messaging-sender" data-testid="messaging-sender-message" style={senderStyle(index)}>
@@ -270,12 +256,6 @@ function CohortAvatar({ image, name, hueIndex }: { image?: string | null; name?:
   );
 }
 
-function markHue(colorKey: string, memberIds: string[], direct: boolean) {
-  if (!direct) return senderColorIndex(colorKey);
-
-  return senderIndexForMember(colorKey, memberIds);
-}
-
 function NamedPreview(props: ChannelPreviewUIComponentProps) {
   const preview = useContext(InboxPreview);
 
@@ -289,7 +269,6 @@ function NamedPreview(props: ChannelPreviewUIComponentProps) {
   const cohortId = preview?.cohortIds.get(key) || (props.channel.data as { cohort_id?: string } | undefined)?.cohort_id;
   const purpose = preview?.purposes.get(key) || (props.channel.data as { purpose?: string } | undefined)?.purpose;
   const members = channelMembers(props.channel);
-  const direct = purpose === 'fellow_dm' || purpose === 'mentor_dm';
   const colorKey = channelColorKey({
     purpose,
     cohortId,
@@ -298,11 +277,7 @@ function NamedPreview(props: ChannelPreviewUIComponentProps) {
     displayName: title,
     fallback: key
   });
-  const hueIndex = markHue(
-    colorKey,
-    members.map((member) => member.id),
-    direct
-  );
+  const hueIndex = senderColorIndex(colorKey);
 
   return (
     <div onClick={() => preview?.onOpen(props.channel)}>
@@ -340,11 +315,7 @@ function ConversationHeader(props: {
     displayName: title,
     fallback: key || 'channel'
   });
-  const hueIndex = markHue(
-    colorKey,
-    members.map((member) => member.id),
-    direct
-  );
+  const hueIndex = senderColorIndex(colorKey);
   const mark = <CohortAvatar image={image} name={title} hueIndex={hueIndex} />;
 
   if (!direct) {
