@@ -5,6 +5,7 @@ const mocks = vi.hoisted(() => ({
   listPublishedCourseGroupsForAutoEnroll: vi.fn(),
   listActiveOrgStudentsForAutoEnroll: vi.fn(),
   listStartedCourseIdsForProfile: vi.fn(),
+  removeUnpublishedStudentMembershipsWithoutProgress: vi.fn(),
   enrollUsersInCourseGroups: vi.fn(),
   ensureComplianceEnrollmentRecordsForProfiles: vi.fn()
 }));
@@ -16,7 +17,8 @@ vi.mock('@cio/db/queries/organization', () => ({
 vi.mock('@cio/db/queries/course', () => ({
   listPublishedCourseGroupsForAutoEnroll: mocks.listPublishedCourseGroupsForAutoEnroll,
   listActiveOrgStudentsForAutoEnroll: mocks.listActiveOrgStudentsForAutoEnroll,
-  listStartedCourseIdsForProfile: mocks.listStartedCourseIdsForProfile
+  listStartedCourseIdsForProfile: mocks.listStartedCourseIdsForProfile,
+  removeUnpublishedStudentMembershipsWithoutProgress: mocks.removeUnpublishedStudentMembershipsWithoutProgress
 }));
 
 vi.mock('@cio/db/queries/group', () => ({
@@ -35,7 +37,10 @@ describe('autoEnrollOrgStudents', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.getOrganizationById.mockResolvedValue({ settings: { membersOnlyCatalog: true } });
-    mocks.listPublishedCourseGroupsForAutoEnroll.mockResolvedValue([{ courseId: 'course-1', groupId: 'group-1' }]);
+    mocks.removeUnpublishedStudentMembershipsWithoutProgress.mockResolvedValue(0);
+    mocks.listPublishedCourseGroupsForAutoEnroll.mockResolvedValue([
+      { courseId: 'course-1', groupId: 'group-1', isPublished: true }
+    ]);
     mocks.listActiveOrgStudentsForAutoEnroll.mockResolvedValue([
       { profileId: 'student-1', email: 'student@example.com' }
     ]);
@@ -61,6 +66,25 @@ describe('autoEnrollOrgStudents', () => {
     );
     expect(mocks.ensureComplianceEnrollmentRecordsForProfiles).toHaveBeenCalledTimes(1);
     expect(mocks.ensureComplianceEnrollmentRecordsForProfiles).toHaveBeenCalledWith(['course-1'], ['student-1']);
+    expect(mocks.removeUnpublishedStudentMembershipsWithoutProgress).toHaveBeenCalledWith('org-1', undefined);
+  });
+
+  it('enrolls published courses only and reports unpublished memberships removed', async () => {
+    mocks.listPublishedCourseGroupsForAutoEnroll.mockResolvedValue([
+      { courseId: 'draft', groupId: 'group-draft', isPublished: false },
+      { courseId: 'course-1', groupId: 'group-1', isPublished: true }
+    ]);
+    mocks.removeUnpublishedStudentMembershipsWithoutProgress.mockResolvedValue(2);
+    mocks.enrollUsersInCourseGroups.mockResolvedValue([]);
+
+    const result = await autoEnrollOrgStudents({ orgId });
+
+    expect(result).toEqual({ inserted: 0, removed: 2 });
+    expect(mocks.enrollUsersInCourseGroups).toHaveBeenCalledWith(
+      ['group-1'],
+      [{ profileId: 'student-1', email: 'student@example.com' }],
+      3
+    );
   });
 
   it('does not enroll anyone when the setting is off', async () => {
@@ -70,8 +94,9 @@ describe('autoEnrollOrgStudents', () => {
 
     const result = await autoEnrollOrgStudents({ orgId });
 
-    expect(result.inserted).toBe(0);
+    expect(result).toEqual({ inserted: 0, removed: 0 });
     expect(mocks.enrollUsersInCourseGroups).not.toHaveBeenCalled();
+    expect(mocks.removeUnpublishedStudentMembershipsWithoutProgress).not.toHaveBeenCalled();
   });
 
   it('does not enroll anyone when the catalog is open and auto-enroll was not turned on', async () => {
@@ -79,7 +104,8 @@ describe('autoEnrollOrgStudents', () => {
 
     const result = await autoEnrollOrgStudents({ orgId });
 
-    expect(result.inserted).toBe(0);
+    expect(result).toEqual({ inserted: 0, removed: 0 });
     expect(mocks.listPublishedCourseGroupsForAutoEnroll).not.toHaveBeenCalled();
+    expect(mocks.removeUnpublishedStudentMembershipsWithoutProgress).not.toHaveBeenCalled();
   });
 });

@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { isAutoEnrollMembersEnabled, resolveMemberCourseCta } from '../src/functions/member-course-access';
+import {
+  isAutoEnrollMembersEnabled,
+  resolveMemberCourseCta,
+  selectPublicCourseInstructors
+} from '../src/functions/member-course-access';
 
 describe('isAutoEnrollMembersEnabled', () => {
   it('follows the members-only catalog when the org has not chosen', () => {
@@ -79,5 +83,53 @@ describe('resolveMemberCourseCta', () => {
         courseId
       }).mode
     ).toBe('open');
+  });
+});
+
+describe('selectPublicCourseInstructors', () => {
+  const tutor = {
+    name: 'Ada Lovelace',
+    avatarUrl: 'https://example.com/ada.png',
+    courseRoleId: 2,
+    orgRoleId: 2
+  };
+  const admin = {
+    name: 'Marcus Finley',
+    avatarUrl: null,
+    courseRoleId: 2,
+    orgRoleId: 1
+  };
+  const owner = {
+    name: 'marcus',
+    avatarUrl: null,
+    courseRoleId: 1,
+    orgRoleId: 1
+  };
+
+  it('shows course tutors by full name and leaves out organization admins', () => {
+    expect(selectPublicCourseInstructors([admin, owner, tutor], { orgName: 'Sankofa Futures' })).toEqual([
+      { name: 'Ada Lovelace', avatarUrl: 'https://example.com/ada.png' }
+    ]);
+  });
+
+  it('includes an admin when the landing page names that full name', () => {
+    expect(
+      selectPublicCourseInstructors([admin, tutor], {
+        explicitInstructorName: 'Marcus Finley',
+        orgName: 'Sankofa Futures'
+      })
+    ).toEqual([
+      { name: 'Ada Lovelace', avatarUrl: 'https://example.com/ada.png' },
+      { name: 'Marcus Finley', avatarUrl: null }
+    ]);
+  });
+
+  it('does not treat the organization name as an explicit instructor', () => {
+    expect(
+      selectPublicCourseInstructors([admin], {
+        explicitInstructorName: 'Sankofa Futures',
+        orgName: 'Sankofa Futures'
+      })
+    ).toEqual([]);
   });
 });

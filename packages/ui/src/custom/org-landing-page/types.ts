@@ -372,7 +372,7 @@ export interface CourseLandingPageLabels {
   reviewsAverageLabel?: (count: number) => string;
   pricingEyebrow?: string;
   freeLabel?: string;
-  /** When true, the course page omits the price, including the free label. */
+  /** When true, the course page omits the pricing section, its nav tab, and the price. */
   hidePrice?: boolean;
   pricingRewardLabel?: string;
   chipsSkillsEyebrow?: string;

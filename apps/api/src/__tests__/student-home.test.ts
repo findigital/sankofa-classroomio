@@ -1,5 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+vi.mock('@api/services/course/member-auto-enroll', () => ({
+  autoEnrollOrgStudentQuietly: vi.fn().mockResolvedValue(undefined),
+  autoEnrollOrgStudents: vi.fn().mockResolvedValue({ inserted: 0, removed: 0 }),
+  autoEnrollPublishedCourseQuietly: vi.fn().mockResolvedValue(undefined),
+  autoEnrollMembersOnBoot: vi.fn().mockResolvedValue(undefined),
+  viewerMemberCourseAccess: vi.fn().mockResolvedValue(null),
+  publicCourseTutors: vi.fn().mockResolvedValue([]),
+  memberCourseLinksForViewer: vi.fn().mockResolvedValue(new Map())
+}));
+
 vi.mock('@cio/db/queries/organization', () => ({
   getOrganizationMemberRoleId: vi.fn(),
   getOrganizationPlanStatus: vi.fn(),
