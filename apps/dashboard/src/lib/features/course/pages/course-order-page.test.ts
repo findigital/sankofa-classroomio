@@ -1,5 +1,6 @@
+// @vitest-environment jsdom
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { render } from 'svelte/server';
+import { render } from '@testing-library/svelte/svelte5';
 
 vi.mock('$app/environment', () => ({ browser: false, dev: true, building: false }));
 vi.mock('$env/static/public', () => ({ PUBLIC_IS_SELFHOSTED: 'false' }));
@@ -19,7 +20,8 @@ beforeAll(async () => {
 
 describe('course order page', () => {
   it('renders the page body', () => {
-    const { body } = render(Page);
+    const { container } = render(Page);
+    const body = container.innerHTML;
 
     expect(body).toContain('Only an organization admin can reorder courses.');
     expect(body).toContain('Course order');
