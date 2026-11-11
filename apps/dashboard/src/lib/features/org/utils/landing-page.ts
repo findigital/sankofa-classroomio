@@ -715,6 +715,17 @@ export function mapPublicCoursesToLandingPageCourses(courses: OrgPublicCourses):
         ? t.get(`analytics.popularTypes.types.${type}`)
         : undefined;
     const isPublished = typeof courseRecord.isPublished === 'boolean' ? courseRecord.isPublished : true;
+    const memberCourse = isRecord(courseRecord.memberCourse) ? courseRecord.memberCourse : undefined;
+    const memberHref = memberCourse && typeof memberCourse.href === 'string' ? memberCourse.href : undefined;
+    const memberStarted = memberCourse?.started === true;
+    const memberOpen = Boolean(memberHref);
+    const actionLabel = memberOpen
+      ? t.get(
+          memberStarted
+            ? 'course.navItem.landing_page.pricing_section.continue_course'
+            : 'course.navItem.landing_page.pricing_section.go_to_course'
+        )
+      : undefined;
 
     return {
       id: course.id,
@@ -725,7 +736,7 @@ export function mapPublicCoursesToLandingPageCourses(courses: OrgPublicCourses):
       type,
       typeLabel,
       isPublished,
-      cost: courseIsPaid ? courseCost : 0,
+      cost: memberOpen || !courseIsPaid ? 0 : courseCost,
       currency: courseCurrency,
       lessonCount,
       exerciseCount,
@@ -738,8 +749,10 @@ export function mapPublicCoursesToLandingPageCourses(courses: OrgPublicCourses):
         : undefined,
       tags,
       image,
-      link: courseSlug ? `/course/${courseSlug}` : undefined,
-      price: courseIsPaid ? price : undefined,
+      link: memberHref ?? (courseSlug ? `/course/${courseSlug}` : undefined),
+      actionLabel,
+      suppressPrice: memberOpen,
+      price: memberOpen || !courseIsPaid ? undefined : price,
       duration,
       level
     };

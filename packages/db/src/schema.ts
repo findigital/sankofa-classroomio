@@ -2668,6 +2668,7 @@ export const organization = pgTable(
         reached?: boolean;
       };
       membersOnlyCatalog?: boolean;
+      autoEnrollMembers?: boolean;
       hideCoursePricing?: boolean;
       showCourseTypeFilter?: boolean;
       catalogFilterTagGroupIds?: string[] | null;

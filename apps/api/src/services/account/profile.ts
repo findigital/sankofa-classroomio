@@ -74,6 +74,8 @@ export async function getAccountData(userId: string): Promise<GetAccountDataResu
           createdMember,
           userId
         );
+        const { autoEnrollOrgStudentQuietly } = await import('@api/services/course/member-auto-enroll');
+        await autoEnrollOrgStudentQuietly(createdMember.organizationId, userId);
       }
 
       if (membershipEnsured) {

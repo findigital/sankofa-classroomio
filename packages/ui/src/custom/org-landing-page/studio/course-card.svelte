@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { CourseItem, OrgLandingPageLabels } from '../types';
   import ArrowRightIcon from '@lucide/svelte/icons/arrow-right';
-  import { getCourseTypeLandingMeta, landingCoursePriceLabel } from '../landing-page-utils';
+  import { getCourseTypeLandingMeta, landingCourseActionLabel, landingCoursePriceLabel } from '../landing-page-utils';
   import CourseTagPills from '../course-tag-pills.svelte';
 
   interface Props {
@@ -63,7 +63,7 @@
     <span
       class="ui:flex-shrink-0 ui:inline-flex ui:items-center ui:justify-center ui:size-8 ui:rounded-full ui:bg-secondary ui:text-secondary-foreground ui:group-hover:bg-secondary/80 ui:transition-colors"
       aria-hidden="true"
-      aria-label={labels?.enrollLabel ?? 'Enroll'}
+      aria-label={landingCourseActionLabel(course, labels) ?? 'Enroll'}
     >
       <ArrowRightIcon class="ui:size-3.5" />
     </span>

@@ -22,12 +22,19 @@ export function getCourseCoverImage(course: CourseItem): string {
   return DEFAULT_COURSE_BANNER_IMAGE;
 }
 
+export function landingCourseActionLabel(
+  course: Pick<CourseItem, 'actionLabel'>,
+  labels?: { enrollLabel?: string }
+): string | undefined {
+  return course.actionLabel || labels?.enrollLabel;
+}
+
 export function landingCoursePriceLabel(
-  course: Pick<CourseItem, 'price' | 'cost' | 'currency'>,
+  course: Pick<CourseItem, 'price' | 'cost' | 'currency' | 'suppressPrice'>,
   labels?: { freeLabel?: string; hidePrice?: boolean },
   options?: { maximumFractionDigits?: number }
 ): string | null {
-  if (labels?.hidePrice) return null;
+  if (course.suppressPrice || labels?.hidePrice) return null;
   if (course.price) return course.price;
   if (!course.cost) return labels?.freeLabel ?? 'Free';
 

@@ -29,6 +29,7 @@ import {
   ZUpdateOrgPlan,
   ZUpdateOrganization
 } from '@cio/utils/validation/organization';
+import { autoEnrollOrgStudents } from '@api/services/course/member-auto-enroll';
 import { assertMcpAutomationUsageAllowed, recordMcpAutomationUsage } from '@api/services/organization/automation-usage';
 import {
   assignAudienceToCourses,
@@ -560,7 +561,10 @@ export const organizationRouter = new Hono()
         search || undefined,
         pricing || undefined,
         pagination,
-        { orgRoles: (c.get('orgRoles') as Record<string, number> | undefined) ?? {} }
+        {
+          userId: c.get('user')?.id ?? null,
+          orgRoles: (c.get('orgRoles') as Record<string, number> | undefined) ?? {}
+        }
       );
 
       return c.json(
@@ -602,6 +606,16 @@ export const organizationRouter = new Hono()
       }
     }
   )
+  .post('/member-auto-enroll', authMiddleware, orgAdminMiddleware, async (c) => {
+    try {
+      const orgId = c.req.header('cio-org-id')!;
+      const result = await autoEnrollOrgStudents({ orgId });
+
+      return c.json({ success: true, data: result }, 200);
+    } catch (error) {
+      return handleError(c, error, 'Failed to enroll organization members');
+    }
+  })
   /**
    * POST /organization/courses/reorder
    * Persists the manual display order of organization courses (landing page + public catalog)

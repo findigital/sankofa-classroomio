@@ -54,6 +54,8 @@ export type CourseItem = {
   // Fallbacks for specific templates that might still want to use these
   image?: string;
   link?: string;
+  actionLabel?: string;
+  suppressPrice?: boolean;
   price?: string;
   duration?: string;
   level?: string;
@@ -264,12 +266,19 @@ export type CourseReviewItem = {
   createdAt?: string;
 };
 
+export type CourseInstructorPerson = {
+  name: string;
+  role?: string;
+  imgUrl?: string;
+};
+
 export type CourseInstructor = {
   name: string;
   role?: string;
   imgUrl?: string;
   description?: string;
   coursesNo?: number;
+  people?: CourseInstructorPerson[];
 };
 
 export type LandingPrimaryAction = {

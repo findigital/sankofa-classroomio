@@ -231,6 +231,7 @@ export const ZUpdateOrganization = z.object({
         .optional(),
       internalEnrollmentOnly: z.boolean().optional(),
       membersOnlyCatalog: z.boolean().optional(),
+      autoEnrollMembers: z.boolean().optional(),
       hideCoursePricing: z.boolean().optional(),
       showCourseTypeFilter: z.boolean().optional(),
       catalogFilterTagGroupIds: z.array(z.string().uuid()).max(100).nullable().optional(),

@@ -4,6 +4,7 @@
     defaultEnrolledLabel,
     defaultLessonsLabel,
     getCourseTypeLandingMeta,
+    landingCourseActionLabel,
     landingCoursePriceLabel
   } from '../landing-page-utils';
   import CourseTagPills from '../course-tag-pills.svelte';
@@ -125,7 +126,7 @@
         class="ui:inline-flex ui:items-center ui:gap-1 ui:text-sm ui:font-medium ui:text-[var(--landing-accent)]"
         aria-hidden="true"
       >
-        {labels?.enrollLabel ?? 'Enroll'} <span>→</span>
+        {landingCourseActionLabel(course, labels) ?? 'Enroll'} <span>→</span>
       </span>
     </div>
   </div>

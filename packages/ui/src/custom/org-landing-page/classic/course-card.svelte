@@ -82,7 +82,7 @@
         <div class="ui:py-1">
           <CourseTagPills tags={course.tags} />
         </div>
-        {#if !labels?.hidePrice}
+        {#if !labels?.hidePrice && !course.suppressPrice}
           <div class="ui:py-2 ui:text-xs">
             {#if course.price != null && String(course.price).length > 0}
               <span class="ui:px-2">{course.price}</span>

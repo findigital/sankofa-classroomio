@@ -1,3 +1,4 @@
+import { autoEnrollOrgStudents, memberCourseLinksForViewer } from '@api/services/course/member-auto-enroll';
 import { emitOrganizationMemberWebhookEvent } from '@cio/core/services/webhook/emit';
 import { AppError, ErrorCodes } from '@api/utils/errors';
 import type { OrgAudienceMember, OrgAudiencePagination, OrgAudienceQuery } from '@api/types/org';
@@ -68,7 +69,12 @@ import type { OrganizationWithPlans } from '@cio/db/queries/organization/types';
 import { canUseBasicAuthSettings, PLAN } from '@cio/utils/plans';
 import { env } from '@cio/core/config/env';
 import { isFreeLandingPageTheme, ROLE } from '@cio/utils/constants';
-import { canListOrgCatalog, filterTagGroupsForCatalog, resolveCatalogPresentation } from '@cio/utils/functions';
+import {
+  canListOrgCatalog,
+  filterTagGroupsForCatalog,
+  isAutoEnrollMembersEnabled,
+  resolveCatalogPresentation
+} from '@cio/utils/functions';
 import { createOrganizationWithOwner } from '@api/services/onboarding';
 import { deriveAudienceMemberStatus } from '@api/utils/audience-member-status';
 import { getProfileById, getProfileByEmail } from '@cio/db/queries/auth';
@@ -317,7 +323,7 @@ export async function getPublicCourses(
   search?: string,
   pricing?: 'free' | 'paid',
   pagination?: { page?: number; limit?: number },
-  viewer?: { orgRoles: Record<string, number> }
+  viewer?: { userId?: string | null; orgRoles: Record<string, number> }
 ) {
   try {
     const orgResult = await getOrgIdBySiteName(siteName);
@@ -413,11 +419,19 @@ export async function getPublicCourses(
       org.id,
       courses.map((course) => course.id)
     );
+    const memberLinks = await memberCourseLinksForViewer({
+      orgId: org.id,
+      settings: org.settings,
+      profileId: viewer?.userId ?? null,
+      orgRoleId: viewer?.orgRoles[org.id],
+      courseIds: courses.map((course) => course.id)
+    });
 
     return {
       courses: courses.map((course) => ({
         ...course,
-        tags: tagsByCourseId[course.id] ?? []
+        tags: tagsByCourseId[course.id] ?? [],
+        memberCourse: memberLinks.get(course.id) ?? null
       })),
       hasMoreCourses: offset + courses.length < totalCourses,
       total: totalCourses,
@@ -971,6 +985,14 @@ export async function updateOrg(
 
     if (newCustomDomainHostname && organization.isCustomDomainVerified) {
       trustCustomDomainHostname(newCustomDomainHostname);
+    }
+
+    if (dbClient === db && isAutoEnrollMembersEnabled(organization.settings)) {
+      try {
+        await autoEnrollOrgStudents({ orgId });
+      } catch (error) {
+        console.error('updateOrg member auto-enroll error:', error);
+      }
     }
 
     return organization;
