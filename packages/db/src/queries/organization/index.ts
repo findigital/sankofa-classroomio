@@ -1,4 +1,7 @@
 export * from './organization';
+export * from './fellow-pace';
+export * from './safeguarding';
+export * from './mentor-assignment';
 export * from './student-home';
 export * from './audience';
 export * from './member-lifecycle';
