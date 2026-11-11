@@ -21,12 +21,15 @@ import 'stream-chat-react/dist/css/v2/index.css';
 import './stream-theme.css';
 import './inbox.css';
 
+import { cohortMarkColor } from '../utils/avatar-color';
 import type { InboxViewProps } from '../utils/inbox-types';
 
 export type { InboxViewProps } from '../utils/inbox-types';
 
 type InboxPreviewValue = {
   names: Map<string, string>;
+  images: Map<string, string>;
+  cohortIds: Map<string, string>;
   onOpen: (channel: Channel) => void;
   emptyLabel: string;
   selectLabel: string;
@@ -70,9 +73,30 @@ function channelInitials(name: string) {
 function channelImage(channel: Channel) {
   const image = (channel.data as { image?: string } | undefined)?.image;
 
-  if (typeof image !== 'string' || !/^https:\/\//i.test(image)) return;
+  return safeMarkImage(image);
+}
 
-  return image;
+function safeMarkImage(image?: string) {
+  if (!image) return;
+
+  const value = image.trim();
+
+  if (/^https:\/\//i.test(value)) return value;
+
+  if (value.startsWith('/') && !value.startsWith('//')) return value;
+}
+
+// stream-chat-react shows Reply only when own_capabilities includes send-reply; the server omits that grant because sends go through the API.
+function allowReplyUi(channel: Channel) {
+  const data = (channel.data ?? {}) as { own_capabilities?: string[] };
+  const capabilities = data.own_capabilities ?? [];
+
+  if (capabilities.includes('send-reply')) return false;
+
+  data.own_capabilities = [...capabilities, 'send-reply'];
+  channel.data = data as Channel['data'];
+
+  return true;
 }
 
 function applyDisplayName(channel: Channel, names: Map<string, string>) {
@@ -154,15 +178,20 @@ function useNarrowViewport() {
   return narrow;
 }
 
-function CohortAvatar({ image, name }: { image?: string; name?: string }) {
-  const safeImage = image && /^https:\/\//i.test(image) ? image : undefined;
+function CohortAvatar({ image, name, colorKey }: { image?: string; name?: string; colorKey: string }) {
+  const safeImage = safeMarkImage(image);
 
   if (safeImage) {
     return <img alt="" className="messaging-inbox__mark" data-testid="messaging-channel-avatar" src={safeImage} />;
   }
 
   return (
-    <span className="messaging-inbox__mark" data-testid="messaging-channel-avatar" aria-hidden="true">
+    <span
+      className="messaging-inbox__mark"
+      data-testid="messaging-channel-avatar"
+      aria-hidden="true"
+      style={{ background: cohortMarkColor(colorKey), color: 'var(--primary-foreground)' }}
+    >
       {channelInitials(name ?? '')}
     </span>
   );
@@ -173,14 +202,20 @@ function NamedPreview(props: ChannelPreviewUIComponentProps) {
 
   if (preview) applyDisplayName(props.channel, preview.names);
 
-  const title = preview?.names.get(channelKey(props.channel));
+  allowReplyUi(props.channel);
+
+  const key = channelKey(props.channel);
+  const title = preview?.names.get(key);
+  const image = preview?.images.get(key) || channelImage(props.channel);
+  const cohortId = preview?.cohortIds.get(key) || (props.channel.data as { cohort_id?: string } | undefined)?.cohort_id;
+  const colorKey = cohortId || key;
 
   return (
     <div onClick={() => preview?.onOpen(props.channel)}>
       <ChannelPreviewMessenger
         {...props}
         Avatar={(avatar) => (
-          <CohortAvatar image={avatar.image ?? channelImage(props.channel)} name={title || avatar.name} />
+          <CohortAvatar image={image || avatar.image} name={title || avatar.name} colorKey={colorKey} />
         )}
       />
     </div>
@@ -223,6 +258,7 @@ function InboxPanes(props: InboxViewProps) {
   const { client, setActiveChannel, channel: activeChannel } = useChatContext();
   const narrow = useNarrowViewport();
   const [openedKey, setOpenedKey] = useState<string | null>(null);
+  const [, setReplyRevision] = useState(0);
   const openedChannel = useRef<Channel | null>(null);
   const activeChannelRef = useRef(activeChannel);
   activeChannelRef.current = activeChannel;
@@ -232,6 +268,26 @@ function InboxPanes(props: InboxViewProps) {
 
     for (const channel of props.channels) {
       if (channel.name) map.set(`${channel.channelType}:${channel.channelId}`, channel.name);
+    }
+
+    return map;
+  }, [props.channels]);
+
+  const images = useMemo(() => {
+    const map = new Map<string, string>();
+
+    for (const channel of props.channels) {
+      if (channel.image) map.set(`${channel.channelType}:${channel.channelId}`, channel.image);
+    }
+
+    return map;
+  }, [props.channels]);
+
+  const cohortIds = useMemo(() => {
+    const map = new Map<string, string>();
+
+    for (const channel of props.channels) {
+      if (channel.cohortId) map.set(`${channel.channelType}:${channel.channelId}`, channel.cohortId);
     }
 
     return map;
@@ -248,12 +304,14 @@ function InboxPanes(props: InboxViewProps) {
   const preview = useMemo<InboxPreviewValue>(
     () => ({
       names,
+      images,
+      cohortIds,
       onOpen,
       emptyLabel: props.labels.empty,
       selectLabel: props.labels.select,
       backLabel: props.labels.back
     }),
-    [names, onOpen, props.labels.back, props.labels.empty, props.labels.select]
+    [cohortIds, images, names, onOpen, props.labels.back, props.labels.empty, props.labels.select]
   );
 
   const filters = useMemo(() => {
@@ -392,6 +450,30 @@ function InboxPanes(props: InboxViewProps) {
     }),
     [props.labels.flag, props.labels.mute, props.onFlag, props.onMute, props.userId]
   );
+
+  useEffect(() => {
+    const channel = activeChannel ?? openedChannel.current;
+
+    if (!channel) return;
+
+    const apply = () => {
+      if (allowReplyUi(channel)) setReplyRevision((revision) => revision + 1);
+    };
+
+    apply();
+
+    if (typeof channel.on !== 'function') return;
+
+    const subscription = channel.on(apply);
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [activeChannel, openedKey]);
+
+  const threadChannel = activeChannel ?? openedChannel.current;
+
+  if (threadChannel) allowReplyUi(threadChannel);
 
   const activeKey = openedKey ?? (activeChannel?.id ? `${activeChannel.type}:${activeChannel.id}` : null);
   const listed = activeKey

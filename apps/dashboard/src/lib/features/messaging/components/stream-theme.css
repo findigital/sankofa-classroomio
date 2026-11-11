@@ -119,6 +119,28 @@
   color: var(--primary-foreground);
 }
 
+.messaging-inbox .str-chat__message-input .str-chat__send-button,
+.messaging-inbox .str-chat__message-input .str-chat__send-button:disabled {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: calc(var(--radius) - 2px);
+  box-shadow: 0 1px rgb(0 0 0 / 0.05);
+}
+
+.messaging-inbox .str-chat__message-input .str-chat__send-button:hover:not(:disabled) {
+  background-color: color-mix(in oklch, var(--primary) 90%, transparent);
+}
+
+.messaging-inbox .str-chat__message-input .str-chat__send-button svg path,
+.messaging-inbox .str-chat__message-input .str-chat__send-button:disabled svg path {
+  fill: var(--primary-foreground);
+}
+
+.messaging-inbox .str-chat__message-input .str-chat__send-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .messaging-inbox .str-chat__send-button,
 .messaging-inbox .str-chat__cta-button {
   font-size: var(--text-sm, 0.875rem);

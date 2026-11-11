@@ -62,6 +62,7 @@ describe('syncCohortChannels', () => {
         groupId: PUBLISHED_GROUP,
         name: 'Published cohort',
         courseName: 'React Basics',
+        courseImage: 'https://cdn.example/react.png',
         fellowDmEnabled: false,
         members: [
           {
@@ -121,6 +122,7 @@ describe('syncCohortChannels', () => {
     ]);
     expect(createdIds).not.toContain(cohortChannelId('discussion', DRAFT_GROUP));
     expect(listed.map((channel) => channel.cohortId)).toEqual([PUBLISHED_GROUP, null]);
+    expect(listed.map((channel) => channel.image)).toEqual(['https://cdn.example/react.png', null]);
     expect(vi.mocked(stream.removeChannelMember).mock.calls).toEqual([
       ['cohort_discussion', cohortChannelId('discussion', DRAFT_GROUP), FELLOW_ID]
     ]);

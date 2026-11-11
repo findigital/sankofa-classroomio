@@ -183,7 +183,34 @@
   .messaging-inbox__thread {
     width: 100%;
     min-width: 0;
+    max-width: none;
     height: 100%;
+  }
+
+  .messaging-inbox__list,
+  .messaging-inbox__list .str-chat__channel-list,
+  .messaging-inbox__directory {
+    background: var(--card);
+    color: var(--card-foreground);
+    border-right: 0;
+  }
+
+  .messaging-inbox__list {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .messaging-inbox .str-chat.str-chat__theme-light,
+  .messaging-inbox .str-chat.str-chat__theme-dark {
+    --str-chat__channel-list-background-color: var(--card);
+    --str-chat__channel-preview-border-radius: 0;
+  }
+
+  .messaging-inbox__list .str-chat__channel-preview {
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
   }
 
   .messaging-inbox .str-chat__channel {

@@ -79,7 +79,9 @@ class MessagingApi extends BaseApiWithErrors {
     return saved;
   }
 
-  async loadChannels() {
+  async loadChannels(options?: { notify?: boolean }) {
+    const notify = options?.notify !== false;
+
     return this.execute<MessagingChannelsRequest>({
       requestFn: () => classroomio.messaging.channels.$get(),
       logContext: 'loading conversations',
@@ -89,7 +91,7 @@ class MessagingApi extends BaseApiWithErrors {
       onError: () => {
         if (this.channels === null) this.channels = [];
 
-        snackbar.error('snackbar.messaging.load_failed');
+        if (notify) snackbar.error('snackbar.messaging.load_failed');
       }
     });
   }

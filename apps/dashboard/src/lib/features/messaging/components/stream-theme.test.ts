@@ -4,7 +4,9 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-const theme = readFileSync(join(dirname(fileURLToPath(import.meta.url)), 'stream-theme.css'), 'utf8');
+const directory = dirname(fileURLToPath(import.meta.url));
+const theme = readFileSync(join(directory, 'stream-theme.css'), 'utf8');
+const layout = readFileSync(join(directory, 'inbox.css'), 'utf8');
 
 describe('Stream inbox theme', () => {
   it('derives Stream colors from the dashboard tokens for light and dark', () => {
@@ -39,6 +41,22 @@ describe('Stream inbox theme', () => {
     expect(theme).toContain('--str-chat__own-message-bubble-color: var(--primary-foreground)');
     expect(theme).toContain('--str-chat__message-send-background-color: var(--primary)');
     expect(theme).toContain('--str-chat__message-send-color: var(--primary-foreground)');
+    expect(theme).toContain('.str-chat__message-input .str-chat__send-button:disabled');
+    expect(theme).toContain('background-color: var(--primary)');
+    expect(theme).toContain('fill: var(--primary-foreground)');
+    expect(theme).toContain('border-radius: calc(var(--radius) - 2px)');
+    expect(theme).toContain('.str-chat__send-button:hover:not(:disabled)');
+    expect(theme).toContain('color-mix(in oklch, var(--primary) 90%, transparent)');
+    expect(theme).toContain('opacity: 0.5');
     expect(theme).not.toMatch(/#005fff|#1d4ee2|rgba\(0,\s*95,\s*255|rgba\(51,\s*126,\s*255/i);
+  });
+
+  it('makes the mobile channel list a full-width card', () => {
+    const mobile = layout.slice(layout.indexOf('@media (max-width: 767px)'));
+
+    expect(mobile).toContain('background: var(--card)');
+    expect(mobile).toContain('--str-chat__channel-list-background-color: var(--card)');
+    expect(mobile).toContain('width: 100%');
+    expect(mobile).toContain('border-radius: 0');
   });
 });
