@@ -10,7 +10,7 @@ import {
 } from '@cio/db/queries/cohort';
 import { ensureComplianceEnrollmentRecordsForProfiles } from '@api/services/course/compliance';
 import { enqueueTransactionalEmail } from '@api/services/jobs';
-import { buildEmailBranding, buildEmailFromName } from '@cio/email';
+import { buildEmailBranding, buildOrgEmailFromName } from '@cio/email';
 import { getDashboardBaseUrl } from '@cio/core/config/dashboard-url';
 import { invalidateOrgStats } from '@cio/core/utils/redis/org-stats-cache';
 import type { DbOrTxClient } from '@cio/db/drizzle';
@@ -102,7 +102,7 @@ async function sendCohortWelcomeEmail(input: {
         loginUrl,
         branding
       },
-      from: buildEmailFromName(`${organization.name} (via ClassroomIO.com)`),
+      from: buildOrgEmailFromName(organization.name),
       idempotencyKey: `invite-link-cohort-welcome:${cohortId}:${profileId}`,
       preference: { organizationId: organization.id, recipientProfileId: profileId }
     });

@@ -15,6 +15,8 @@ export * from './vimeo';
 export * from './youtube';
 export * from './video';
 export * from './course-content';
+export * from './course-visibility';
+export * from './catalog-filters';
 export * from './course-banner-image';
 export * from './whisper-language';
 export * from './live-session';

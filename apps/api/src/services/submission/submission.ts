@@ -19,7 +19,7 @@ import type {
   TSubmissionGradesUpdate,
   TSubmissionUpdate
 } from '@cio/utils/validation/submission';
-import { buildEmailBranding, buildEmailFromName } from '@cio/email';
+import { buildEmailBranding, buildOrgEmailFromName } from '@cio/email';
 import { enqueueTransactionalEmail } from '@api/services/jobs';
 import {
   createSubmission,
@@ -1251,7 +1251,7 @@ async function sendSubmissionUpdateEmail(submissionId: string, newStatusId: numb
           theme: orgResult?.orgTheme
         })
       },
-      from: buildEmailFromName(`${orgName} (via ClassroomIO.com)`),
+      from: buildOrgEmailFromName(orgName),
       idempotencyKey: `submission-update:${submissionId}:${newStatusId}`,
       preference: {
         organizationId: orgResult?.orgId,
@@ -1326,7 +1326,7 @@ async function sendExerciseSubmissionUpdateEmail(courseId: string, exerciseId: s
           theme: orgResult?.orgTheme
         })
       },
-      from: buildEmailFromName(`${orgName} (via ClassroomIO.com)`),
+      from: buildOrgEmailFromName(orgName),
       idempotencyKey: `exercise-submitted:${courseId}:${exerciseId}:${submittedBy}`,
       preference: { organizationId: orgResult?.orgId }
     });

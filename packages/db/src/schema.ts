@@ -2667,6 +2667,10 @@ export const organization = pgTable(
         half?: boolean;
         reached?: boolean;
       };
+      membersOnlyCatalog?: boolean;
+      hideCoursePricing?: boolean;
+      showCourseTypeFilter?: boolean;
+      catalogFilterTagGroupIds?: string[] | null;
       emailNotifications?: {
         newStudent?: boolean;
         newSubmission?: boolean;

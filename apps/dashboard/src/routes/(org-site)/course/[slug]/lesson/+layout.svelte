@@ -4,6 +4,7 @@
   import { PublicCourse } from '@cio/ui';
   import { toPublicSidebarSections } from '$features/course/utils/public-course-mappers';
   import { type PublicCourseSidebarItem, type PublicCourseSidebarSection } from '@cio/ui/custom/public-course';
+  import { sourceOfferUrl } from '$lib/utils/functions/brand';
   import { t } from '$lib/utils/functions/translations';
   import type { Snippet } from 'svelte';
 
@@ -53,8 +54,8 @@
     footerPrevLabel={$t('public_course.footer_nav.previous')}
     footerNextLabel={$t('public_course.footer_nav.next')}
     courseSlug={data.tree.course.slug}
-    poweredByLabel={$t('public_course.powered_by.label')}
-    poweredByBrand="ClassroomIO"
+    showPoweredBy={false}
+    sourceOffer={{ href: sourceOfferUrl(), label: $t('common.source_offer') }}
     onItemClick={navigateTo}
     onPrev={() => navigateTo(prevItem)}
     onNext={() => navigateTo(nextItem)}

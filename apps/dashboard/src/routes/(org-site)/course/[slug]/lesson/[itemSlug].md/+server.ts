@@ -1,13 +1,13 @@
 import { classroomio } from '$lib/utils/services/api';
 import { ApiError } from '$lib/utils/services/api/types';
-import { getApiKeyHeaders } from '$lib/utils/services/api/server';
+import { getVisitorHeaders } from '$lib/utils/services/api/server';
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = async ({ params }) => {
+export const GET: RequestHandler = async ({ params, cookies }) => {
   try {
     const acceptHeaders = {
-      ...getApiKeyHeaders().headers,
+      ...getVisitorHeaders(cookies).headers,
       Accept: 'text/markdown'
     };
 
@@ -15,6 +15,10 @@ export const GET: RequestHandler = async ({ params }) => {
       { param: { courseSlug: params.slug, itemSlug: `${params.itemSlug}.md` } },
       { headers: acceptHeaders }
     );
+
+    if (response.status === 401) {
+      throw error(401, 'Sign in to view this lesson');
+    }
 
     if (!response.ok) {
       throw error(response.status === 404 ? 404 : 502, 'Markdown export is not available for this lesson');

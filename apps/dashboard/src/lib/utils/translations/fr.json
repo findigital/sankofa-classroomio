@@ -37,7 +37,8 @@
         "caption": "Préparation de vos cours, étudiants et paramètres."
       }
     },
-    "back": "Retour"
+    "back": "Retour",
+    "source_offer": "View source code"
   },
   "validations": {
     "generic": {
@@ -230,7 +231,7 @@
     },
     "submissions": {
       "success": {
-        "grading": "Note enregistrée et élève averti"
+        "grading": "Review saved and student notified"
       }
     },
     "marks": {
@@ -439,7 +440,9 @@
       "tag_updated": "Balise mise à jour",
       "course_tags_updated": "Balises de cours mises à jour",
       "fetch_failed": "Échec du chargement des balises",
-      "save_failed": "Échec de l'enregistrement des modifications de balise"
+      "save_failed": "Échec de l'enregistrement des modifications de balise",
+      "tag_deleted": "Tag deleted",
+      "delete_failed": "Failed to delete tag"
     },
     "error_update": "Échec de la mise à jour",
     "token_auth": {
@@ -543,8 +546,8 @@
     "heading": "Exercices",
     "not_submitted": "Non soumis",
     "submitted": "Soumis",
-    "in_progress": "Classement en cours",
-    "graded": "Noté",
+    "in_progress": "Review in progress",
+    "graded": "Reviewed",
     "lesson": "Leçon"
   },
   "my_learning": {
@@ -606,8 +609,8 @@
     "last_seen": "Vu pour la dernière fois",
     "a_while_ago": "il y a quelque temps",
     "exercises": "Exercices",
-    "graded": "Noté",
-    "not_graded": "Non noté",
+    "graded": "Reviewed",
+    "not_graded": "Not reviewed",
     "enrolled_courses": "Cours inscrits",
     "enrolled_courses_description": "Tous les cours inscrits",
     "overall_course_progress": "Progression globale du cours",
@@ -842,8 +845,8 @@
       "no_courses_description": "Inscrivez cet étudiant pour commencer le suivi de sa progression.",
       "no_exercises_title": "Aucun exercice dans ce cours",
       "no_exercises_description": "Ajoutez un exercice à une leçon et les tentatives de chaque étudiant s'afficheront ici.",
-      "no_grades_title": "Aucune note attribuée pour le moment",
-      "no_grades_description": "Les notes s'afficheront une fois que cet étudiant aura remis un exercice.",
+      "no_grades_title": "Nothing reviewed yet",
+      "no_grades_description": "Results appear once this student submits an exercise.",
       "load_failed_title": "Impossible de charger cet étudiant",
       "load_failed_description": "Une erreur s'est produite lors du chargement de cet étudiant. Veuillez réessayer.",
       "retry": "Réessayer",
@@ -1684,7 +1687,7 @@
       "submissions": {
         "title": "Exercices soumis",
         "access": {
-          "denied_title": "Vous ne pouvez pas noter les rendus de ce cours",
+          "denied_title": "You can't review submissions for this course",
           "denied_description": "Demandez à un administrateur de vous ajouter comme tuteur du cours, ou comme mentor d'une cohorte qui inclut ce cours."
         },
         "grading_modal": {
@@ -1696,8 +1699,8 @@
           "status": "Statut",
           "add_comment": "Ajouter un commentaire",
           "add_comment_placeholder": "Laisser un commentaire",
-          "grade_with_ai": "Noter avec l'IA",
-          "submit_grades": "Soumettre les notes",
+          "grade_with_ai": "Review with AI",
+          "submit_grades": "Submit review",
           "accept_grade": "Accepter",
           "reject_grade": "Rejeter",
           "allocated": "J'ai attribué ce score parce que",
@@ -1715,12 +1718,12 @@
         "submission_status": {
           "submitted": "Soumis",
           "in_progress": "En cours",
-          "graded": "Noté"
+          "graded": "Reviewed"
         },
         "workflow": {
           "awaiting_manual_hint": "Nécessite un examen manuel",
-          "failed_hint": "La notation automatique a échoué. Remettez cette soumission dans Soumis pour réessayer.",
-          "invalid_transition": "Ce changement de statut n'est pas autorisé par le workflow de notation"
+          "failed_hint": "Automatic review failed. Move this submission back to Submitted to retry.",
+          "invalid_transition": "This status move is not allowed by the review workflow"
         },
         "filter": {
           "student": "Student",
@@ -1907,8 +1910,8 @@
                 "attempts_count": "{count} tentatives",
                 "attempt_label": "Tentative {number}",
                 "date_unknown": "Date inconnue",
-                "status_awaiting_manual": "En attente de notation manuelle",
-                "status_completed": "Noté",
+                "status_awaiting_manual": "Awaiting manual review",
+                "status_completed": "Reviewed",
                 "status_pending": "En attente",
                 "counts_as_complete": "Compte comme terminé",
                 "passed": "Réussi",
@@ -1942,7 +1945,7 @@
               "due": "Due par",
               "no_description": "Pas de description",
               "start": "Commencer",
-              "graded": "Noté",
+              "graded": "Reviewed",
               "pending": "En attente",
               "submitted": "Soumis",
               "status_pending": "Statut : En attente d'examen",
@@ -3306,7 +3309,18 @@
       "empty_tags": "Aucune balise disponible"
     },
     "page_subtitle": "Là où les leçons deviennent des cours et les cours deviennent des inscriptions.",
-    "load_more": "Charger plus"
+    "load_more": "Charger plus",
+    "catalog_order": {
+      "action": "Reorder courses",
+      "title": "Course order",
+      "description": "Drag courses into the order people should see. The catalog and home page use this order, then the date the course was created. Saving featured courses on the landing page replaces this order.",
+      "saved": "Course order saved",
+      "save_failed": "Could not save course order",
+      "unpublished": "Unpublished",
+      "empty": "There are no courses to order yet.",
+      "admin_only": "Only an organization admin can reorder courses.",
+      "drag": "Drag to reorder"
+    }
   },
   "ai": {
     "help_me": "Aide-moi à écrire",
@@ -4418,6 +4432,23 @@
         "internal_enrollment_only": {
           "label": "Inscription interne uniquement",
           "description": "Lorsque cette option est activée, seuls les membres existants de votre organisation peuvent s'inscrire à vos cours. Tous les autres doivent être invités : ils ne peuvent pas s'inscrire eux-mêmes à partir d'une page de cours, même lorsque le cours est ouvert à de nouveaux étudiants."
+        },
+        "members_only_catalog": {
+          "label": "Members-only catalog",
+          "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
+        },
+        "hide_course_pricing": {
+          "label": "Hide course prices",
+          "description": "Hide prices, the pricing filter, and Free labels on the catalog and course cards. Prices stay hidden until you turn this off."
+        },
+        "show_course_type_filter": {
+          "label": "Show course type filter",
+          "description": "Show course types that have published courses, such as live class and self-paced, as catalog filters."
+        },
+        "catalog_filter_groups": {
+          "label": "Catalog filter groups",
+          "description": "Choose which tag groups appear as catalog filters. Every group is included until you pick a subset.",
+          "empty": "Tag groups will show up here after they are created."
         }
       },
       "login": {
@@ -4539,12 +4570,12 @@
           "description": "Envoyer un e-mail aux membres du cours concernant les nouvelles publications et commentaires."
         },
         "gradingResult": {
-          "label": "Résultats de notation",
-          "description": "Envoyer un e-mail aux étudiants lorsque leur soumission est notée ou mise à jour."
+          "label": "Review results",
+          "description": "Email students when their submission is reviewed or updated."
         },
         "newSubmission": {
-          "label": "Nouvelles soumissions à noter",
-          "description": "Envoyer un e-mail aux tuteurs lorsqu'un étudiant soumet un travail à noter."
+          "label": "New submissions to review",
+          "description": "Email tutors when a student submits work that needs review."
         },
         "newStudent": {
           "label": "Nouvel étudiant s'inscrit",
@@ -4625,7 +4656,7 @@
         "quizAssigned": "Quiz attribué",
         "sessionReminder": "Rappel de session en direct",
         "sessionUpdated": "Session en direct mise à jour",
-        "submissionGraded": "Soumission notée",
+        "submissionGraded": "Submission reviewed",
         "newsfeedPost": "Publication du fil d'actualité du cours"
       },
       "descriptions": {
@@ -4981,7 +5012,7 @@
     },
     "filters": {
       "title": "Filtrer par balises",
-      "help": "Sélectionnez une ou plusieurs balises pour filtrer les cours",
+      "help": "Filter by the options shown, or search by name",
       "empty": "Aucun tag disponible pour l'instant",
       "tags_title": "Étiquettes",
       "types_title": "Espèces",
@@ -4992,6 +5023,11 @@
       "pricing_paid": "Prix",
       "selected": "Sélectionné :",
       "save_changes": "Enregistrer les modifications"
+    },
+    "catalog_locked": {
+      "title": "This catalog is for members",
+      "description": "Only members of this academy can browse courses here. Sign in with a member account, or ask an administrator for access.",
+      "sign_in": "Sign in"
     }
   },
   "tags_admin": {
@@ -5040,12 +5076,17 @@
       "edit_tag": "Modifier la balise",
       "save": "Enregistrer",
       "cancel": "Annuler",
-      "actions_menu": "Actions de balise"
+      "actions_menu": "Actions de balise",
+      "delete_tag": "Delete tag"
     },
     "common": {
       "not_available": "N/D"
     },
-    "page_subtitle": "Organisez les cours avec des étiquettes pour que les filtres et les listes restent faciles à parcourir."
+    "page_subtitle": "Organisez les cours avec des étiquettes pour que les filtres et les listes restent faciles à parcourir.",
+    "delete": {
+      "title": "Delete tag",
+      "description": "Delete {name}? It will be removed from courses and catalog filters."
+    }
   },
   "invite": {
     "organization": {
@@ -5261,7 +5302,7 @@
         "course_completed": "Un étudiant termine un cours",
         "course_certificate_issued": "Un certificat est obtenu",
         "course_submission_created": "Une soumission d'exercice est créée",
-        "course_submission_status_changed": "Le statut d'une soumission change, par exemple lorsqu'elle est notée",
+        "course_submission_status_changed": "A submission status changes, such as when it is reviewed",
         "lesson_completion_updated": "Une leçon est marquée comme terminée ou réinitialisée",
         "exercise_completion_updated": "Un exercice est terminé ou réinitialisé",
         "compliance_record_status_changed": "Le statut de conformité d'un étudiant change",
@@ -5861,7 +5902,7 @@
       "practice_again": "Entraînez-vous à nouveau",
       "attempt_option": "Tentative {attemptNumber} – {correct}/{total}",
       "attempts_select_aria": "Vos tentatives",
-      "privacy_hint": "Noté instantanément dans votre navigateur – rien n’est soumis.",
+      "privacy_hint": "Reviewed instantly in your browser — nothing is submitted.",
       "summary_template": "Vous avez obtenu [[correct]] / [[total]] correct."
     },
     "powered_by": {
@@ -6434,7 +6475,7 @@
       "certificate": "Certificat activé",
       "deadline": "Date limite {date}",
       "sequential": "Les leçons se débloquent dans l'ordre",
-      "grading": "Un tuteur note les soumissions",
+      "grading": "A tutor reviews submissions",
       "comments_off": "Les commentaires des cours sont désactivés",
       "lesson_download": "Les apprenants peuvent télécharger des leçons",
       "self_enrollment": "Les apprenants peuvent se joindre",

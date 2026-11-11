@@ -8,8 +8,7 @@
   import OrgLogo from '$features/ui/sidebar/org-sidebar/org-logo.svelte';
   import Navigation from './cohort-sidebar-navigation.svelte';
   import SidebarSkeleton from '$features/ui/sidebar/sidebar-skeleton.svelte';
-  import PoweredBy from '$features/ui/powered-by.svelte';
-  import { useSidebar } from '@cio/ui/base/sidebar';
+  import SourceOffer from '$features/ui/source-offer.svelte';
 
   const SIDEBAR_ITEM_SKELETON_COUNT = 4;
 
@@ -22,7 +21,6 @@
   let { path, id, isCohortReady = true }: Props = $props();
 
   const isOrgLoaded = $derived($orgs.length > 0 && $profile.id);
-  const sidebar = useSidebar();
   const currentPath = $derived(path || page.url.pathname);
 </script>
 
@@ -60,11 +58,7 @@
     <Sidebar.Rail />
 
     <Sidebar.Footer>
-      <PoweredBy
-        variant="sidebar"
-        sidebarUtmSource="lms-cohort-sidebar"
-        showOnlyLogo={!sidebar.open || sidebar.isMobile}
-      />
+      <SourceOffer />
     </Sidebar.Footer>
   </Sidebar.Root>
 {/if}

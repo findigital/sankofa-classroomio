@@ -37,4 +37,10 @@ export const EMAIL_IDS = [
 const DEFAULT_EMAIL_FROM = '"Best from ClassroomIO" <notify@mail.classroomio.com>';
 
 export const EMAIL_FROM = env.SMTP_SENDER || DEFAULT_EMAIL_FROM;
-export const EMAIL_REPLY_TO = '"Best from ClassroomIO" <help@classroomio.com>';
+
+export function getEmailReplyTo(): string {
+  const support = process.env.SUPPORT_EMAIL?.trim();
+  if (!support) return EMAIL_FROM;
+
+  return `"Support" <${support}>`;
+}

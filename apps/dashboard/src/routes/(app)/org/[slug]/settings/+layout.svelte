@@ -7,6 +7,7 @@
   import * as Page from '@cio/ui/base/page';
   import { OrgSettingsInlineTabs } from '$features/settings/components';
   import { t } from '$lib/utils/functions/translations';
+  import SourceOffer from '$features/ui/source-offer.svelte';
 
   let { children }: Props = $props();
 
@@ -33,4 +34,5 @@
   {/if}
 
   {@render children?.()}
+  <SourceOffer />
 </Page.Root>

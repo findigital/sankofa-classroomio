@@ -40,19 +40,21 @@
       <div class={`${t.pricingShell} ui:w-full ui:max-w-md`}>
         <div class={t.pricingHeader}>
           <span class={t.pricingEyebrow}>{labels?.pricingEyebrow ?? 'Enrol'}</span>
-          {#if isFree}
-            <span class={t.pricingAmount}>{labels?.freeLabel ?? 'Free'}</span>
-          {:else}
-            <div class="ui:flex ui:items-baseline ui:gap-3">
-              <span class={t.pricingAmount}>{formattedDisplayAmount}</span>
-              {#if discountedAmount !== null}
-                <span class={t.pricingDiscount}>{formattedOriginalAmount}</span>
+          {#if !labels?.hidePrice}
+            {#if isFree}
+              <span class={t.pricingAmount}>{labels?.freeLabel ?? 'Free'}</span>
+            {:else}
+              <div class="ui:flex ui:items-baseline ui:gap-3">
+                <span class={t.pricingAmount}>{formattedDisplayAmount}</span>
+                {#if discountedAmount !== null}
+                  <span class={t.pricingDiscount}>{formattedOriginalAmount}</span>
+                {/if}
+              </div>
+              {#if pricing.discount && pricing.showDiscount}
+                <span class={t.pricingSavingsBadge}>
+                  Save {pricing.discount}%
+                </span>
               {/if}
-            </div>
-            {#if pricing.discount && pricing.showDiscount}
-              <span class={t.pricingSavingsBadge}>
-                Save {pricing.discount}%
-              </span>
             {/if}
           {/if}
         </div>

@@ -351,6 +351,13 @@
       "when": 1794218915414,
       "tag": "0049_lesson_blocks",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1794355000000,
+      "tag": "0050_course_display_order",
+      "breakpoints": true
     }
   ]
 }

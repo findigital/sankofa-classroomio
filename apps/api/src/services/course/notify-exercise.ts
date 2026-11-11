@@ -2,7 +2,7 @@ import { AppError, ErrorCodes } from '@api/utils/errors';
 import { getCourseById, getCourseWithOrgData } from '@cio/db/queries/course';
 import { getExerciseById } from '@cio/db/queries/exercise';
 import { getDashboardBaseUrl } from '@cio/core/config/dashboard-url';
-import { buildEmailFromName, buildEmailBranding } from '@cio/email';
+import { buildOrgEmailFromName, buildEmailBranding } from '@cio/email';
 import { QUEUE_NAMES, enqueueNotifyCourseExercise, getQueueJobEnvelope, type JobEnvelope } from '@cio/jobs';
 
 const NOTIFY_DOMAIN = 'notify-course-exercise';
@@ -61,7 +61,7 @@ export async function notifyCourseExerciseService(courseId: string, exerciseId: 
     courseName: course.title,
     orgName,
     organizationId: orgData.orgId,
-    fromName: buildEmailFromName(`${orgName} (via ClassroomIO.com)`),
+    fromName: buildOrgEmailFromName(orgName),
     quizUrl,
     branding: buildEmailBranding({
       name: orgData.orgName,

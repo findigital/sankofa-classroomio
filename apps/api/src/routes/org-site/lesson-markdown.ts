@@ -1,5 +1,6 @@
 import { ZPublicCourseItemParam } from '@cio/utils/validation/course';
 import { getPublicLessonMarkdownService } from '@api/services/course/public-course';
+import { publicCourseReadOptions, viewerFromAuth } from '@api/services/course/course-visibility';
 
 import { Hono } from '@api/utils/hono';
 import { handleError } from '@api/utils/errors';
@@ -30,7 +31,8 @@ export const lessonMarkdownRouter = new Hono().get(
   async (c) => {
     try {
       const { courseSlug, itemSlug } = c.req.valid('param');
-      const markdown = await getPublicLessonMarkdownService(courseSlug, itemSlug);
+      const options = await publicCourseReadOptions(courseSlug, viewerFromAuth(c.get('user'), c.get('orgRoles')));
+      const markdown = await getPublicLessonMarkdownService(courseSlug, itemSlug, options);
 
       if (markdown == null) {
         return c.json(

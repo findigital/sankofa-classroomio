@@ -7,21 +7,23 @@
   import FrownIcon from '@lucide/svelte/icons/frown';
   import { Empty } from '@cio/ui/custom/empty';
   import { SimpleLogoNav } from '@cio/ui/custom/simple-logo-nav';
-  import { buildOrgLandingPageProps, normalizeLandingPageSettings } from '$features/org/utils/landing-page';
+  import {
+    buildOrgLandingPageProps,
+    normalizeLandingPageSettings,
+    withCatalogLockedLabels
+  } from '$features/org/utils/landing-page';
   import { user, profile } from '$lib/utils/store/user';
   import { t } from '$lib/utils/functions/translations';
   import { resolveOrgLandingAuthAction } from '$features/org/utils/org-landing-auth-action';
   import { resolveOrgLandingLearnerAccount } from '$features/org/utils/org-landing-learner-account';
+  import { defaultDocumentTitle } from '$lib/utils/functions/brand';
+  import SourceOffer from '$features/ui/source-offer.svelte';
 
   let { data } = $props();
 
   const hasSetupError = $derived(!appInitApi.loading && !!appInitApi.error);
 
-  const pageTitle = $derived(
-    data.isOrgSite && data.org
-      ? data.org.name
-      : 'ClassroomIO - One Platform for Customer, Partner, and Employee Training'
-  );
+  const pageTitle = $derived(data.isOrgSite && data.org ? data.org.name : defaultDocumentTitle());
 
   const authAction = $derived(
     resolveOrgLandingAuthAction({
@@ -47,7 +49,7 @@
   const landingPageProps = $derived.by(() => {
     if (!data.isOrgSite || !data.org) return null;
 
-    return buildOrgLandingPageProps(
+    const props = buildOrgLandingPageProps(
       data.org,
       normalizeLandingPageSettings(data.org.landingpage),
       data.courses,
@@ -55,6 +57,8 @@
       authAction,
       { learnerAccount }
     );
+
+    return withCatalogLockedLabels(props, data.catalogLocked);
   });
 
   onMount(() => {
@@ -76,6 +80,7 @@
 {#if data.isOrgSite && data.org}
   {#if ThemeComponent && landingPageProps}
     <ThemeComponent {...landingPageProps} />
+    <SourceOffer />
   {/if}
 {:else if hasSetupError}
   <Empty

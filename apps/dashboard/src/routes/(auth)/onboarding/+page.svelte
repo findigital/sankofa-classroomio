@@ -11,6 +11,7 @@
 
   import { Stepper, TestimonialPanel } from '$features/onboarding/components';
   import { currentOrg } from '$lib/utils/store/org';
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { profile } from '$lib/utils/store/user';
   import { onboardingApi } from '$features/onboarding/api/onboarding.svelte';
   import { hasManagedOrganization, resolveResumeStep } from '$features/onboarding/utils/completeness';
@@ -194,14 +195,13 @@
   <div class="ui:bg-background grid min-h-screen w-full grid-cols-1 lg:grid-cols-2">
     <div class="relative flex flex-col px-4 lg:px-12">
       <header class="flex justify-center pt-6 md:block">
-        <a
-          href="https://classroomio.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="flex w-fit items-center gap-2"
-        >
-          <img src="/logo-512.png" class="h-7 w-7" alt="ClassroomIO Logo" />
-          <span class="text-base font-semibold dark:text-white">ClassroomIO</span>
+        <a href="/" class="flex w-fit items-center gap-2" aria-label={$currentOrg.name || appBrandName()}>
+          <img
+            src={$currentOrg.avatarUrl || '/logo-512.png'}
+            class="h-7 w-7"
+            alt={$currentOrg.name || appBrandName()}
+          />
+          <span class="text-base font-semibold dark:text-white">{$currentOrg.name || appBrandName()}</span>
         </a>
         <p class="ui:text-muted-foreground mt-1 hidden text-sm md:block">{$t('onboarding.header.tagline')}</p>
       </header>

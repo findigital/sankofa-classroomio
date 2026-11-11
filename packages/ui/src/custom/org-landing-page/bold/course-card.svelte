@@ -4,8 +4,8 @@
   import { Button } from '../../../base/button';
   import { BorderBeam } from '../../animation/border-beam';
   import ClockIcon from '@lucide/svelte/icons/clock';
-  import TagIcon from '@lucide/svelte/icons/tag';
-  import { getCourseTypeLandingMeta, getPrimaryCourseTag } from '../landing-page-utils';
+  import { getCourseTypeLandingMeta, landingCoursePriceLabel } from '../landing-page-utils';
+  import CourseTagPills from '../course-tag-pills.svelte';
 
   interface Props {
     course: CourseItem;
@@ -16,17 +16,13 @@
   let { course, disableCourseLinks = false, labels }: Props = $props();
 
   const courseTypeMeta = $derived(getCourseTypeLandingMeta(course));
-  const primaryTag = $derived(getPrimaryCourseTag(course));
   const href = $derived.by(() => {
     if (disableCourseLinks) return undefined;
 
     return course.link || (course.slug ? `/course/${course.slug}` : undefined);
   });
 
-  function formatCurrency(cost?: number, currency = 'USD') {
-    if (!cost) return labels?.freeLabel ?? 'Free';
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(cost);
-  }
+  const priceLabel = $derived(landingCoursePriceLabel(course, labels));
 </script>
 
 <Card.Root
@@ -70,25 +66,13 @@
             <span>{courseTypeMeta.label}</span>
           </div>
         {/if}
-        {#if primaryTag}
-          <div
-            class="ui:flex ui:items-center ui:gap-1.5 ui:text-[var(--landing-fg)] ui:bg-[var(--landing-card-soft)] ui:px-2.5 ui:py-1 ui:rounded-md"
-          >
-            <TagIcon class="ui:size-3.5 ui:text-[var(--landing-accent)]" />
-            {#if primaryTag.color}
-              <span
-                class="ui:inline-block ui:h-2 ui:w-2 ui:rounded-full"
-                style={`background-color: ${primaryTag.color}`}
-                aria-hidden="true"
-              ></span>
-            {/if}
-            <span>{primaryTag.name}</span>
-          </div>
-        {/if}
+      </div>
+      <div class="ui:mt-3">
+        <CourseTagPills tags={course.tags} />
       </div>
 
       <div class="ui:mt-auto ui:flex ui:items-center ui:justify-between">
-        <span class="ui:font-black ui:text-lg">{course.price || formatCurrency(course.cost, course.currency)}</span>
+        {#if priceLabel}<span class="ui:font-black ui:text-lg">{priceLabel}</span>{/if}
         <Button
           {href}
           variant="outline"

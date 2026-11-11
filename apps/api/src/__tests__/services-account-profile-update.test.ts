@@ -194,7 +194,7 @@ describe('sendProfileUpdatedEmail', () => {
           locale: 'fr',
           loginUrl: 'https://academy.example.com'
         }),
-        from: expect.stringContaining('Academy (via ClassroomIO.com)')
+        from: expect.stringContaining('"Academy" <')
       })
     );
   });

@@ -1,5 +1,5 @@
 import { type BetterAuthOptions } from 'better-auth';
-import { buildEmailBranding, buildEmailFromName, sendEmail } from '@cio/email';
+import { buildEmailBranding, buildOrgEmailFromName, sendEmail } from '@cio/email';
 import { enqueueEmailSend } from '@cio/jobs';
 
 import { clearWelcomeEmailPending, getProfileById, markWelcomeEmailSent } from '../queries/auth/profile';
@@ -64,7 +64,7 @@ async function sendOrgAwareVerifyEmail(options: {
 
   await sendEmail('verifyEmail', {
     to: options.to,
-    from: org?.name ? buildEmailFromName(`${org.name} (via ClassroomIO.com)`) : undefined,
+    from: org?.name ? buildOrgEmailFromName(org.name) : undefined,
     subject: org?.name ? `Confirm your email for ${org.name}` : undefined,
     fields: {
       link: stripTriggerParam(options.verificationUrl),

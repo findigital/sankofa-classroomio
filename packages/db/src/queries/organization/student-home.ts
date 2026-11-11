@@ -1,6 +1,6 @@
 import * as schema from '@db/schema';
 
-import { and, asc, count, eq, ilike } from 'drizzle-orm';
+import { and, asc, count, desc, eq, ilike, sql } from 'drizzle-orm';
 
 import { db, type DbOrTxClient } from '@db/drizzle';
 
@@ -105,7 +105,11 @@ export async function listStudentHomeCourseOptions(
       .from(schema.course)
       .innerJoin(schema.group, eq(schema.course.groupId, schema.group.id))
       .where(studentHomeCourseFilter(orgId, options.search))
-      .orderBy(asc(schema.course.displayOrder), asc(schema.course.title), asc(schema.course.id))
+      .orderBy(
+        sql`${schema.course.displayOrder} asc nulls last`,
+        desc(schema.course.createdAt),
+        asc(schema.course.title)
+      )
       .limit(limit)
       .offset((page - 1) * limit);
 

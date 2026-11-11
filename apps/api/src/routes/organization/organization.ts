@@ -3,6 +3,7 @@ import {
   ZAudienceInviteByEmail,
   ZCancelOrgPlan,
   ZClaimEarlyAdopterPlan,
+  ZCourseCatalogOrder,
   ZCourseReorder,
   ZCreateLinkInvite,
   ZCreateOrgPlan,
@@ -55,6 +56,7 @@ import {
   getOrganizationNavCounts,
   getOrganizationsWithFilters,
   getPublicCourses,
+  listCatalogOrder,
   getRecommendedCourses,
   getUserAnalytics,
   getUserEnrolledCourses,
@@ -556,7 +558,8 @@ export const organizationRouter = new Hono()
         courseTypes?.length ? courseTypes : undefined,
         search || undefined,
         pricing || undefined,
-        pagination
+        pagination,
+        { orgRoles: (c.get('orgRoles') as Record<string, number> | undefined) ?? {} }
       );
 
       return c.json(
@@ -570,6 +573,34 @@ export const organizationRouter = new Hono()
       return handleError(c, error, 'Failed to fetch public courses');
     }
   })
+  .get('/courses/catalog-order', authMiddleware, orgAdminMiddleware, async (c) => {
+    try {
+      const orgId = c.req.header('cio-org-id')!;
+      const courses = await listCatalogOrder(orgId);
+
+      return c.json({ success: true, data: courses }, 200);
+    } catch (error) {
+      return handleError(c, error, 'Failed to list course order');
+    }
+  })
+  .post(
+    '/courses/catalog-order',
+    authMiddleware,
+    orgAdminMiddleware,
+    zValidator('json', ZCourseCatalogOrder),
+    async (c) => {
+      try {
+        const { courses } = c.req.valid('json');
+        const orgId = c.req.header('cio-org-id')!;
+
+        await reorderOrgCourses(orgId, courses);
+
+        return c.json({ success: true }, 200);
+      } catch (error) {
+        return handleError(c, error, 'Failed to save course order');
+      }
+    }
+  )
   /**
    * POST /organization/courses/reorder
    * Persists the manual display order of organization courses (landing page + public catalog)

@@ -56,7 +56,7 @@
     attemptsSelectAriaLabel = 'Your attempts',
     submitLabel = 'Check my answers',
     tryAgainLabel = 'Practice again',
-    privacyHint = 'Graded instantly in your browser — nothing is submitted.',
+    privacyHint = 'Reviewed instantly in your browser — nothing is submitted.',
     summaryTemplate = 'You got [[correct]] / [[total]] correct.',
     titleActions,
     outlineActions,

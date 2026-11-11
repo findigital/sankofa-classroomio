@@ -6,7 +6,12 @@
   import Sidebar from './sidebar.svelte';
   import { Button } from '../../base/button';
   import { cn } from '../../tools';
-  import type { PublicCourseOrgData, PublicCourseSidebarItem, PublicCourseSidebarSection } from './types';
+  import type {
+    PublicCourseOrgData,
+    PublicCourseSidebarItem,
+    PublicCourseSidebarSection,
+    PublicCourseSourceOffer
+  } from './types';
   import { ModeSwitcher } from '../../base/dark-mode';
 
   interface Props {
@@ -51,6 +56,7 @@
     poweredByBrand?: string;
     /** Hide the powered-by footer entirely (e.g. enterprise white-label). */
     showPoweredBy?: boolean;
+    sourceOffer?: PublicCourseSourceOffer | null;
     /** Main content. Typically a PublicLessonView or PublicExerciseView. */
     children: Snippet;
     /**
@@ -93,6 +99,7 @@
     poweredByLabel = 'Powered by',
     poweredByBrand = 'ClassroomIO',
     showPoweredBy = true,
+    sourceOffer = null,
     children,
     topRight,
     headerActions,
@@ -219,6 +226,7 @@
         orgSlug={org?.siteName ?? org?.name ?? null}
         {poweredByLabel}
         {poweredByBrand}
+        {sourceOffer}
       />
     </aside>
 
@@ -262,6 +270,7 @@
     orgSlug={org?.siteName ?? org?.name ?? null}
     {poweredByLabel}
     {poweredByBrand}
+    {sourceOffer}
     collapseToSectionId={activeSectionId}
     onItemClick={(item) => {
       if (!hrefFor) {

@@ -8,7 +8,6 @@
   import { t } from '$lib/utils/functions/translations';
   import { user, profile } from '$lib/utils/store/user';
 
-  import { PoweredBy } from '$features/ui';
   import { appInitApi } from '$features/app/init.svelte';
   import { resolveOrgLandingAuthAction } from '$features/org/utils/org-landing-auth-action';
   import { resolveOrgLandingLearnerAccount } from '$features/org/utils/org-landing-learner-account';
@@ -19,14 +18,11 @@
 
   import { LandingButton, LandingThemeScope, OrgLandingPageFooter } from '@cio/ui/custom/org-landing-page';
 
-  import { Checkbox } from '@cio/ui/base/checkbox';
   import { Input } from '@cio/ui/base/input';
   import { DebouncedSearch } from '$lib/utils/functions/debounced-search.svelte';
   import { Empty } from '@cio/ui/custom/empty';
-  import { Separator } from '@cio/ui/base/separator';
   import * as Pagination from '@cio/ui/base/pagination';
   import * as Sheet from '@cio/ui/base/sheet';
-  import { Accordion } from '@cio/ui';
 
   let { data } = $props();
 
@@ -72,9 +68,6 @@
     search.destroy();
   });
   let filterSheetOpen = $state(false);
-  type FilterSection = 'types' | 'pricing' | 'tags';
-  // let openFilterSection = $state<FilterSection | null>('types');
-  let openFilterSection = $state<FilterSection | string[] | undefined>('types');
 
   const COURSE_TYPES = [
     { value: 'SELF_PACED', label: t.get('analytics.popularTypes.types.SELF_PACED') },
@@ -84,6 +77,7 @@
   ] as const;
 
   const landingSettings = $derived(normalizeLandingPageSettings(data.org.landingpage));
+  const signInHref = $derived(`/login?redirect=${encodeURIComponent(`${page.url.pathname}${page.url.search}`)}`);
 
   const authAction = $derived(
     resolveOrgLandingAuthAction({
@@ -110,6 +104,10 @@
   const HeroComponent = $derived(data.theme.Hero);
   const CourseCardComponent = $derived(data.theme.CourseCard);
   const courseGridClass = $derived(data.theme.coursesGridClass);
+  const cardLabels = $derived({
+    hidePrice: data.hideCoursePricing,
+    freeLabel: $t('course.navItem.landing_page.pricing_section.free')
+  });
 
   const heroProps = $derived({
     ...landingSettings.hero,
@@ -146,42 +144,6 @@
       invalidateAll: true
     });
   }
-
-  let isDesktop = $state(false);
-
-  let restoreSheetOnMobile = $state(false);
-
-  $effect(() => {
-    if (typeof window === 'undefined') return;
-
-    const mql = window.matchMedia('(min-width: 1024px)');
-
-    function syncViewport(matches: boolean) {
-      isDesktop = matches;
-
-      if (matches) {
-        openFilterSection = ['types', 'pricing', 'tags'];
-
-        if (filterSheetOpen) {
-          restoreSheetOnMobile = true;
-          filterSheetOpen = false;
-        }
-      } else {
-        openFilterSection = 'types';
-
-        if (restoreSheetOnMobile) {
-          filterSheetOpen = true;
-          restoreSheetOnMobile = false;
-        }
-      }
-    }
-
-    syncViewport(mql.matches);
-
-    const onChange = (e: MediaQueryListEvent) => syncViewport(e.matches);
-    mql.addEventListener('change', onChange);
-    return () => mql.removeEventListener('change', onChange);
-  });
 
   async function goToPage(nextPage: number) {
     if (nextPage === data.pagination.page) {
@@ -286,6 +248,18 @@
   const hasActiveFilters = $derived(
     selectedTags.length > 0 || selectedTypes.length > 0 || !!activeSearch || !!activePricing
   );
+
+  const visibleCourseTypes = $derived(
+    data.showCourseTypeFilter
+      ? COURSE_TYPES.filter((courseType) =>
+          (data.courseTypeCounts ?? []).some((row) => row.type === courseType.value && row.count > 0)
+        )
+      : []
+  );
+
+  const hasFilterOptions = $derived(
+    displayTagGroups.some((group) => group.tags.length > 0) || visibleCourseTypes.length > 0 || !data.hideCoursePricing
+  );
 </script>
 
 {#snippet searchField()}
@@ -311,112 +285,63 @@
   </div>
 {/snippet}
 
-{#snippet filtersContent(showHeader = true)}
-  {#if showHeader}
-    <div class="p-4 pb-3">
-      <h2 class="text-base font-semibold">{$t('public_courses.filters.title')}</h2>
-      <p class="text-xs text-(--landing-fg-muted)">{$t('public_courses.filters.help')}</p>
-    </div>
-    <Separator class="bg-(--landing-border)" />
-  {/if}
-
-  <div class="px-2 pb-2">
-    {#key isDesktop}
-      <Accordion.Root type={isDesktop ? 'multiple' : 'single'} bind:value={openFilterSection as never} class="w-full">
-        <!-- TYPES -->
-        <Accordion.Item value="types" class="ui:border-border">
-          <Accordion.Trigger class="px-2 text-sm font-semibold tracking-wide uppercase">
-            {$t('public_courses.filters.types_title')}
-          </Accordion.Trigger>
-          <Accordion.Content>
-            <div class="space-y-2 px-1 pb-2">
-              {#each COURSE_TYPES as courseType (courseType.value)}
-                <label
-                  class="ui:border-border ui:hover:bg-muted/50 flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2"
-                >
-                  <Checkbox
-                    checked={selectedTypes.includes(courseType.value)}
-                    onCheckedChange={(checked) => toggleType(courseType.value, Boolean(checked))}
-                  />
-                  <span class="text-sm">{courseType.label}</span>
-                </label>
-              {/each}
-            </div>
-          </Accordion.Content>
-        </Accordion.Item>
-
-        <!-- PRICING -->
-        <Accordion.Item value="pricing" class="ui:border-border">
-          <Accordion.Trigger class="px-2 text-sm font-semibold tracking-wide uppercase">
-            {$t('public_courses.filters.pricing_title')}
-          </Accordion.Trigger>
-          <Accordion.Content>
-            <div class="space-y-2 px-1 pb-2">
-              {#each [{ value: 'free', label: $t('public_courses.filters.pricing_free') }, { value: 'paid', label: $t('public_courses.filters.pricing_paid') }] as option (option.value)}
-                <label
-                  class="ui:border-border ui:hover:bg-muted/50 flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2"
-                >
-                  <Checkbox
-                    checked={activePricing === option.value}
-                    onCheckedChange={(checked) => togglePricing(checked ? (option.value as 'free' | 'paid') : null)}
-                  />
-                  <span class="text-sm">{option.label}</span>
-                </label>
-              {/each}
-            </div>
-          </Accordion.Content>
-        </Accordion.Item>
-
-        <!-- TAGS -->
-        {#if displayTagGroups.length > 0}
-          <Accordion.Item value="tags" class="ui:border-border">
-            <Accordion.Trigger class="px-2 text-sm font-semibold tracking-wide uppercase">
-              {$t('public_courses.filters.tags_title')}
-            </Accordion.Trigger>
-            <Accordion.Content>
-              <div class="space-y-5 px-1 pb-2">
-                {#each displayTagGroups as group (group.id)}
-                  <div class="space-y-2">
-                    <div class="space-y-1">
-                      <h3 class="text-sm font-semibold">{group.name}</h3>
-                      {#if group.description}
-                        <p class="ui:text-muted-foreground text-xs">{group.description}</p>
-                      {/if}
-                    </div>
-
-                    <div class="space-y-2">
-                      {#each group.tags as tag (tag.id)}
-                        <label
-                          class="ui:border-border ui:hover:bg-muted/50 flex cursor-pointer items-center justify-between rounded-md border px-3 py-2"
-                        >
-                          <div class="flex items-center gap-2">
-                            <Checkbox
-                              checked={isTagSelected(tag.slug)}
-                              onCheckedChange={(checked) => toggleTag(tag.slug, Boolean(checked))}
-                            />
-                            <span
-                              class="inline-block h-2.5 w-2.5 rounded-full border"
-                              style={`background-color: ${tag.color}`}
-                              aria-hidden="true"
-                            ></span>
-                            <span class="text-sm">{tag.name}</span>
-                          </div>
-                          <span class="ui:text-muted-foreground text-xs">{tag.courseCount}</span>
-                        </label>
-                      {/each}
-                    </div>
-                  </div>
-                {/each}
-              </div>
-            </Accordion.Content>
-          </Accordion.Item>
-        {/if}
-      </Accordion.Root>
-    {/key}
-  </div>
+{#snippet filterChip(label: string, pressed: boolean, onclick: () => void)}
+  <button
+    type="button"
+    aria-pressed={pressed}
+    {onclick}
+    class="inline-flex items-center rounded-full border px-3 py-1 text-sm transition-colors {pressed
+      ? 'ui:border-primary ui:bg-primary ui:text-primary-foreground'
+      : 'ui:border-border ui:bg-background ui:text-foreground ui:hover:bg-muted'}"
+  >
+    {label}
+  </button>
 {/snippet}
 
-<PoweredBy />
+{#snippet filtersContent()}
+  <div class="flex flex-col gap-5" data-testid="catalog-filter-bar">
+    {#if visibleCourseTypes.length > 0}
+      <div class="space-y-2">
+        <h3 class="text-sm font-semibold tracking-wide uppercase">{$t('public_courses.filters.types_title')}</h3>
+        <div class="flex flex-wrap gap-2">
+          {#each visibleCourseTypes as courseType (courseType.value)}
+            {@render filterChip(courseType.label, selectedTypes.includes(courseType.value), () =>
+              toggleType(courseType.value, !selectedTypes.includes(courseType.value))
+            )}
+          {/each}
+        </div>
+      </div>
+    {/if}
+
+    {#each displayTagGroups as group (group.id)}
+      {#if group.tags.length > 0}
+        <div class="space-y-2">
+          <h3 class="text-sm font-semibold tracking-wide uppercase">{group.name}</h3>
+          <div class="flex flex-wrap gap-2">
+            {#each group.tags as tag (tag.id)}
+              {@render filterChip(tag.name, isTagSelected(tag.slug), () =>
+                toggleTag(tag.slug, !isTagSelected(tag.slug))
+              )}
+            {/each}
+          </div>
+        </div>
+      {/if}
+    {/each}
+
+    {#if !data.hideCoursePricing}
+      <div class="space-y-2">
+        <h3 class="text-sm font-semibold tracking-wide uppercase">{$t('public_courses.filters.pricing_title')}</h3>
+        <div class="flex flex-wrap gap-2">
+          {#each [{ value: 'free' as const, label: $t('public_courses.filters.pricing_free') }, { value: 'paid' as const, label: $t('public_courses.filters.pricing_paid') }] as option (option.value)}
+            {@render filterChip(option.label, activePricing === option.value, () =>
+              togglePricing(activePricing === option.value ? null : option.value)
+            )}
+          {/each}
+        </div>
+      </div>
+    {/if}
+  </div>
+{/snippet}
 
 <LandingThemeScope theme={landingSettings.theme} class="font-sans">
   <main>
@@ -451,93 +376,111 @@
     {/if}
 
     <section class="mx-auto w-full max-w-7xl px-4 py-8 md:px-6">
-      <!-- Actions row -->
-      <div class="mb-6 flex items-center justify-between gap-3">
-        <!-- Mobile only -->
-        <div class="lg:hidden">
-          <LandingButton variant="secondary" onclick={() => (filterSheetOpen = true)}>
-            <FilterIcon class="size-4" />
-            {$t('public_courses.filters.title')}
-            {#if activeFilterCount > 0}
-              <span
-                class="ui:bg-primary ui:text-primary-foreground ml-1 inline-flex min-w-5 items-center justify-center rounded-full px-1.5 text-xs"
-              >
-                {activeFilterCount}
-              </span>
-            {/if}
-          </LandingButton>
-        </div>
-
-        <div class="ml-auto">
-          <LandingButton variant="secondary" onclick={clearFilters} disabled={!hasActiveFilters}>
-            {$t('public_courses.clear_filters')}
-          </LandingButton>
-        </div>
-      </div>
-
-      <!-- Layout: 1 col mobile, sidebar + content on desktop -->
-      <div class="grid grid-cols-1 gap-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-8">
-        <!-- Desktop sidebar -->
-        <aside
-          class="sticky top-4 hidden max-h-[calc(100dvh-2rem)] flex-col self-start overflow-hidden rounded-lg border border-(--landing-border) bg-(--landing-card) text-(--landing-fg) lg:flex"
+      {#if data.catalogLocked}
+        <Empty
+          icon={LibraryBigIcon}
+          title={$t('public_courses.catalog_locked.title')}
+          description={$t('public_courses.catalog_locked.description')}
+          variant="page"
         >
-          <div class="flex min-h-0 flex-1 flex-col overflow-y-auto">
-            {@render filtersContent(true)}
-          </div>
-        </aside>
-
-        <!-- Course list -->
-        <div class="ui:@container min-w-0 space-y-4">
-          {#if data.courses.length === 0}
-            <Empty
-              icon={LibraryBigIcon}
-              title={$t('public_courses.empty.title')}
-              description={$t('public_courses.empty.description')}
-              variant="page"
-            />
-          {:else}
-            <div class={courseGridClass}>
-              {#each data.courses as course, index (course.id)}
-                <CourseCardComponent {course} {index} />
-              {/each}
-            </div>
-
-            {#if data.pagination.totalPages > 1}
-              <Pagination.Root
-                count={data.pagination.total}
-                perPage={data.pagination.perPage}
-                page={data.pagination.page}
-                onPageChange={goToPage}
-                class="mt-8"
-              >
-                {#snippet children({ pages, currentPage })}
-                  <Pagination.Content>
-                    <Pagination.Item>
-                      <Pagination.PrevButton />
-                    </Pagination.Item>
-                    {#each pages as pageItem (pageItem.key)}
-                      {#if pageItem.type === 'ellipsis'}
-                        <Pagination.Item>
-                          <Pagination.Ellipsis />
-                        </Pagination.Item>
-                      {:else}
-                        <Pagination.Item>
-                          <Pagination.Link page={pageItem} isActive={currentPage === pageItem.value}>
-                            {pageItem.value}
-                          </Pagination.Link>
-                        </Pagination.Item>
-                      {/if}
-                    {/each}
-                    <Pagination.Item>
-                      <Pagination.NextButton />
-                    </Pagination.Item>
-                  </Pagination.Content>
-                {/snippet}
-              </Pagination.Root>
-            {/if}
+          {#if data.showSignIn}
+            <LandingButton href={signInHref}>
+              {$t('public_courses.catalog_locked.sign_in')}
+            </LandingButton>
           {/if}
+        </Empty>
+      {:else}
+        <div class="mb-6 flex items-center justify-between gap-3 lg:hidden">
+          {#if hasFilterOptions}
+            <LandingButton variant="secondary" onclick={() => (filterSheetOpen = true)}>
+              <FilterIcon class="size-4" />
+              {$t('public_courses.filters.title')}
+              {#if activeFilterCount > 0}
+                <span
+                  class="ui:bg-primary ui:text-primary-foreground ml-1 inline-flex min-w-5 items-center justify-center rounded-full px-1.5 text-xs"
+                >
+                  {activeFilterCount}
+                </span>
+              {/if}
+            </LandingButton>
+          {/if}
+
+          <div class="ml-auto">
+            <LandingButton variant="secondary" onclick={clearFilters} disabled={!hasActiveFilters}>
+              {$t('public_courses.clear_filters')}
+            </LandingButton>
+          </div>
         </div>
-      </div>
+
+        <div class="grid grid-cols-1 gap-6 lg:gap-8 {hasFilterOptions ? 'lg:grid-cols-[280px_minmax(0,1fr)]' : ''}">
+          {#if hasFilterOptions}
+            <aside
+              class="hidden self-start rounded-lg border border-(--landing-border) bg-(--landing-card) p-4 text-(--landing-fg) lg:block"
+              data-testid="catalog-filter-card"
+            >
+              <h2 class="text-base font-semibold">{$t('public_courses.filters.title')}</h2>
+              <p class="ui:text-muted-foreground mb-4 text-xs">{$t('public_courses.filters.help')}</p>
+              {@render filtersContent()}
+              <div class="mt-4">
+                <LandingButton variant="secondary" onclick={clearFilters} disabled={!hasActiveFilters}>
+                  {$t('public_courses.clear_filters')}
+                </LandingButton>
+              </div>
+            </aside>
+          {/if}
+
+          <div class="ui:@container min-w-0 space-y-4">
+            {#if data.courses.length === 0}
+              <Empty
+                icon={LibraryBigIcon}
+                title={$t('public_courses.empty.title')}
+                description={$t('public_courses.empty.description')}
+                variant="page"
+              />
+            {:else}
+              <div class={courseGridClass}>
+                {#each data.courses as course, index (course.id)}
+                  <CourseCardComponent {course} {index} labels={cardLabels} />
+                {/each}
+              </div>
+
+              {#if data.pagination.totalPages > 1}
+                <Pagination.Root
+                  count={data.pagination.total}
+                  perPage={data.pagination.perPage}
+                  page={data.pagination.page}
+                  onPageChange={goToPage}
+                  class="mt-8"
+                >
+                  {#snippet children({ pages, currentPage })}
+                    <Pagination.Content>
+                      <Pagination.Item>
+                        <Pagination.PrevButton />
+                      </Pagination.Item>
+                      {#each pages as pageItem (pageItem.key)}
+                        {#if pageItem.type === 'ellipsis'}
+                          <Pagination.Item>
+                            <Pagination.Ellipsis />
+                          </Pagination.Item>
+                        {:else}
+                          <Pagination.Item>
+                            <Pagination.Link page={pageItem} isActive={currentPage === pageItem.value}>
+                              {pageItem.value}
+                            </Pagination.Link>
+                          </Pagination.Item>
+                        {/if}
+                      {/each}
+                      <Pagination.Item>
+                        <Pagination.NextButton />
+                      </Pagination.Item>
+                    </Pagination.Content>
+                  {/snippet}
+                </Pagination.Root>
+              {/if}
+            {/if}
+          </div>
+        </div>
+      {/if}
     </section>
 
     <!-- Mobile filter sheet -->
@@ -555,8 +498,8 @@
           </Sheet.Description>
         </Sheet.Header>
 
-        <div class="min-h-0 flex-1 overflow-y-auto">
-          {@render filtersContent(false)}
+        <div class="min-h-0 flex-1 overflow-y-auto p-4">
+          {@render filtersContent()}
         </div>
 
         <div class="flex gap-3 border-t p-4">

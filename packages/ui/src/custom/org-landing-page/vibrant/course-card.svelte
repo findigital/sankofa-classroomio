@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { CourseItem, OrgLandingPageLabels } from '../types';
-  import { getCourseTypeLandingMeta } from '../landing-page-utils';
+  import { getCourseTypeLandingMeta, landingCoursePriceLabel } from '../landing-page-utils';
+  import CourseTagPills from '../course-tag-pills.svelte';
 
   interface Props {
     course: CourseItem;
@@ -11,16 +12,12 @@
   let { course, disableCourseLinks = false, labels }: Props = $props();
 
   const courseTypeMeta = $derived(getCourseTypeLandingMeta(course));
+  const priceLabel = $derived(landingCoursePriceLabel(course, labels, { maximumFractionDigits: 0 }));
 
   const href = $derived.by(() => {
     if (disableCourseLinks) return undefined;
     return course.link || (course.slug ? `/course/${course.slug}` : undefined);
   });
-
-  function formatCost(cost?: number, currency = 'USD'): string {
-    if (!cost) return labels?.freeLabel ?? 'Free';
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(cost);
-  }
 </script>
 
 <a
@@ -68,13 +65,18 @@
     >
       {course.description}
     </p>
+    <div class="ui:mb-4">
+      <CourseTagPills tags={course.tags} />
+    </div>
     <div
       class="ui:flex ui:items-center ui:justify-between ui:pt-5 ui:mt-auto"
       style="border-top: 1px solid var(--landing-border-soft);"
     >
-      <span class="ui:text-lg ui:font-semibold ui:text-[var(--landing-fg)]" style="letter-spacing: -0.01em;">
-        {course.price || formatCost(course.cost, course.currency)}
-      </span>
+      {#if priceLabel}
+        <span class="ui:text-lg ui:font-semibold ui:text-[var(--landing-fg)]" style="letter-spacing: -0.01em;">
+          {priceLabel}
+        </span>
+      {/if}
       <span
         class="ui:inline-flex ui:items-center ui:gap-1 ui:text-sm ui:font-medium ui:text-[var(--landing-accent)] ui:transition-transform ui:group-hover:translate-x-0.5"
         aria-hidden="true"

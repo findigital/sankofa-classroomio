@@ -7,8 +7,24 @@
   import { Textarea } from '@cio/ui/base/textarea';
   import LockIcon from '@lucide/svelte/icons/lock';
   import { orgApi } from '$features/org/api/org.svelte';
+  import { tagApi } from '$features/tag/api';
   import * as Alert from '@cio/ui/base/alert';
+  import { Checkbox } from '@cio/ui/base/checkbox';
   import { UpgradeLock } from '$features/ui';
+  import { SvelteSet } from 'svelte/reactivity';
+
+  function readCatalogSettings(settings: unknown) {
+    const record = settings && typeof settings === 'object' ? (settings as Record<string, unknown>) : {};
+    const groupIds = record.catalogFilterTagGroupIds;
+
+    return {
+      hideCoursePricing: record.hideCoursePricing !== false,
+      showCourseTypeFilter: record.showCourseTypeFilter !== false,
+      catalogFilterTagGroupIds: Array.isArray(groupIds)
+        ? groupIds.filter((id): id is string => typeof id === 'string')
+        : null
+    };
+  }
 
   interface Props {
     hasUnsavedChanges?: boolean;
@@ -23,7 +39,13 @@
   let disableEmailPassword = $state($currentOrg?.disableEmailPassword ?? false);
   let disableGoogleAuth = $state($currentOrg?.disableGoogleAuth ?? false);
   let internalEnrollmentOnly = $state($currentOrg?.settings?.internalEnrollmentOnly ?? false);
+  let membersOnlyCatalog = $state($currentOrg?.settings?.membersOnlyCatalog ?? false);
+  let hideCoursePricing = $state(readCatalogSettings($currentOrg?.settings).hideCoursePricing);
+  let showCourseTypeFilter = $state(readCatalogSettings($currentOrg?.settings).showCourseTypeFilter);
+  let selectedFilterGroupIds = new SvelteSet<string>();
+  let appliedGroupSignature = '';
   let isSaving = $state(false);
+  let listedOrgId = '';
 
   // Sync with store when it changes
   $effect(() => {
@@ -34,7 +56,31 @@
       disableEmailPassword = $currentOrg.disableEmailPassword ?? false;
       disableGoogleAuth = $currentOrg.disableGoogleAuth ?? false;
       internalEnrollmentOnly = $currentOrg.settings?.internalEnrollmentOnly ?? false;
+      membersOnlyCatalog = $currentOrg.settings?.membersOnlyCatalog ?? false;
+      const catalog = readCatalogSettings($currentOrg.settings);
+      hideCoursePricing = catalog.hideCoursePricing;
+      showCourseTypeFilter = catalog.showCourseTypeFilter;
     }
+  });
+
+  $effect(() => {
+    const organizationId = $currentOrg?.id;
+    if (!organizationId || organizationId === listedOrgId) return;
+
+    listedOrgId = organizationId;
+    void tagApi.getTagGroups();
+  });
+
+  $effect(() => {
+    const catalog = readCatalogSettings($currentOrg?.settings);
+    const groups = tagApi.tagGroups;
+    const ids = catalog.catalogFilterTagGroupIds ?? groups.map((group) => group.id);
+    const signature = `${$currentOrg?.id ?? ''}:${[...ids].sort().join(',')}`;
+    if (signature === appliedGroupSignature) return;
+
+    appliedGroupSignature = signature;
+    selectedFilterGroupIds.clear();
+    for (const id of ids) selectedFilterGroupIds.add(id);
   });
 
   let currentAllowPublicSignups = $derived(!$currentOrg?.settings?.signup?.inviteOnly);
@@ -45,8 +91,31 @@
       allowPublicSignups !== currentAllowPublicSignups ||
       disableEmailPassword !== ($currentOrg?.disableEmailPassword ?? false) ||
       disableGoogleAuth !== ($currentOrg?.disableGoogleAuth ?? false) ||
-      internalEnrollmentOnly !== ($currentOrg?.settings?.internalEnrollmentOnly ?? false)
+      internalEnrollmentOnly !== ($currentOrg?.settings?.internalEnrollmentOnly ?? false) ||
+      membersOnlyCatalog !== ($currentOrg?.settings?.membersOnlyCatalog ?? false) ||
+      hideCoursePricing !== readCatalogSettings($currentOrg?.settings).hideCoursePricing ||
+      showCourseTypeFilter !== readCatalogSettings($currentOrg?.settings).showCourseTypeFilter ||
+      selectedFilterGroupIds.size !== storedFilterGroupIds.length ||
+      storedFilterGroupIds.some((id) => !selectedFilterGroupIds.has(id))
   );
+
+  const storedFilterGroupIds = $derived.by(() => {
+    const catalog = readCatalogSettings($currentOrg?.settings);
+    if (catalog.catalogFilterTagGroupIds) return [...catalog.catalogFilterTagGroupIds].sort();
+
+    return tagApi.tagGroups.map((group) => group.id).sort();
+  });
+
+  const allFilterGroupsSelected = $derived(tagApi.tagGroups.every((group) => selectedFilterGroupIds.has(group.id)));
+
+  function toggleFilterGroup(groupId: string, checked: boolean) {
+    if (checked) {
+      selectedFilterGroupIds.add(groupId);
+      return;
+    }
+
+    selectedFilterGroupIds.delete(groupId);
+  }
 
   $effect(() => {
     hasUnsavedChanges = hasChanges;
@@ -71,7 +140,11 @@
             ...existingSignup,
             inviteOnly: !allowPublicSignups
           },
-          internalEnrollmentOnly
+          internalEnrollmentOnly,
+          membersOnlyCatalog,
+          hideCoursePricing,
+          showCourseTypeFilter,
+          catalogFilterTagGroupIds: allFilterGroupsSelected ? null : [...selectedFilterGroupIds]
         },
         disableEmailPassword,
         disableGoogleAuth
@@ -94,6 +167,13 @@
     disableEmailPassword = $currentOrg.disableEmailPassword ?? false;
     disableGoogleAuth = $currentOrg.disableGoogleAuth ?? false;
     internalEnrollmentOnly = $currentOrg.settings?.internalEnrollmentOnly ?? false;
+    membersOnlyCatalog = $currentOrg.settings?.membersOnlyCatalog ?? false;
+    const catalog = readCatalogSettings($currentOrg.settings);
+    hideCoursePricing = catalog.hideCoursePricing;
+    showCourseTypeFilter = catalog.showCourseTypeFilter;
+    const ids = catalog.catalogFilterTagGroupIds ?? tagApi.tagGroups.map((group) => group.id);
+    selectedFilterGroupIds.clear();
+    for (const id of ids) selectedFilterGroupIds.add(id);
     hasUnsavedChanges = false;
   }
 </script>
@@ -149,6 +229,61 @@
             {$t('settings.auth.general.internal_enrollment_only.description')}
           </Field.Description>
         </div>
+      </Field.Field>
+
+      <Field.Field orientation="horizontal">
+        <Switch bind:checked={membersOnlyCatalog} disabled={isSaving} />
+        <div class="space-y-0.5">
+          <Field.Label>{$t('settings.auth.general.members_only_catalog.label')}</Field.Label>
+          <Field.Description>
+            {$t('settings.auth.general.members_only_catalog.description')}
+          </Field.Description>
+        </div>
+      </Field.Field>
+
+      <Field.Field orientation="horizontal">
+        <Switch bind:checked={hideCoursePricing} disabled={isSaving} />
+        <div class="space-y-0.5">
+          <Field.Label>{$t('settings.auth.general.hide_course_pricing.label')}</Field.Label>
+          <Field.Description>
+            {$t('settings.auth.general.hide_course_pricing.description')}
+          </Field.Description>
+        </div>
+      </Field.Field>
+
+      <Field.Field orientation="horizontal">
+        <Switch bind:checked={showCourseTypeFilter} disabled={isSaving} />
+        <div class="space-y-0.5">
+          <Field.Label>{$t('settings.auth.general.show_course_type_filter.label')}</Field.Label>
+          <Field.Description>
+            {$t('settings.auth.general.show_course_type_filter.description')}
+          </Field.Description>
+        </div>
+      </Field.Field>
+
+      <Field.Field>
+        <Field.Label>{$t('settings.auth.general.catalog_filter_groups.label')}</Field.Label>
+        <Field.Description>
+          {$t('settings.auth.general.catalog_filter_groups.description')}
+        </Field.Description>
+        {#if tagApi.tagGroups.length === 0}
+          <p class="ui:text-muted-foreground text-sm">
+            {$t('settings.auth.general.catalog_filter_groups.empty')}
+          </p>
+        {:else}
+          <div class="mt-2 space-y-2">
+            {#each tagApi.tagGroups as group (group.id)}
+              <label class="flex items-center gap-2 text-sm">
+                <Checkbox
+                  checked={selectedFilterGroupIds.has(group.id)}
+                  disabled={isSaving}
+                  onCheckedChange={(checked) => toggleFilterGroup(group.id, checked === true)}
+                />
+                <span>{group.name}</span>
+              </label>
+            {/each}
+          </div>
+        {/if}
       </Field.Field>
 
       <!-- Signup Disabled Message (shown when disableSignup is true) -->

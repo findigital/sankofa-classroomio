@@ -147,7 +147,7 @@ one of each question type below. This is how you learn the authoring and grading
 - [ ] Submit a test response as a student.
 - [ ] Go to the **submissions summary** view in the admin — check the charts and aggregate data.
 - [ ] Open the **individual submission** view — grade the manually-graded questions.
-- [ ] Verify the student's exercise status changes from "Submitted" to "Graded".
+- [ ] Verify the student's exercise status changes from "Submitted" to "Reviewed".
 - 📸 **Screenshot:** The exercise editor showing multiple question types in the list.
 - 📸 **Screenshot:** The submissions summary view with charts.
 - 📸 **Screenshot:** The individual submission view with graded answers.

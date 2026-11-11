@@ -9,7 +9,7 @@ import type { DefineEmailConfig, EmailDefinition, EmailTemplate, SendConfig } fr
 import { EmailRegistry } from './core/registry';
 import { ZodError } from 'zod';
 import { sendTemplateEmail } from './core/base';
-import { EMAIL_FROM, EMAIL_REPLY_TO } from './utils/constants';
+import { EMAIL_FROM, getEmailReplyTo } from './utils/constants';
 
 /**
  * Define an email template with schema validation
@@ -34,7 +34,7 @@ export function defineEmail<TSchema extends z.ZodType>(config: DefineEmailConfig
     schema: config.schema,
     render: config.render,
     from: config.from ?? EMAIL_FROM,
-    replyTo: config.replyTo ?? EMAIL_REPLY_TO
+    replyTo: config.replyTo ?? getEmailReplyTo()
   };
 
   // Auto-register in registry

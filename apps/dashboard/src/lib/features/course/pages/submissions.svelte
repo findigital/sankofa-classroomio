@@ -255,6 +255,14 @@
     });
   });
 
+  function boardColumnTitle(statusId: number) {
+    if (statusId === STATUS.SUBMITTED) return $t('course.navItem.submissions.submission_status.submitted');
+    if (statusId === STATUS.IN_PROGRESS) return $t('course.navItem.submissions.submission_status.in_progress');
+    if (statusId === STATUS.GRADED) return $t('course.navItem.submissions.submission_status.graded');
+
+    return '';
+  }
+
   function handleModalClose() {
     isGradeWithAI = false;
     const url = new URL(page.url);
@@ -311,7 +319,7 @@
       return;
     }
 
-    // Backend auto-sets status to Graded; move card to Graded column and sync submissionIdData
+    // Backend auto-sets status to reviewed; move card to the Reviewed column and sync submissionIdData
     const gradedStatusId = STATUS.GRADED;
     const prevSection = sections.find((s) => s.items.some((item) => item.id === subId));
     const prevStatusId = prevSection?.id ?? gradedStatusId;
@@ -373,14 +381,14 @@
 />
 
 <div class="flex items-center overflow-x-scroll">
-  {#each visibleSections as { id, title, items }, idx (id)}
+  {#each visibleSections as { id, items }, idx (id)}
     <div
       class="section ui:bg-muted ui:border-border mr-3 h-80 overflow-hidden rounded-md border p-3"
       animate:flip={{ duration: flipDurationMs }}
     >
       <div class="mb-2 flex items-center">
         <Chip value={items.length} />
-        <p class="ml-2 dark:text-white">{title}</p>
+        <p class="ml-2 dark:text-white">{boardColumnTitle(id)}</p>
       </div>
       <div
         class="content mb-3 overflow-y-auto pr-2"

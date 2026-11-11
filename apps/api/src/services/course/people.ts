@@ -27,7 +27,7 @@ import { getWebhookLastActiveAt } from '@cio/db/queries/webhook';
 import { calcCourseProgressPercent } from '@api/utils/course-completion';
 import { getCourseWithOrgData, getOrgIdByCourseId } from '@cio/db/queries/course';
 import { getProfileById } from '@cio/db/queries/auth';
-import { buildEmailFromName, buildEmailBranding } from '@cio/email';
+import { buildOrgEmailFromName, buildEmailBranding } from '@cio/email';
 import { enqueueTransactionalEmail } from '@api/services/jobs';
 import { ensureComplianceEnrollmentRecordsForProfiles } from './compliance';
 import { getCourseMemberProgressSummaries } from './member-progress';
@@ -155,7 +155,7 @@ async function sendStudentCourseWelcome(
       customMessage: courseOrgData.welcomeEmailMessage ?? undefined,
       branding: delivery.branding
     },
-    from: buildEmailFromName(`${orgName} (via ClassroomIO.com)`),
+    from: buildOrgEmailFromName(orgName),
     idempotencyKey,
     ics: delivery.ics,
     preference: { organizationId: courseOrgData.orgId, recipientProfileId: student.profileId }
@@ -284,7 +284,7 @@ export async function addMembers(
               inviteLink,
               branding
             },
-            from: buildEmailFromName(`${orgName} (via ClassroomIO.com)`),
+            from: buildOrgEmailFromName(orgName),
             idempotencyKey: `teacher-course-welcome:${courseId}:${email}`,
             preference: { organizationId: courseOrgData.orgId }
           }).catch((emailError) => {

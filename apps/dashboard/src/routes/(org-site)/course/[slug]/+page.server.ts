@@ -4,7 +4,9 @@ import type { GetOrganizationRequest } from '$features/org/utils/types';
 import type { AccountOrg } from '$features/app/types';
 import { toPublicOrg } from '$features/app/public-org';
 import { classroomio, type InferResponseType } from '$lib/utils/services/api';
-import { getApiKeyHeaders, safeServerApi } from '$lib/utils/services/api/server';
+import { getApiKeyHeaders, getVisitorHeaders, safeServerApi } from '$lib/utils/services/api/server';
+import { redirectToSignIn } from '$lib/utils/functions/sign-in-redirect';
+import { twitterSiteMeta } from '$lib/utils/functions/brand';
 import { error, redirect } from '@sveltejs/kit';
 
 type GetCourseBySlugSuccess = Extract<InferResponseType<GetCourseBySlugRequest>, { success: true }>;
@@ -13,14 +15,18 @@ type GetOrganizationSuccess = Extract<InferResponseType<GetOrganizationRequest>,
 type GetPublicCourseRequest = (typeof classroomio)['org-site']['course'][':courseSlug']['$get'];
 type GetPublicCourseSuccess = Extract<InferResponseType<GetPublicCourseRequest>, { success: true }>;
 
-export const load = async ({ params = { slug: '' }, parent, url }) => {
+export const load = async ({ params = { slug: '' }, parent, url, cookies }) => {
   const { org: parentOrg } = await parent();
+  const visitorHeaders = getVisitorHeaders(cookies);
+  const returnPath = `${url.pathname}${url.search}`;
 
-  // PUBLIC courses are served by the anonymous org-site endpoint and bypass the
-  // regular landing page entirely — redirect straight to the first item.
   const publicTreeResult = await safeServerApi<GetPublicCourseSuccess>(() =>
-    classroomio['org-site'].course[':courseSlug'].$get({ param: { courseSlug: params.slug } }, getApiKeyHeaders())
+    classroomio['org-site'].course[':courseSlug'].$get({ param: { courseSlug: params.slug } }, visitorHeaders)
   );
+
+  if (!publicTreeResult.ok && publicTreeResult.status === 401) {
+    redirectToSignIn(returnPath);
+  }
 
   if (publicTreeResult.ok && publicTreeResult.body.data.items.length > 0) {
     const firstItem = publicTreeResult.body.data.items[0]!;
@@ -32,9 +38,13 @@ export const load = async ({ params = { slug: '' }, parent, url }) => {
       {
         param: { slug: params.slug }
       },
-      getApiKeyHeaders()
+      visitorHeaders
     )
   );
+
+  if (!courseResult.ok && courseResult.status === 401) {
+    redirectToSignIn(returnPath);
+  }
 
   if (!courseResult.ok || !courseResult.body.data) {
     console.error('Failed to fetch course:', courseResult);
@@ -89,8 +99,7 @@ export const load = async ({ params = { slug: '' }, parent, url }) => {
       ]
     },
     twitter: {
-      handle: '@classroomio',
-      site: '@classroomio',
+      ...twitterSiteMeta(),
       cardType: 'summary_large_image' as const,
       title: course.title,
       description: course.description,

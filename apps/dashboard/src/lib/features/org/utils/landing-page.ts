@@ -19,8 +19,12 @@ import {
   resolveFooterSocialPlatform
 } from '@cio/ui/custom/org-landing-page/footer-social-platform';
 import { isAllowedHref } from '@cio/utils/validation/shared';
+import {
+  resolveCatalogPresentation,
+  resolveCourseBannerImage,
+  type CatalogPresentationSettings
+} from '@cio/utils/functions';
 import { t } from '$lib/utils/functions/translations';
-import { resolveCourseBannerImage } from '@cio/utils/functions';
 
 export const landingPageThemes = [
   'minimal',
@@ -742,7 +746,23 @@ export function mapPublicCoursesToLandingPageCourses(courses: OrgPublicCourses):
   });
 }
 
-export function buildOrgLandingPageLabels(): OrgLandingPageProps['labels'] {
+export function withCatalogLockedLabels<T extends { labels?: OrgLandingPageProps['labels'] }>(
+  props: T,
+  catalogLocked: boolean
+): T {
+  if (!catalogLocked || !props.labels) return props;
+
+  return {
+    ...props,
+    labels: {
+      ...props.labels,
+      catalogEmptyTitle: t.get('public_courses.catalog_locked.title'),
+      catalogEmptyDescription: t.get('public_courses.catalog_locked.description')
+    }
+  };
+}
+
+export function buildOrgLandingPageLabels(options?: { hidePrice?: boolean }): OrgLandingPageProps['labels'] {
   return {
     catalogEyebrow: t.get('public_courses.heading'),
     catalogHeading: t.get('public_courses.heading'),
@@ -750,6 +770,7 @@ export function buildOrgLandingPageLabels(): OrgLandingPageProps['labels'] {
     browseCoursesLabel: t.get('dashboard.view_more'),
     enrollLabel: t.get('courses.course_card.learn_more'),
     freeLabel: t.get('course.navItem.landing_page.pricing_section.free'),
+    hidePrice: options?.hidePrice,
     featuredLabel: t.get('public_courses.heading'),
     filterAllLabel: t.get('audience.import.all_courses'),
     startCourseLabel: t.get('course.navItem.landing_page.start_course'),
@@ -788,6 +809,7 @@ export function buildOrgLandingPageProps(
   options?: { coursesLoaded?: boolean; learnerAccount?: OrgLandingPageProps['learnerAccount'] }
 ): OrgLandingPageProps {
   const normalizedLandingPage = normalizeLandingPageSettings(landingpage);
+  const catalog = resolveCatalogPresentation(org.settings as CatalogPresentationSettings | null | undefined);
   const configuredPrimaryAction = normalizedLandingPage.hero.primaryAction;
   const primaryAction =
     configuredPrimaryAction.href === '/login' && authAction && !authAction.loading
@@ -807,7 +829,7 @@ export function buildOrgLandingPageProps(
     courses: mapPublicCoursesToLandingPageCourses(courses),
     hasMoreCourses,
     coursesLoaded: options?.coursesLoaded ?? true,
-    labels: buildOrgLandingPageLabels()
+    labels: buildOrgLandingPageLabels({ hidePrice: catalog.hideCoursePricing })
   };
 }
 

@@ -4,6 +4,7 @@
   import { Button } from '@cio/ui/base/button';
   import * as Card from '@cio/ui/base/card';
   import { currentOrg } from '$lib/utils/store/org';
+  import { appBrandName } from '$lib/utils/functions/brand';
   import * as Avatar from '@cio/ui/base/avatar';
 
   const errorCode = $derived(new URLSearchParams(page.url.search).get('error'));
@@ -22,9 +23,9 @@
     <Avatar.Root>
       <Avatar.Image
         src={$currentOrg.avatarUrl ? $currentOrg.avatarUrl : '/logo-192.png'}
-        alt={$currentOrg.name ? $currentOrg.name : 'ClassroomIO'}
+        alt={$currentOrg.name || appBrandName()}
       />
-      <Avatar.Fallback>{$currentOrg.name ? $currentOrg.name : 'ClassroomIO'}</Avatar.Fallback>
+      <Avatar.Fallback>{$currentOrg.name || appBrandName()}</Avatar.Fallback>
     </Avatar.Root>
 
     <p class="text-xl font-semibold">Something went wrong</p>

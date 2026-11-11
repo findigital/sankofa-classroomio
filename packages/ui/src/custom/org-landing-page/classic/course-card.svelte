@@ -3,6 +3,7 @@
   import * as Item from '../../../base/item';
   import { CourseCard } from '../../course-card';
   import { calcCourseDiscount, formatExerciseCountLabel, getCourseTypeLandingMeta } from '../landing-page-utils';
+  import CourseTagPills from '../course-tag-pills.svelte';
   import { cn } from '../../../tools';
 
   interface Props {
@@ -78,22 +79,27 @@
               formatExerciseCountLabel(course.exerciseCount ?? 0)}</span
           >
         </p>
-        <div class="ui:py-2 ui:text-xs">
-          {#if course.price != null && String(course.price).length > 0}
-            <span class="ui:px-2">{course.price}</span>
-          {:else if !displayCost}
-            <span class="ui:px-2">{labels?.freeLabel ?? 'Free'}</span>
-          {:else if pricingData.showDiscount}
-            <span class="ui:px-2">
-              {currencyFormatter.format(displayCost)}
-              <span class="line-through">
-                {currencyFormatter.format(pricingData.cost)}
-              </span>
-            </span>
-          {:else}
-            <span class="ui:px-2">{currencyFormatter.format(displayCost)}</span>
-          {/if}
+        <div class="ui:py-1">
+          <CourseTagPills tags={course.tags} />
         </div>
+        {#if !labels?.hidePrice}
+          <div class="ui:py-2 ui:text-xs">
+            {#if course.price != null && String(course.price).length > 0}
+              <span class="ui:px-2">{course.price}</span>
+            {:else if !displayCost}
+              <span class="ui:px-2">{labels?.freeLabel ?? 'Free'}</span>
+            {:else if pricingData.showDiscount}
+              <span class="ui:px-2">
+                {currencyFormatter.format(displayCost)}
+                <span class="line-through">
+                  {currencyFormatter.format(pricingData.cost)}
+                </span>
+              </span>
+            {:else}
+              <span class="ui:px-2">{currencyFormatter.format(displayCost)}</span>
+            {/if}
+          </div>
+        {/if}
       </div>
     </div>
   {/snippet}

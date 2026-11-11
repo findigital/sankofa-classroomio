@@ -42,7 +42,7 @@ import {
 } from '@cio/core/services/webhook/emit';
 import { getCourseTeachers } from '@cio/db/queries/course/people';
 import { getProfileById } from '@cio/db/queries/auth';
-import { buildEmailFromName, buildEmailBranding, type EmailBranding } from '@cio/email';
+import { buildEmailFromName, buildOrgEmailFromName, buildEmailBranding, type EmailBranding } from '@cio/email';
 import { enqueueTransactionalEmail } from '@api/services/jobs';
 import { getProfileByEmail, markUserAndProfileEmailVerified } from '@cio/db/queries/auth';
 import { generateSlug } from '@cio/utils/functions';
@@ -429,7 +429,7 @@ async function sendStudentJoinEmails(input: {
         customMessage: input.welcomeEmailMessage ?? undefined,
         branding: input.branding
       },
-      from: buildEmailFromName(`${input.orgName} (via ClassroomIO.com)`),
+      from: buildOrgEmailFromName(input.orgName),
       idempotencyKey: `course-welcome:${input.courseId}:${input.studentId}`,
       ics,
       preference: { organizationId: input.organizationId, recipientProfileId: input.studentId }
@@ -459,7 +459,7 @@ async function sendStudentJoinEmails(input: {
         studentEmail: input.studentEmail,
         branding: input.branding
       },
-      from: buildEmailFromName('ClassroomIO'),
+      from: buildEmailFromName(),
       idempotencyKey: `teacher-student-joined:${input.courseId}:${input.studentId}`,
       preference: { organizationId: input.organizationId }
     });
@@ -518,7 +518,7 @@ async function createEmailInviteAndSend(input: {
         expiresAt: getExpiryLabel(createdInvite.expiresAt),
         branding: input.branding
       },
-      from: buildEmailFromName(`${input.orgName} (via ClassroomIO.com)`),
+      from: buildOrgEmailFromName(input.orgName),
       organizationId: input.organizationId,
       idempotencyKey: `course-invite-email:${createdInvite.id}`
     });

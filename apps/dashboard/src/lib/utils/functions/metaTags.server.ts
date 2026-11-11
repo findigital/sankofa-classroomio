@@ -4,10 +4,10 @@ import { PUBLIC_IS_SELFHOSTED } from '$env/static/public';
 import { env as publicEnv } from '$env/dynamic/public';
 import { buildOrgSiteTitle, extractOrgSiteMetaCopy } from '$lib/utils/functions/org-site-meta';
 import { resolveOrgSiteOgImageUrl } from '$lib/utils/functions/org-site-og-url';
+import { appBrandName, defaultDocumentTitle, twitterSiteMeta } from '$lib/utils/functions/brand';
 
 const isSelfHosted = PUBLIC_IS_SELFHOSTED === 'true';
 
-const DEFAULT_TITLE = 'ClassroomIO | One Platform for Customer, Partner, and Employee Training';
 const DEFAULT_DESCRIPTION =
   'One platform for customer academies, partner certification, and employee training. Build courses with AI, publish under your domain, and track completions.';
 const CLOUD_OG_IMAGE = 'https://brand.cdn.clsrio.com/og/classroomio-opengraph.jpg';
@@ -97,7 +97,7 @@ export async function getBaseMetaTags(url: URL, orgSiteInfo: OrgSiteInfo): Promi
   const title =
     orgMeta?.title ||
     publicEnv.PUBLIC_APP_TITLE?.trim() ||
-    (isSelfHosted && orgSiteInfo.org?.name ? `${orgSiteInfo.org.name} | Learning Platform` : DEFAULT_TITLE);
+    (isSelfHosted && orgSiteInfo.org?.name ? `${orgSiteInfo.org.name} | Learning Platform` : defaultDocumentTitle());
 
   const description = orgMeta?.description || publicEnv.PUBLIC_APP_DESCRIPTION?.trim() || DEFAULT_DESCRIPTION;
 
@@ -105,7 +105,7 @@ export async function getBaseMetaTags(url: URL, orgSiteInfo: OrgSiteInfo): Promi
     orgMeta?.siteName ||
     publicEnv.PUBLIC_APP_TITLE?.trim() ||
     (isSelfHosted && orgSiteInfo.org?.name ? orgSiteInfo.org.name : null) ||
-    'ClassroomIO';
+    appBrandName();
 
   const ogImageUrl = await resolveOgImageUrl(url, orgSiteInfo);
   const usesDynamicOrgOg =
@@ -150,8 +150,7 @@ export async function getBaseMetaTags(url: URL, orgSiteInfo: OrgSiteInfo): Promi
       images: openGraphImages
     },
     twitter: {
-      handle: '@classroomio',
-      site: '@classroomio',
+      ...twitterSiteMeta(),
       cardType: 'summary_large_image' as const,
       title,
       description,

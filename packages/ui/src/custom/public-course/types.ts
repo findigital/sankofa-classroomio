@@ -32,6 +32,11 @@ export interface PublicCourseOrgData {
   avatarUrl: string | null;
 }
 
+export interface PublicCourseSourceOffer {
+  href: string;
+  label: string;
+}
+
 export interface PublicCourseSidebarItem {
   kind: 'lesson' | 'exercise';
   id: string;

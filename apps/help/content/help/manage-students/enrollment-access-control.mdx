@@ -6,17 +6,19 @@ last_reviewed: '2026-10-21'
 
 Organization signup policies control who can create an account, while course enrollment controls decide how students join a course. Review both before opening or restricting access.
 
-![Organization Authentication settings with signup and internal enrollment controls](./images/enrollment-access-control/overview.webp)
-
 ## Set organization policies
 
-Organization administrators open **Settings → Authentication → General**. Review the following controls before saving:
+Organization administrators open **Settings → Authentication → General**. Review these signup and catalog controls before saving:
 
 - **Allow public signups:** On allows anyone to create an account. Off requires a valid invitation link to sign up.
 - **Internal Enrollment Only:** On limits normal course self-enrollment to existing organization members. Invite outsiders when you want them to join.
 - **Block all new signups:** Prevents new account creation, including invited students. Existing accounts are unaffected.
+- **Members-only catalog:** When on, only members of this organization see courses on the landing page and `/courses`. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses.
+- **Hide course prices:** On by default. Hides prices, the pricing filter, and Free labels on the catalog and course cards until you turn it off.
+- **Show course type filter:** On by default. Shows course types that have at least one published course.
+- **Catalog filter groups:** Choose which tag groups appear as catalog filters. Every group is included until you pick a subset.
 
-The first two controls require an Early Adopter or Enterprise plan, or a self-hosted installation. Blocking all new signups is an Enterprise control in the hosted app. A lock beside a control indicates that your current plan cannot change it.
+The first two controls require an Early Adopter or Enterprise plan, or a self-hosted installation. Blocking all new signups is an Enterprise control in the hosted app. The catalog controls are available on every plan. A lock beside a control indicates that your current plan cannot change it.
 
 :::warning[Check invitations before blocking signups]
 A new student cannot create an account while **Block all new signups** is on, even when they have an invitation. Use this setting only when that is the intended result.

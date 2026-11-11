@@ -83,7 +83,7 @@ Components in the `custom` directory come from various sources or are built on t
 - `custom/course-creator/` - ChatGPT-style course creation input with level and type selects
 - `custom/attention-highlight/` - Prop-driven focus pulse and smooth scroll wrapper to draw user attention to specific items
 - `custom/question-type-picker/` - Question type picker modal and QuestionTypeIcon glyph/icon component
-- `custom/org-landing-page/` - 11-theme org and course landing page system, including `LearnerMenu` authenticated popover
+- `custom/org-landing-page/` - 11-theme org and course landing page system, including `LearnerMenu` authenticated popover and `CourseTagPills` for course tags
 - `custom/add-block/` - the add-content entry points for lessons (`Menu` between-block plus, `Row` empty-state/AI row, `Item` choice button)
 - `custom/block/` - lesson block container (ordering, gap menus, rail) and presentational blocks (image, document, slide, video, note)
 
