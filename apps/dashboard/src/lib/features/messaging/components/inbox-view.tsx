@@ -1,15 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type CSSProperties,
-  type ReactNode
-} from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { StreamChat, type Channel, type ChannelFilters, type LocalMessage } from 'stream-chat';
 import {
@@ -29,6 +18,7 @@ import {
 } from 'stream-chat-react';
 import 'stream-chat-react/dist/css/v2/index.css';
 
+import './stream-theme.css';
 import './inbox.css';
 
 import type { InboxViewProps } from '../utils/inbox-types';
@@ -54,7 +44,8 @@ const InboxPreview = createContext<InboxPreviewValue | null>(null);
 
 const NARROW_QUERY = '(max-width: 767px)';
 const MESSAGE_ACTIONS = ['react', 'reply'] as const;
-const FALLBACK_BRAND = '#1d4ee2';
+const STREAM_THEME_LIGHT = 'str-chat__theme-light';
+const STREAM_THEME_DARK = 'str-chat__theme-dark';
 
 function narrowNow() {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false;
@@ -64,10 +55,6 @@ function narrowNow() {
 
 function channelKey(channel: { type?: string; id?: string }) {
   return `${channel.type ?? ''}:${channel.id ?? ''}`;
-}
-
-function safeBrand(value: string) {
-  return /^#[0-9A-Fa-f]{3,8}$/.test(value) ? value : FALLBACK_BRAND;
 }
 
 function channelInitials(name: string) {
@@ -98,35 +85,6 @@ function applyDisplayName(channel: Channel, names: Map<string, string>) {
   channel.data = data as Channel['data'];
 }
 
-function applyBrand(element: HTMLElement, brandColor: string) {
-  const tint = `color-mix(in srgb, ${brandColor} 16%, #ffffff)`;
-  const variables: Record<string, string> = {
-    '--messaging-brand': brandColor,
-    '--str-chat__font-family': 'Geist, sans-serif',
-    '--str-chat__primary-color': brandColor,
-    '--str-chat__active-primary-color': brandColor,
-    '--str-chat__primary-color-low-emphasis': brandColor,
-    '--str-chat__on-primary-color': '#ffffff',
-    '--str-chat__own-message-bubble-background-color': brandColor,
-    '--str-chat__own-message-bubble-color': '#ffffff',
-    '--str-chat__avatar-background-color': brandColor,
-    '--str-chat__avatar-color': '#ffffff',
-    '--str-chat__message-link-color': brandColor,
-    '--str-chat__message-send-color': '#ffffff',
-    '--str-chat__message-send-background-color': brandColor,
-    '--str-chat__unread-badge-color': brandColor,
-    '--str-chat__channel-preview-unread-badge-background-color': brandColor,
-    '--str-chat__channel-preview-unread-badge-color': '#ffffff',
-    '--str-chat__channel-preview-active-background-color': tint
-  };
-
-  element.style.fontFamily = 'Geist, sans-serif';
-
-  for (const [name, value] of Object.entries(variables)) {
-    element.style.setProperty(name, value);
-  }
-}
-
 function useSharedChatClient(apiKey: string, token: string, userId: string, userName: string) {
   const [client, setClient] = useState<StreamChat | null>(null);
 
@@ -154,6 +112,28 @@ function useSharedChatClient(apiKey: string, token: string, userId: string, user
   }, [apiKey, token, userId, userName]);
 
   return client;
+}
+
+function streamThemeNow() {
+  if (typeof document === 'undefined') return STREAM_THEME_LIGHT;
+
+  return document.body.classList.contains('dark') ? STREAM_THEME_DARK : STREAM_THEME_LIGHT;
+}
+
+function useStreamTheme() {
+  const [theme, setTheme] = useState(streamThemeNow);
+
+  useEffect(() => {
+    const sync = () => setTheme(streamThemeNow());
+
+    sync();
+    const observer = new MutationObserver(sync);
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+    return () => observer.disconnect();
+  }, []);
+
+  return theme;
 }
 
 function useNarrowViewport() {
@@ -235,30 +215,6 @@ function InboxThreadHeader(props: ThreadHeaderProps) {
         {preview?.backLabel}
       </button>
       <StreamThreadHeader {...props} />
-    </div>
-  );
-}
-
-function BrandScope({ brandColor, children }: { brandColor: string; children: ReactNode }) {
-  const host = useRef<HTMLDivElement>(null);
-  const color = safeBrand(brandColor);
-
-  useLayoutEffect(() => {
-    const root = host.current?.querySelector('.str-chat');
-
-    if (!(root instanceof HTMLElement)) return;
-
-    applyBrand(root, color);
-  }, [color]);
-
-  return (
-    <div
-      className="messaging-inbox"
-      data-testid="messaging-stream"
-      ref={host}
-      style={{ '--messaging-brand': color } as CSSProperties}
-    >
-      {children}
     </div>
   );
 }
@@ -558,15 +514,16 @@ function InboxPanes(props: InboxViewProps) {
 
 export function InboxView(props: InboxViewProps) {
   const client = useSharedChatClient(props.apiKey, props.token, props.userId, props.userName);
+  const theme = useStreamTheme();
 
   if (!client) return <div className="messaging-inbox" data-testid="messaging-stream" />;
 
   return (
-    <BrandScope brandColor={props.brandColor}>
-      <Chat client={client} theme="str-chat__theme-light">
+    <div className="messaging-inbox" data-testid="messaging-stream">
+      <Chat client={client} theme={theme}>
         <InboxPanes {...props} />
       </Chat>
-    </BrandScope>
+    </div>
   );
 }
 

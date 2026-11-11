@@ -30,7 +30,6 @@ export type InboxViewProps = {
   organizationId: string;
   channels: InboxChannel[];
   directory: InboxDirectoryPerson[];
-  brandColor: string;
   disclosureAccepted: boolean;
   canPostAnnouncements: boolean;
   roleIsAdmin: boolean;

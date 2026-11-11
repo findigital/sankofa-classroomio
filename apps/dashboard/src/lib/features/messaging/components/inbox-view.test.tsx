@@ -31,7 +31,9 @@ vi.mock('stream-chat', () => ({
 }));
 
 vi.mock('stream-chat-react', () => ({
-  Chat: ({ children }: { children?: React.ReactNode }) => <div className="str-chat">{children}</div>,
+  Chat: ({ children, theme }: { children?: React.ReactNode; theme?: string }) => (
+    <div className={`str-chat ${theme ?? ''}`}>{children}</div>
+  ),
   useChatContext: () => ({
     client: harness.client,
     channel: null,
@@ -166,7 +168,6 @@ function props(overrides: Partial<InboxViewProps> = {}): InboxViewProps {
       }
     ],
     directory: [],
-    brandColor: '#be1241',
     disclosureAccepted: true,
     canPostAnnouncements: false,
     roleIsAdmin: false,
@@ -197,7 +198,7 @@ describe('Stream inbox', () => {
     harness.channelProps.current = {};
   });
 
-  it('keeps the channel list and the thread in separate panes and themes the brand color', async () => {
+  it('keeps the channel list and the thread in separate panes', async () => {
     render(<InboxView {...props()} />);
 
     const list = await screen.findByTestId('messaging-channel-list');
@@ -208,9 +209,9 @@ describe('Stream inbox', () => {
     expect(list.textContent).toContain('2');
     expect(thread.textContent).toContain('Choose a conversation');
     expect(thread.textContent).not.toContain('Hello from the thread');
-    expect(screen.getByTestId('messaging-stream').querySelector('.str-chat')?.getAttribute('style')).toContain(
-      '#be1241'
-    );
+    const stream = screen.getByTestId('messaging-stream').querySelector('.str-chat');
+    expect(stream?.className).toContain('str-chat__theme-light');
+    expect(stream?.getAttribute('style') ?? '').not.toMatch(/#(?:[0-9a-f]{3}|[0-9a-f]{6})/i);
     expect(harness.client.queryChannels).toHaveBeenCalledWith(
       expect.objectContaining({ cid: { $in: ['mentor_dm:mdm'] } }),
       { last_message_at: -1 },

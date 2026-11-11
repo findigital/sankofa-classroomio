@@ -12,7 +12,6 @@
 
   import { messagingApi } from '$features/messaging/api/messaging.svelte';
   import { messagingPresence } from '$features/messaging/api/messaging-presence.svelte';
-  import { brandColor } from '$features/messaging/utils/brand-color';
   import type { InboxViewProps } from '$features/messaging/utils/inbox-types';
   import type { MessagingChannel } from '$features/messaging/utils/types';
   import { MESSAGING_ENABLED } from '$lib/utils/constants/messaging';
@@ -160,7 +159,6 @@
     if (!render || !session || !channels) return;
 
     const organizationId = $currentOrg.id;
-    const theme = $currentOrg.theme;
     const roleId = $currentOrg.roleId;
     const directory = messagingApi.directory ?? [];
     const focused = focusChannel;
@@ -181,7 +179,6 @@
         profileId: person.profileId,
         name: person.name
       })),
-      brandColor: brandColor(theme),
       disclosureAccepted: session.disclosureAccepted,
       canPostAnnouncements: roleId === ROLE.ADMIN || roleId === ROLE.TUTOR,
       roleIsAdmin: roleId === ROLE.ADMIN,
