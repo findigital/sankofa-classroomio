@@ -104,6 +104,8 @@ export const organizationMemberEventType = pgEnum('ORGANIZATION_MEMBER_EVENT_TYP
   'REMOVED'
 ]);
 
+export const fellowConsentStatus = pgEnum('fellow_consent_status', ['none', 'pending', 'granted', 'revoked']);
+
 export const user = pgTable('user', {
   id: uuid()
     .default(sql`gen_random_uuid()`)
@@ -1783,6 +1785,120 @@ export const organizationMemberAudit = pgTable(
     index('idx_organization_member_audit_profile_id').on(table.profileId),
     index('idx_organization_member_audit_event_type').on(table.eventType),
     index('idx_organization_member_audit_created_at').on(table.createdAt)
+  ]
+);
+
+export const organizationMemberSafeguarding = pgTable(
+  'organization_member_safeguarding',
+  {
+    organizationMemberId: bigint('organization_member_id', { mode: 'number' }).primaryKey().notNull(),
+    isMinor: boolean('is_minor').default(false).notNull(),
+    guardianName: text('guardian_name'),
+    guardianEmail: text('guardian_email'),
+    guardianPhone: text('guardian_phone'),
+    consentStatus: fellowConsentStatus('consent_status').default('none').notNull(),
+    consentAt: timestamp('consent_at', { withTimezone: true, mode: 'string' }),
+    notes: text(),
+    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+      .default(sql`timezone('utc'::text, now())`)
+      .notNull(),
+    updatedBy: uuid('updated_by')
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.organizationMemberId],
+      foreignColumns: [organizationmember.id],
+      name: 'organization_member_safeguarding_organization_member_id_fkey'
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.updatedBy],
+      foreignColumns: [profile.id],
+      name: 'organization_member_safeguarding_updated_by_fkey'
+    }).onDelete('set null'),
+    check(
+      'organization_member_safeguarding_consent_date_check',
+      sql`(
+        (${table.consentStatus} = 'none' AND ${table.consentAt} IS NULL)
+        OR (${table.consentStatus} <> 'none' AND ${table.consentAt} IS NOT NULL)
+      )`
+    )
+  ]
+);
+
+// member_id and actor ids are recorded values with no foreign key: deleting the member must not erase the audit trail.
+export const organizationMemberSafeguardingAudit = pgTable(
+  'organization_member_safeguarding_audit',
+  {
+    id: uuid()
+      .default(sql`gen_random_uuid()`)
+      .primaryKey()
+      .notNull(),
+    organizationId: uuid('organization_id').notNull(),
+    memberId: bigint('member_id', { mode: 'number' }).notNull(),
+    profileId: uuid('profile_id'),
+    targetEmail: text('target_email'),
+    actorProfileId: uuid('actor_profile_id'),
+    actorEmail: text('actor_email'),
+    before: jsonb().notNull(),
+    after: jsonb().notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .default(sql`timezone('utc'::text, now())`)
+      .notNull()
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.organizationId],
+      foreignColumns: [organization.id],
+      name: 'organization_member_safeguarding_audit_organization_id_fkey'
+    }).onDelete('cascade'),
+    index('idx_safeguarding_audit_org_member_created').on(table.organizationId, table.memberId, table.createdAt)
+  ]
+);
+
+export const mentorAssignment = pgTable(
+  'mentor_assignment',
+  {
+    id: uuid()
+      .default(sql`gen_random_uuid()`)
+      .primaryKey()
+      .notNull(),
+    organizationId: uuid('organization_id').notNull(),
+    mentorProfileId: uuid('mentor_profile_id').notNull(),
+    fellowProfileId: uuid('fellow_profile_id').notNull(),
+    assignedBy: uuid('assigned_by'),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .default(sql`timezone('utc'::text, now())`)
+      .notNull()
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.organizationId],
+      foreignColumns: [organization.id],
+      name: 'mentor_assignment_organization_id_fkey'
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.mentorProfileId],
+      foreignColumns: [profile.id],
+      name: 'mentor_assignment_mentor_profile_id_fkey'
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.fellowProfileId],
+      foreignColumns: [profile.id],
+      name: 'mentor_assignment_fellow_profile_id_fkey'
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.assignedBy],
+      foreignColumns: [profile.id],
+      name: 'mentor_assignment_assigned_by_fkey'
+    }).onDelete('set null'),
+    unique('mentor_assignment_org_mentor_fellow_unique').on(
+      table.organizationId,
+      table.mentorProfileId,
+      table.fellowProfileId
+    ),
+    check('mentor_assignment_distinct_profiles', sql`${table.mentorProfileId} <> ${table.fellowProfileId}`),
+    index('idx_mentor_assignment_org_mentor').on(table.organizationId, table.mentorProfileId),
+    index('idx_mentor_assignment_org_fellow').on(table.organizationId, table.fellowProfileId)
   ]
 );
 

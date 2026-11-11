@@ -1,5 +1,11 @@
 import * as z from 'zod';
 
+import {
+  FELLOW_QUIET_DAYS_DEFAULT,
+  FELLOW_QUIET_DAYS_MAX,
+  FELLOW_QUIET_DAYS_MIN
+} from '@cio/utils/functions/fellow-pace';
+
 /** Coursera Test in the local seed. Production should set its own org id. */
 export const DEFAULT_PLATFORM_TEMPLATES_ORG_ID = '2b8f4a1c-6d3e-4b2a-9f7e-1c4d8a6e9b0f';
 
@@ -122,7 +128,17 @@ const envSchema = z.object({
   /** Supadata API key for YouTube caption fetching. Leave unset to disable YouTube transcripts. */
   SUPADATA_API_KEY: z.string().optional(),
   /** YouTube caption provider identifier (default 'supadata'). */
-  YOUTUBE_CAPTION_PROVIDER: z.string().optional()
+  YOUTUBE_CAPTION_PROVIDER: z.string().optional(),
+  /** Days without activity before a fellow is flagged gone quiet on the staff pace view. */
+  FELLOW_QUIET_DAYS: z
+    .string()
+    .optional()
+    .transform((value) => {
+      const raw = value === undefined || value.trim() === '' ? String(FELLOW_QUIET_DAYS_DEFAULT) : value.trim();
+
+      return Number(raw);
+    })
+    .pipe(z.number().int().min(FELLOW_QUIET_DAYS_MIN).max(FELLOW_QUIET_DAYS_MAX))
 });
 
 export const env = envSchema.parse(process.env);
