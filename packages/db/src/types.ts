@@ -157,6 +157,11 @@ export type { TLessonRevisionPlacement } from './schema';
 
 export type TOrganizationmember = typeof schema.organizationmember.$inferSelect;
 export type TNewOrganizationmember = typeof schema.organizationmember.$inferInsert;
+export type TOrganizationMemberSafeguarding = typeof schema.organizationMemberSafeguarding.$inferSelect;
+export type TNewOrganizationMemberSafeguarding = typeof schema.organizationMemberSafeguarding.$inferInsert;
+export type TOrganizationMemberSafeguardingAudit = typeof schema.organizationMemberSafeguardingAudit.$inferSelect;
+export type TMentorAssignment = typeof schema.mentorAssignment.$inferSelect;
+export type TNewMentorAssignment = typeof schema.mentorAssignment.$inferInsert;
 export type TOrganizationmemberEmailNotifications = typeof schema.organizationmemberEmailNotifications.$inferSelect;
 export type TNewOrganizationmemberEmailNotifications = typeof schema.organizationmemberEmailNotifications.$inferInsert;
 

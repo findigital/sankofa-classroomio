@@ -139,6 +139,35 @@ for which emails each process sends.
 paid. For local dev a free sandbox (e.g. Mailtrap) or a provider's free tier is
 enough — developing costs nothing.
 
+### Fellow messaging (optional)
+Messaging stays dark until both flags are exactly `true`: `MESSAGING_ENABLED` on the API
+and `PUBLIC_MESSAGING_ENABLED` on the dashboard. The API also needs `STREAM_API_KEY` and
+`STREAM_API_SECRET` (server only). `PUBLIC_SERVER_URL` is the base for the Stream
+`before_message_send` webhook. Unread email digests are not sent; the API keeps a deferred
+hook until SMTP is configured and delivery is implemented. Fellows open Messages at `/lms/messages`. Tutors and admins open it from the organization sidebar.
+The inbox is Stream Chat's React UI (`stream-chat-react`), mounted in the browser only. Sends,
+flags, and mutes still go through the API so keyword blocks and the audit log stay on the server.
+On a narrow screen the channel list is its own screen; opening a conversation shows the thread
+with a back button. A direct message is named for the other
+fellow or mentor in the thread. Safeguarding staff and other admins in a supervised adult–minor
+thread see the fellow and mentor names together. A cohort channel is named with the published
+course title or titles (comma-separated when a group has more than one), plus Announcements or
+Discussion. If no course title is available, the cohort name is used instead. Cohort channels are
+created only for published courses. Loading the conversation list updates those cohort channels and re-checks
+each direct message that person belongs to. Opening a direct message from the directory re-checks
+that pair on the server. Stream membership is then set
+to the computed member set: missing people are added and people who no longer belong are
+removed. The two direct-message participants are never removed. Picking an existing thread in the
+inbox does not call the API again until the list is reloaded (for example after saving safeguarding
+staff or opening someone from the directory). An adult–minor direct message
+adds the organization's safeguarding staff list (`organization.settings.safeguardingStaffIds`);
+when that list is unset, every non-minor administrator is added, and a new conversation is
+denied when no eligible administrator remains. A later change to that list is applied the next
+time the conversation list loads or an admin saves the safeguarding staff list on the Messages
+page (which reloads the conversation list). If the
+conversation would now be denied,
+its current members are left unchanged.
+
 ---
 
 ## 3. Ports

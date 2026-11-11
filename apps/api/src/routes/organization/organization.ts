@@ -101,6 +101,7 @@ import { orgMemberOrAutomationKeyMiddleware } from '@api/middlewares/org-member-
 import { orgTeamMemberMiddleware } from '@api/middlewares/org-team-member';
 import { searchRouter } from '@api/routes/organization/search';
 import { tagsRouter } from '@api/routes/organization/tags';
+import { fellowPaceRouter } from '@api/routes/organization/fellow-pace';
 import { widgetsRouter } from '@api/routes/organization/widgets';
 import { zValidator } from '@hono/zod-validator';
 import { ZGetRecommendedCourses } from '@cio/utils/validation/course';
@@ -1057,6 +1058,7 @@ export const organizationRouter = new Hono()
   .route('/course-import', courseImportRouter)
   .route('/search', searchRouter)
   .route('/tags', tagsRouter)
+  .route('/fellows', fellowPaceRouter)
   .route('/widgets', widgetsRouter)
   .route('/assets', assetsRouter)
   .route('/ai-tutor', organizationAiTutorRouter)

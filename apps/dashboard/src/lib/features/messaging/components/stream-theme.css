@@ -1,0 +1,366 @@
+/* Stream sets its blues on `.str-chat__theme-light` and `.str-chat__theme-dark`, which beat a rule on `.str-chat` alone. */
+.messaging-inbox .str-chat.str-chat__theme-light,
+.messaging-inbox .str-chat.str-chat__theme-dark {
+  --str-chat__font-family: var(--font-cio, var(--font-sans));
+  --str-chat__caption-text: var(--text-xs, 0.75rem) / var(--text-xs--line-height, 1.333) var(--str-chat__font-family);
+  --str-chat__caption-medium-text: 500 var(--text-xs, 0.75rem) / var(--text-xs--line-height, 1.333)
+    var(--str-chat__font-family);
+  --str-chat__caption-strong-text: 600 var(--text-xs, 0.75rem) / var(--text-xs--line-height, 1.333)
+    var(--str-chat__font-family);
+  --str-chat__body-text: var(--text-sm, 0.875rem) / var(--text-sm--line-height, 1.43) var(--str-chat__font-family);
+  --str-chat__body-medium-text: 500 var(--text-sm, 0.875rem) / var(--text-sm--line-height, 1.43)
+    var(--str-chat__font-family);
+  --str-chat__body2-text: var(--text-sm, 0.875rem) / var(--text-sm--line-height, 1.43) var(--str-chat__font-family);
+  --str-chat__body2-medium-text: 500 var(--text-sm, 0.875rem) / var(--text-sm--line-height, 1.43)
+    var(--str-chat__font-family);
+  --str-chat__subtitle-text: var(--text-sm, 0.875rem) / var(--text-sm--line-height, 1.43) var(--str-chat__font-family);
+  --str-chat__subtitle-medium-text: 500 var(--text-sm, 0.875rem) / var(--text-sm--line-height, 1.43)
+    var(--str-chat__font-family);
+  --str-chat__subtitle2-text: var(--text-base, 1rem) / var(--text-base--line-height, 1.5) var(--str-chat__font-family);
+  --str-chat__subtitle2-medium-text: 500 var(--text-base, 1rem) / var(--text-base--line-height, 1.5)
+    var(--str-chat__font-family);
+  --str-chat__headline-text: var(--text-2xl, 1.5rem) / var(--text-2xl--line-height, 1.33) var(--str-chat__font-family);
+  --str-chat__headline2-text: var(--text-3xl, 1.875rem) / var(--text-3xl--line-height, 1.2) var(--str-chat__font-family);
+  --str-chat__border-radius-xs: calc(var(--radius) - 4px);
+  --str-chat__border-radius-sm: calc(var(--radius) - 2px);
+  --str-chat__border-radius-md: var(--radius);
+  --str-chat__border-radius-lg: calc(var(--radius) + 4px);
+  --str-chat__message-bubble-border-radius: var(--radius);
+  --str-chat__message-textarea-border-radius: calc(var(--radius) - 2px);
+  --str-chat__message-send-border-radius: calc(var(--radius) - 2px);
+  --str-chat__cta-button-border-radius: calc(var(--radius) - 2px);
+  --str-chat__channel-preview-border-radius: calc(var(--radius) - 2px);
+  --str-chat__primary-color: var(--primary);
+  --str-chat__active-primary-color: var(--primary);
+  --str-chat__primary-color-low-emphasis: var(--primary);
+  --str-chat__on-primary-color: var(--primary-foreground);
+  --str-chat__primary-overlay-color: color-mix(in oklch, var(--primary) 60%, transparent);
+  --str-chat__primary-surface-color: color-mix(in oklch, var(--primary) 16%, var(--card));
+  --str-chat__primary-surface-color-low-emphasis: color-mix(in oklch, var(--primary) 8%, var(--card));
+  --str-chat__background-color: var(--card);
+  --str-chat__secondary-background-color: var(--card);
+  --str-chat__surface-color: var(--accent);
+  --str-chat__secondary-surface-color: var(--muted);
+  --str-chat__tertiary-surface-color: var(--secondary);
+  --str-chat__text-color: var(--foreground);
+  --str-chat__text-low-emphasis-color: var(--muted-foreground);
+  --str-chat__disabled-color: var(--muted);
+  --str-chat__on-disabled-color: var(--muted-foreground);
+  --str-chat__danger-color: var(--destructive);
+  --str-chat__info-color: var(--success);
+  --str-chat__message-highlight-color: color-mix(in oklch, var(--primary) 16%, var(--card));
+  --str-chat__overlay-color: color-mix(in oklch, var(--background) 90%, transparent);
+  --str-chat__secondary-overlay-color: color-mix(in oklch, var(--foreground) 20%, transparent);
+  --str-chat__secondary-overlay-text-color: var(--background);
+  --str-chat__opaque-surface-background-color: var(--popover);
+  --str-chat__opaque-surface-text-color: var(--popover-foreground);
+  --str-chat__box-shadow-color: color-mix(in oklch, var(--foreground) 12%, transparent);
+  --str-chat__channel-list-background-color: var(--sidebar);
+  --str-chat__channel-list-color: var(--sidebar-foreground);
+  --str-chat__channel-list-border-inline-end: 1px solid var(--sidebar-border);
+  --str-chat__thread-border-inline-start: 1px solid var(--border);
+  --str-chat__thread-head-start-border-block-end-color: var(--border);
+  --str-chat__channel-preview-color: var(--sidebar-foreground);
+  --str-chat__channel-preview-hover-background-color: var(--sidebar-accent);
+  --str-chat__channel-preview-active-background-color: color-mix(in oklch, var(--primary) 10%, transparent);
+  --str-chat__channel-preview-latest-message-secondary-color: var(--muted-foreground);
+  --str-chat__channel-preview-message-time-color: var(--muted-foreground);
+  --str-chat__channel-background-color: var(--card);
+  --str-chat__channel-color: var(--card-foreground);
+  --str-chat__channel-header-background-color: var(--card);
+  --str-chat__message-list-background-color: var(--card);
+  --str-chat__thread-background-color: var(--card);
+  --str-chat__thread-header-background-color: var(--card);
+  --str-chat__message-bubble-background-color: var(--muted);
+  --str-chat__message-bubble-color: var(--foreground);
+  --str-chat__own-message-bubble-background-color: var(--primary);
+  --str-chat__own-message-bubble-color: var(--primary-foreground);
+  --str-chat__message-link-color: var(--primary);
+  --str-chat__message-input-background-color: var(--card);
+  --str-chat__message-input-color: var(--foreground);
+  --str-chat__message-textarea-background-color: var(--background);
+  --str-chat__message-textarea-color: var(--foreground);
+  --str-chat__message-textarea-border-block-start: 1px solid var(--input);
+  --str-chat__message-textarea-border-block-end: 1px solid var(--input);
+  --str-chat__message-textarea-border-inline-start: 1px solid var(--input);
+  --str-chat__message-textarea-border-inline-end: 1px solid var(--input);
+  --str-chat__message-send-background-color: var(--primary);
+  --str-chat__message-send-color: var(--primary-foreground);
+  --str-chat__message-send-disabled-background-color: var(--muted);
+  --str-chat__message-send-disabled-color: var(--muted-foreground);
+  --str-chat__avatar-background-color: var(--primary);
+  --str-chat__avatar-color: #fff;
+  --str-chat__unread-badge-color: var(--primary);
+  --str-chat__on-unread-badge-color: var(--primary-foreground);
+  --str-chat__channel-preview-unread-badge-background-color: var(--primary);
+  --str-chat__channel-preview-unread-badge-color: var(--primary-foreground);
+  --str-chat__date-separator-color: var(--muted-foreground);
+  --str-chat__date-separator-line-color: var(--border);
+  --str-chat__date-separator-background-color: transparent;
+  color: var(--foreground);
+  font-family: var(--font-cio, var(--font-sans));
+  font-size: var(--text-sm, 0.875rem);
+}
+
+.dark .messaging-inbox .str-chat.str-chat__theme-light,
+.dark .messaging-inbox .str-chat.str-chat__theme-dark {
+  --str-chat__channel-preview-active-background-color: color-mix(in oklch, var(--primary) 20%, transparent);
+}
+
+.messaging-inbox .str-chat__channel-preview:hover {
+  color: var(--sidebar-accent-foreground);
+}
+
+.messaging-inbox .str-chat__channel-preview--active,
+.messaging-inbox .str-chat__channel-preview-messenger--active,
+.messaging-inbox .str-chat__channel-preview--active:hover,
+.messaging-inbox .str-chat__channel-preview-messenger--active:hover {
+  color: var(--primary);
+}
+
+.messaging-inbox .str-chat__message--me .str-chat__message-bubble a {
+  color: var(--primary-foreground);
+}
+
+.messaging-inbox .str-chat__message-input .str-chat__send-button,
+.messaging-inbox .str-chat__message-input .str-chat__send-button:disabled {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: calc(var(--radius) - 2px);
+  box-shadow: 0 1px rgb(0 0 0 / 0.05);
+}
+
+.messaging-inbox .str-chat__message-input .str-chat__send-button:hover:not(:disabled) {
+  background-color: color-mix(in oklch, var(--primary) 90%, transparent);
+}
+
+.messaging-inbox .str-chat__message-input .str-chat__send-button svg path,
+.messaging-inbox .str-chat__message-input .str-chat__send-button:disabled svg path {
+  fill: var(--primary-foreground);
+}
+
+.messaging-inbox .str-chat__message-input .str-chat__send-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.messaging-inbox .str-chat__send-button,
+.messaging-inbox .str-chat__cta-button {
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: 500;
+}
+
+.messaging-inbox .str-chat__send-button:focus-visible,
+.messaging-inbox .str-chat__cta-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 50%, transparent);
+}
+
+.messaging-inbox {
+  --messaging-sender-0: #0e7490;
+  --messaging-sender-1: #1e40af;
+  --messaging-sender-2: #4338ca;
+  --messaging-sender-3: #7e22ce;
+  --messaging-sender-4: #a21caf;
+  --messaging-sender-5: #b91c1c;
+  --messaging-sender-6: #c2410c;
+  --messaging-sender-7: #a16207;
+  --messaging-sender-8: #3f6212;
+  --messaging-sender-9: #334155;
+  --messaging-sender-10: #7c2d12;
+  --messaging-sender-0-label: #155e75;
+  --messaging-sender-1-label: #1e3a8a;
+  --messaging-sender-2-label: #3730a3;
+  --messaging-sender-3-label: #6b21a8;
+  --messaging-sender-4-label: #86198f;
+  --messaging-sender-5-label: #991b1b;
+  --messaging-sender-6-label: #9a3412;
+  --messaging-sender-7-label: #854d0e;
+  --messaging-sender-8-label: #3f6212;
+  --messaging-sender-9-label: #1e293b;
+  --messaging-sender-10-label: #7c2d12;
+  --messaging-course-0: #2f555c;
+  --messaging-course-1: #314256;
+  --messaging-course-2: #3e3c5c;
+  --messaging-course-3: #5c4052;
+  --messaging-course-4: #5e3d34;
+  --messaging-course-5: #55492c;
+  --messaging-course-6: #3e463f;
+  --messaging-course-7: #4a453f;
+  --messaging-course-0-ink: #2f555c;
+  --messaging-course-1-ink: #314256;
+  --messaging-course-2-ink: #3e3c5c;
+  --messaging-course-3-ink: #5c4052;
+  --messaging-course-4-ink: #5e3d34;
+  --messaging-course-5-ink: #55492c;
+  --messaging-course-6-ink: #3e463f;
+  --messaging-course-7-ink: #4a453f;
+}
+
+.dark .messaging-inbox {
+  --messaging-sender-0-label: #67e8f9;
+  --messaging-sender-1-label: #93c5fd;
+  --messaging-sender-2-label: #a5b4fc;
+  --messaging-sender-3-label: #d8b4fe;
+  --messaging-sender-4-label: #f0abfc;
+  --messaging-sender-5-label: #fca5a5;
+  --messaging-sender-6-label: #fdba74;
+  --messaging-sender-7-label: #fcd34d;
+  --messaging-sender-8-label: #bef264;
+  --messaging-sender-9-label: #cbd5e1;
+  --messaging-sender-10-label: #f5c4a1;
+  --messaging-course-0-ink: #c5dde1;
+  --messaging-course-1-ink: #d0d8e4;
+  --messaging-course-2-ink: #d8d7e6;
+  --messaging-course-3-ink: #e6d4dc;
+  --messaging-course-4-ink: #e8d5ce;
+  --messaging-course-5-ink: #e6dcc4;
+  --messaging-course-6-ink: #d9ddd6;
+  --messaging-course-7-ink: #e2ddd8;
+}
+
+.messaging-inbox .str-chat__message--other {
+  --messaging-received-bubble: oklch(0.95 0.01 250);
+}
+
+.dark .messaging-inbox .str-chat__message--other {
+  --messaging-received-bubble: oklch(0.32 0.015 250);
+}
+
+.messaging-sender {
+  --str-chat__avatar-background-color: var(--messaging-sender-fill);
+  --str-chat__avatar-color: #fff;
+}
+
+.messaging-inbox .str-chat__message--other .str-chat__message-bubble {
+  background-color: var(--messaging-received-bubble);
+  color: var(--foreground);
+}
+
+.messaging-inbox .str-chat__message--me .str-chat__message-bubble {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.messaging-inbox .str-chat__li,
+.messaging-inbox .str-chat__message,
+.messaging-inbox .str-chat__message-inner,
+.messaging-inbox .str-chat__message-bubble {
+  overflow: visible;
+}
+
+.messaging-inbox .str-chat__message-bubble {
+  position: relative;
+}
+
+.messaging-inbox .str-chat__li--top .str-chat__message-bubble,
+.messaging-inbox .str-chat__li--middle .str-chat__message-bubble,
+.messaging-inbox .str-chat__li--bottom .str-chat__message-bubble,
+.messaging-inbox .str-chat__li--single .str-chat__message-bubble {
+  border-radius: var(--radius);
+}
+
+.messaging-inbox .str-chat__li--bottom .str-chat__message--me .str-chat__message-bubble,
+.messaging-inbox .str-chat__li--single .str-chat__message--me .str-chat__message-bubble {
+  border-end-end-radius: 0.35rem;
+}
+
+.messaging-inbox .str-chat__li--bottom .str-chat__message--other .str-chat__message-bubble,
+.messaging-inbox .str-chat__li--single .str-chat__message--other .str-chat__message-bubble {
+  border-end-start-radius: 0.35rem;
+}
+
+.messaging-inbox .str-chat__li--bottom .str-chat__message--me .str-chat__message-bubble::before,
+.messaging-inbox .str-chat__li--single .str-chat__message--me .str-chat__message-bubble::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  right: -8px;
+  bottom: 0;
+  width: 20px;
+  height: 18px;
+  background: var(--primary);
+  border-bottom-left-radius: 16px 14px;
+}
+
+.messaging-inbox .str-chat__li--bottom .str-chat__message--me .str-chat__message-bubble::after,
+.messaging-inbox .str-chat__li--single .str-chat__message--me .str-chat__message-bubble::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  right: -10px;
+  bottom: 0;
+  width: 12px;
+  height: 20px;
+  background: var(--card);
+  border-bottom-left-radius: 12px;
+}
+
+.messaging-inbox .str-chat__li--bottom .str-chat__message--other .str-chat__message-bubble::before,
+.messaging-inbox .str-chat__li--single .str-chat__message--other .str-chat__message-bubble::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  left: -8px;
+  bottom: 0;
+  width: 20px;
+  height: 18px;
+  background: var(--messaging-received-bubble);
+  border-bottom-right-radius: 16px 14px;
+}
+
+.messaging-inbox .str-chat__li--bottom .str-chat__message--other .str-chat__message-bubble::after,
+.messaging-inbox .str-chat__li--single .str-chat__message--other .str-chat__message-bubble::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  left: -10px;
+  bottom: 0;
+  width: 12px;
+  height: 20px;
+  background: var(--card);
+  border-bottom-right-radius: 12px;
+}
+
+.messaging-inbox .str-chat__date-separator {
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.messaging-inbox .str-chat__date-separator-line {
+  flex: 1;
+  height: 1px;
+  border: 0;
+  background: var(--border);
+}
+
+.messaging-inbox .str-chat__message-list {
+  padding-inline: 0.85rem;
+}
+
+.messaging-inbox .str-chat__li--top .str-chat__message,
+.messaging-inbox .str-chat__li--middle .str-chat__message {
+  margin-block-end: 0.125rem;
+}
+
+.messaging-inbox .str-chat__li--bottom .str-chat__message,
+.messaging-inbox .str-chat__li--single .str-chat__message {
+  margin-block-end: 0.85rem;
+}
+
+.messaging-inbox .str-chat__message-simple-name {
+  color: var(--messaging-sender-label, var(--foreground));
+  font-weight: 600;
+}
+
+.messaging-inbox__thread[data-channel-kind='direct'] .str-chat__message-simple-name {
+  display: none;
+}
+
+.messaging-inbox .str-chat__message-simple-timestamp {
+  color: var(--muted-foreground);
+}
+
+.messaging-inbox .str-chat__channel-preview-messenger--unread .str-chat__channel-preview-messenger--name {
+  font-weight: 700;
+}

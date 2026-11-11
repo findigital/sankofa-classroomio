@@ -4,6 +4,7 @@
   import { currentOrg, currentOrgPlan } from '$lib/utils/store/org';
   import { Badge } from '@cio/ui/base/badge';
   import { PLAN_NAMES, PLAN } from '@cio/utils/plans';
+  import { showOrgPlanBadge } from '$lib/utils/constants/promos';
   import { BRAND_ROOT_DOMAIN, TENANT_ROOT_DOMAIN } from '@cio/utils/constants';
 
   const plan = $derived($currentOrgPlan?.planName || PLAN.BASIC);
@@ -31,9 +32,11 @@
           </Avatar.Root>
 
           <span class="truncate font-normal">ClassroomIO</span>
-          <Badge variant="outline" class="capitalize">
-            {PLAN_NAMES[plan] || plan}
-          </Badge>
+          {#if showOrgPlanBadge(plan)}
+            <Badge variant="outline" class="capitalize">
+              {PLAN_NAMES[plan] || plan}
+            </Badge>
+          {/if}
         </a>
       {/snippet}
     </Sidebar.MenuButton>

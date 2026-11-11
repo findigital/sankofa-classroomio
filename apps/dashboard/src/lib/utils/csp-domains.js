@@ -107,8 +107,19 @@ export function getCspDomains(isSelfHosted, serverUrl) {
     };
   }
 
+  const streamConnectSrc =
+    process.env.PUBLIC_MESSAGING_ENABLED === 'true'
+      ? [
+          'https://chat.stream-io-api.com',
+          'wss://chat.stream-io-api.com',
+          'https://*.stream-io-api.com',
+          'wss://*.stream-io-api.com'
+        ]
+      : [];
+
   return {
     ...saasDefaults,
+    connectSrc: [...saasDefaults.connectSrc, ...streamConnectSrc],
     apiOrigin: serverUrl ?? null
   };
 }

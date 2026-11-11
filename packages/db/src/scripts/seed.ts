@@ -6,6 +6,7 @@ import { MVC_SECTION_ID, PANDAS_SECTION_ID, REACT_SECTION_ID, seedCourseSections
 import { seedCourseraDummyCourses } from '@db/utils/seed/courseraDummyCourses';
 import { seedCourses } from '@db/utils/seed/course';
 import { seedExercise } from '@db/utils/seed/exercise';
+import { seedFellowPace } from '@db/utils/seed/fellow-pace';
 import { seedExerciseTemplates } from '@db/utils/seed/exerciseTemplate';
 import { seedGroup } from '@db/utils/seed/group';
 import { seedGroupmembers } from '@db/utils/seed/groupmember';
@@ -66,7 +67,8 @@ const orderedSeeds = [
   'react-people-progress',
   'learner-lifecycle',
   'newsfeed-threads',
-  'launch-templates'
+  'launch-templates',
+  'fellow-pace'
 ] as const;
 
 type SeedName = (typeof orderedSeeds)[number];
@@ -105,7 +107,8 @@ const DEMO_ORGANIZATION_SEEDS: Record<DemoOrganizationSlug, DemoOrganizationSeed
       'exercises',
       'questions',
       'react-people-progress',
-      'learner-lifecycle'
+      'learner-lifecycle',
+      'fellow-pace'
     ]
   },
   'coursera-test': {
@@ -405,6 +408,10 @@ const seedFunctions = {
       reactCourseId: REACT_COURSE_ID,
       existingStudentUserId: STUDENT_USER_ID
     });
+  },
+  'fellow-pace': async () => {
+    console.log('📝 Seeding fellowship pace sample (udemy-test)...');
+    await seedFellowPace();
   }
 };
 
