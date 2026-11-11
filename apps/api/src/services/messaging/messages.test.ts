@@ -36,6 +36,7 @@ function gateway(): StreamGateway {
     inspectChannel: vi.fn(),
     readMessages: vi.fn(),
     sendMessage: vi.fn(),
+    removeChannelMember: vi.fn(),
     muteUser: vi.fn(),
     unmuteUser: vi.fn(),
     verifyWebhook: vi.fn()
@@ -78,5 +79,52 @@ describe('sendMessagingMessage', () => {
     ).rejects.toMatchObject({ code: ErrorCodes.MESSAGING_MESSAGE_BLOCKED });
     expect(stream.sendMessage).not.toHaveBeenCalled();
     expect(moderation.createKeywordFlag).not.toHaveBeenCalled();
+  });
+
+  it('sends a thread reply with the client message id', async () => {
+    const stream = gateway();
+    const clientMessageId = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
+    const parentId = '6ba7b811-9dad-11d1-80b4-00c04fd430c8';
+
+    vi.mocked(stream.inspectChannel).mockResolvedValue({
+      organizationId: ORG_ID,
+      purpose: 'discussion',
+      memberIds: [FELLOW_ID],
+      summary: {
+        channelType: 'cohort_discussion',
+        channelId: 'dis123',
+        name: 'Cohort',
+        purpose: 'discussion',
+        cohortId: null,
+        memberCount: 1,
+        lastMessageAt: null
+      }
+    });
+    vi.mocked(stream.sendMessage).mockResolvedValue({ id: clientMessageId });
+    moderation.keywordsFor.mockResolvedValue([]);
+
+    const sent = await sendMessagingMessage(
+      ORG_ID,
+      FELLOW_ID,
+      ROLE.STUDENT,
+      {
+        channelType: 'cohort_discussion',
+        channelId: 'dis123',
+        text: 'reply',
+        id: clientMessageId,
+        parentId
+      },
+      stream
+    );
+
+    expect(sent).toEqual({ id: clientMessageId });
+    expect(stream.sendMessage).toHaveBeenCalledWith({
+      channelType: 'cohort_discussion',
+      channelId: 'dis123',
+      userId: FELLOW_ID,
+      text: 'reply',
+      id: clientMessageId,
+      parentId
+    });
   });
 });

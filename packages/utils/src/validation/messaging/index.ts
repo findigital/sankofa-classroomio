@@ -13,10 +13,14 @@ export const ZOpenDirectMessage = z.strictObject({
 
 export type TOpenDirectMessage = z.infer<typeof ZOpenDirectMessage>;
 
+const streamMessageId = z.uuid();
+
 export const ZSendMessagingMessage = z.strictObject({
   channelType: z.enum(MESSAGING_CHANNEL_TYPES),
   channelId,
-  text: z.string().trim().min(1).max(5000)
+  text: z.string().trim().min(1).max(5000),
+  id: streamMessageId.optional(),
+  parentId: streamMessageId.optional()
 });
 
 export type TSendMessagingMessage = z.infer<typeof ZSendMessagingMessage>;

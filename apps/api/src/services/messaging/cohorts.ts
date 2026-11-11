@@ -90,6 +90,12 @@ export async function syncCohortChannels(
 
   const publishedGroupIds = new Set(rosters.map((cohort) => cohort.groupId));
   const channels = await gateway.queryMemberChannels(profileId, organizationId);
+
+  for (const channel of channels) {
+    if (isListedCohortChannel(channel, publishedGroupIds)) continue;
+
+    await gateway.removeChannelMember(channel.channelType, channel.channelId, profileId);
+  }
   let reconciledDirectMessage = false;
   const directMembers = new Map<string, string[]>();
 

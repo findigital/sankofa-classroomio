@@ -44,6 +44,7 @@ function gateway(): StreamGateway {
     inspectChannel: vi.fn(),
     readMessages: vi.fn(),
     sendMessage: vi.fn(),
+    removeChannelMember: vi.fn(),
     muteUser: vi.fn(),
     unmuteUser: vi.fn(),
     verifyWebhook: vi.fn()
@@ -120,5 +121,8 @@ describe('syncCohortChannels', () => {
     ]);
     expect(createdIds).not.toContain(cohortChannelId('discussion', DRAFT_GROUP));
     expect(listed.map((channel) => channel.cohortId)).toEqual([PUBLISHED_GROUP, null]);
+    expect(vi.mocked(stream.removeChannelMember).mock.calls).toEqual([
+      ['cohort_discussion', cohortChannelId('discussion', DRAFT_GROUP), FELLOW_ID]
+    ]);
   });
 });

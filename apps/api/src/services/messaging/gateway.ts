@@ -58,7 +58,15 @@ export interface StreamGateway {
   queryOrganizationChannels(organizationId: string): Promise<MessagingChannelSummary[]>;
   inspectChannel(channelType: string, channelId: string): Promise<InspectedChannel | null>;
   readMessages(channelType: string, channelId: string): Promise<TranscriptMessage[]>;
-  sendMessage(input: { channelType: string; channelId: string; userId: string; text: string }): Promise<{ id: string }>;
+  sendMessage(input: {
+    channelType: string;
+    channelId: string;
+    userId: string;
+    text: string;
+    id?: string;
+    parentId?: string;
+  }): Promise<{ id: string }>;
+  removeChannelMember(channelType: string, channelId: string, userId: string): Promise<void>;
   muteUser(mutedUserId: string, muterUserId: string): Promise<void>;
   unmuteUser(mutedUserId: string, muterUserId: string): Promise<void>;
   verifyWebhook(rawBody: string, signature: string): boolean;
@@ -321,9 +329,16 @@ export class StreamServerGateway implements StreamGateway {
     channelId: string;
     userId: string;
     text: string;
+    id?: string;
+    parentId?: string;
   }): Promise<{ id: string }> {
     const channel = this.client.channel(input.channelType, input.channelId);
-    const payload: Message = { text: input.text, user_id: input.userId };
+    const payload: Message = {
+      text: input.text,
+      user_id: input.userId,
+      ...(input.id ? { id: input.id } : {}),
+      ...(input.parentId ? { parent_id: input.parentId } : {})
+    };
     const response = await channel.sendMessage(payload);
     const id = response.message.id;
 
@@ -332,6 +347,18 @@ export class StreamServerGateway implements StreamGateway {
     }
 
     return { id };
+  }
+
+  async removeChannelMember(channelType: string, channelId: string, userId: string): Promise<void> {
+    const channel = this.client.channel(channelType, channelId);
+
+    try {
+      await channel.removeMembers([userId]);
+    } catch (error) {
+      if (isMissing(error)) return;
+
+      throw error;
+    }
   }
 
   async muteUser(mutedUserId: string, muterUserId: string): Promise<void> {

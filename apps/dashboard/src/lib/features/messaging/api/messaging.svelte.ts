@@ -138,8 +138,19 @@ class MessagingApi extends BaseApiWithErrors {
     });
   }
 
-  async send(channelType: string, channelId: string, text: string, options?: { quiet?: boolean }) {
-    const parsed = ZSendMessagingMessage.safeParse({ channelType, channelId, text });
+  async send(
+    channelType: string,
+    channelId: string,
+    text: string,
+    options?: { quiet?: boolean; id?: string; parentId?: string }
+  ) {
+    const parsed = ZSendMessagingMessage.safeParse({
+      channelType,
+      channelId,
+      text,
+      ...(options?.id ? { id: options.id } : {}),
+      ...(options?.parentId ? { parentId: options.parentId } : {})
+    });
 
     if (!parsed.success) {
       snackbar.error('snackbar.messaging.send_failed');

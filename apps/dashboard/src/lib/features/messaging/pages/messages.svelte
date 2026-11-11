@@ -12,7 +12,6 @@
 
   import { messagingApi } from '$features/messaging/api/messaging.svelte';
   import { messagingPresence } from '$features/messaging/api/messaging-presence.svelte';
-  import { brandColor } from '$features/messaging/utils/brand-color';
   import type { InboxViewProps } from '$features/messaging/utils/inbox-types';
   import type { MessagingChannel } from '$features/messaging/utils/types';
   import { MESSAGING_ENABLED } from '$lib/utils/constants/messaging';
@@ -160,7 +159,6 @@
     if (!render || !session || !channels) return;
 
     const organizationId = $currentOrg.id;
-    const theme = $currentOrg.theme;
     const roleId = $currentOrg.roleId;
     const directory = messagingApi.directory ?? [];
     const focused = focusChannel;
@@ -181,7 +179,6 @@
         profileId: person.profileId,
         name: person.name
       })),
-      brandColor: brandColor(theme),
       disclosureAccepted: session.disclosureAccepted,
       canPostAnnouncements: roleId === ROLE.ADMIN || roleId === ROLE.TUTOR,
       roleIsAdmin: roleId === ROLE.ADMIN,
@@ -194,10 +191,15 @@
         open: $t('messaging.open'),
         export: $t('messaging.export'),
         exportCsv: $t('messaging.export_csv'),
-        empty: $t('messaging.empty')
+        empty: $t('messaging.empty'),
+        select: $t('messaging.select')
       },
-      onSend: async (channelType, channelId, text) => {
-        const sent = await messagingApi.send(channelType, channelId, text, { quiet: true });
+      onSend: async (channelType, channelId, text, message) => {
+        const sent = await messagingApi.send(channelType, channelId, text, {
+          quiet: true,
+          id: message.id,
+          parentId: message.parentId
+        });
 
         return sentMessageId(sent);
       },
@@ -217,7 +219,7 @@
   });
 </script>
 
-<div class="flex h-[calc(100dvh-4rem)] min-h-0 flex-col overflow-hidden">
+<div class="messaging-page flex h-[calc(100dvh-4rem)] min-h-0 flex-col overflow-hidden">
   <Page.Root class="flex min-h-0 flex-1 flex-col overflow-hidden">
     <Page.Header>
       <Page.HeaderContent>
@@ -231,11 +233,14 @@
         {#if !MESSAGING_ENABLED}
           <p>{$t('messaging.disabled')}</p>
         {:else}
-          <div class="rounded-md border p-3" data-testid="messaging-staff-notice">
-            <p>{$t('messaging.notice.body')}</p>
+          <div
+            class="flex flex-col gap-2 rounded-md border p-3 max-md:flex-row max-md:items-center max-md:gap-3 max-md:px-3 max-md:py-1"
+            data-testid="messaging-staff-notice"
+          >
+            <p class="max-md:min-w-0 max-md:flex-1 max-md:truncate max-md:text-sm">{$t('messaging.notice.body')}</p>
             {#if messagingApi.session && !messagingApi.session.disclosureAccepted}
               <Button
-                class="mt-2"
+                class="mt-2 max-md:mt-0 max-md:shrink-0"
                 size="sm"
                 testId="messaging-disclosure-accept"
                 onclick={() => messagingApi.acceptDisclosure()}
@@ -421,3 +426,16 @@
     </Page.Body>
   </Page.Root>
 </div>
+
+<style>
+  @media (max-width: 767px) {
+    .messaging-page :global([data-slot='page-header']) {
+      display: none;
+    }
+
+    .messaging-page :global([data-slot='page-body']) {
+      gap: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+  }
+</style>

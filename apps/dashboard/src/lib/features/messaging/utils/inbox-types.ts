@@ -19,6 +19,7 @@ export type InboxLabels = {
   export: string;
   exportCsv: string;
   empty: string;
+  select: string;
 };
 
 export type InboxViewProps = {
@@ -29,13 +30,17 @@ export type InboxViewProps = {
   organizationId: string;
   channels: InboxChannel[];
   directory: InboxDirectoryPerson[];
-  brandColor: string;
   disclosureAccepted: boolean;
   canPostAnnouncements: boolean;
   roleIsAdmin: boolean;
   focusKey: string | null;
   labels: InboxLabels;
-  onSend: (channelType: string, channelId: string, text: string) => Promise<string | null>;
+  onSend: (
+    channelType: string,
+    channelId: string,
+    text: string,
+    message: { id?: string; parentId?: string }
+  ) => Promise<string | null>;
   onFlag: (channelType: string, channelId: string, messageId: string) => void;
   onMute: (userId: string) => void;
   onOpenDirect: (profileId: string) => void;

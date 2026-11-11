@@ -1,13 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type CSSProperties
-} from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { StreamChat, type Channel, type ChannelFilters, type LocalMessage } from 'stream-chat';
 import {
@@ -19,12 +10,15 @@ import {
   MessageInput,
   MessageList,
   Thread,
+  ThreadHeader as StreamThreadHeader,
   Window,
   useChatContext,
-  type ChannelPreviewUIComponentProps
+  type ChannelPreviewUIComponentProps,
+  type ThreadHeaderProps
 } from 'stream-chat-react';
 import 'stream-chat-react/dist/css/v2/index.css';
 
+import './stream-theme.css';
 import './inbox.css';
 
 import type { InboxViewProps } from '../utils/inbox-types';
@@ -35,11 +29,23 @@ type InboxPreviewValue = {
   names: Map<string, string>;
   onOpen: (channel: Channel) => void;
   emptyLabel: string;
+  selectLabel: string;
+  backLabel: string;
+};
+
+type OutgoingMessage = {
+  id?: string;
+  text?: string;
+  parent_id?: string;
+  user?: LocalMessage['user'];
 };
 
 const InboxPreview = createContext<InboxPreviewValue | null>(null);
 
 const NARROW_QUERY = '(max-width: 767px)';
+const MESSAGE_ACTIONS = ['react', 'reply'] as const;
+const STREAM_THEME_LIGHT = 'str-chat__theme-light';
+const STREAM_THEME_DARK = 'str-chat__theme-dark';
 
 function narrowNow() {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false;
@@ -49,6 +55,24 @@ function narrowNow() {
 
 function channelKey(channel: { type?: string; id?: string }) {
   return `${channel.type ?? ''}:${channel.id ?? ''}`;
+}
+
+function channelInitials(name: string) {
+  const words = name.trim().split(/\s+/).filter(Boolean).slice(0, 2);
+
+  if (words.length === 0) return '?';
+
+  if (words.length === 1) return words[0]!.slice(0, 2).toUpperCase();
+
+  return words.map((word) => word[0]?.toUpperCase() ?? '').join('');
+}
+
+function channelImage(channel: Channel) {
+  const image = (channel.data as { image?: string } | undefined)?.image;
+
+  if (typeof image !== 'string' || !/^https:\/\//i.test(image)) return;
+
+  return image;
 }
 
 function applyDisplayName(channel: Channel, names: Map<string, string>) {
@@ -90,6 +114,28 @@ function useSharedChatClient(apiKey: string, token: string, userId: string, user
   return client;
 }
 
+function streamThemeNow() {
+  if (typeof document === 'undefined') return STREAM_THEME_LIGHT;
+
+  return document.body.classList.contains('dark') ? STREAM_THEME_DARK : STREAM_THEME_LIGHT;
+}
+
+function useStreamTheme() {
+  const [theme, setTheme] = useState(streamThemeNow);
+
+  useEffect(() => {
+    const sync = () => setTheme(streamThemeNow());
+
+    sync();
+    const observer = new MutationObserver(sync);
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+    return () => observer.disconnect();
+  }, []);
+
+  return theme;
+}
+
 function useNarrowViewport() {
   const [narrow, setNarrow] = useState(narrowNow);
 
@@ -108,14 +154,35 @@ function useNarrowViewport() {
   return narrow;
 }
 
+function CohortAvatar({ image, name }: { image?: string; name?: string }) {
+  const safeImage = image && /^https:\/\//i.test(image) ? image : undefined;
+
+  if (safeImage) {
+    return <img alt="" className="messaging-inbox__mark" data-testid="messaging-channel-avatar" src={safeImage} />;
+  }
+
+  return (
+    <span className="messaging-inbox__mark" data-testid="messaging-channel-avatar" aria-hidden="true">
+      {channelInitials(name ?? '')}
+    </span>
+  );
+}
+
 function NamedPreview(props: ChannelPreviewUIComponentProps) {
   const preview = useContext(InboxPreview);
 
   if (preview) applyDisplayName(props.channel, preview.names);
 
+  const title = preview?.names.get(channelKey(props.channel));
+
   return (
     <div onClick={() => preview?.onOpen(props.channel)}>
-      <ChannelPreviewMessenger {...props} />
+      <ChannelPreviewMessenger
+        {...props}
+        Avatar={(avatar) => (
+          <CohortAvatar image={avatar.image ?? channelImage(props.channel)} name={title || avatar.name} />
+        )}
+      />
     </div>
   );
 }
@@ -124,6 +191,32 @@ function EmptyChannels() {
   const preview = useContext(InboxPreview);
 
   return <p className="messaging-inbox__empty">{preview?.emptyLabel}</p>;
+}
+
+function EmptyConversation() {
+  const preview = useContext(InboxPreview);
+
+  return (
+    <p className="messaging-inbox__prompt" data-testid="messaging-empty-channel">
+      {preview?.selectLabel}
+    </p>
+  );
+}
+
+function InboxThreadHeader(props: ThreadHeaderProps) {
+  const narrow = useNarrowViewport();
+  const preview = useContext(InboxPreview);
+
+  if (!narrow) return <StreamThreadHeader {...props} />;
+
+  return (
+    <div className="messaging-inbox__mobile-thread">
+      <button type="button" className="messaging-inbox__back" onClick={(event) => props.closeThread(event)}>
+        {preview?.backLabel}
+      </button>
+      <StreamThreadHeader {...props} />
+    </div>
+  );
 }
 
 function InboxPanes(props: InboxViewProps) {
@@ -144,6 +237,8 @@ function InboxPanes(props: InboxViewProps) {
     return map;
   }, [props.channels]);
 
+  const allowedKey = props.channels.map((channel) => `${channel.channelType}:${channel.channelId}`).join('\n');
+
   const onOpen = useCallback((channel: Channel) => {
     openedChannel.current = channel;
 
@@ -151,8 +246,37 @@ function InboxPanes(props: InboxViewProps) {
   }, []);
 
   const preview = useMemo<InboxPreviewValue>(
-    () => ({ names, onOpen, emptyLabel: props.labels.empty }),
-    [names, onOpen, props.labels.empty]
+    () => ({
+      names,
+      onOpen,
+      emptyLabel: props.labels.empty,
+      selectLabel: props.labels.select,
+      backLabel: props.labels.back
+    }),
+    [names, onOpen, props.labels.back, props.labels.empty, props.labels.select]
+  );
+
+  const filters = useMemo(() => {
+    const allowed = allowedKey ? allowedKey.split('\n') : [];
+
+    return {
+      cid: { $in: allowed.length > 0 ? allowed : ['none'] },
+      members: { $in: [props.userId] },
+      organization_id: props.organizationId
+    } as ChannelFilters;
+  }, [allowedKey, props.organizationId, props.userId]);
+
+  const keepAllowed = useCallback(
+    (channels: Channel[]) => {
+      const allowed = new Set(allowedKey ? allowedKey.split('\n') : []);
+
+      return channels.filter((channel) => {
+        applyDisplayName(channel, names);
+
+        return allowed.has(channelKey(channel));
+      });
+    },
+    [allowedKey, names]
   );
 
   const queryChannels = useCallback(
@@ -167,7 +291,9 @@ function InboxPanes(props: InboxViewProps) {
       setChannels: (channels: Channel[]) => void;
       setHasNextPage: (hasNext: boolean) => void;
     }) => {
-      if (!client) {
+      const allowed = allowedKey ? allowedKey.split('\n') : [];
+
+      if (!client || allowed.length === 0) {
         setChannels([]);
         setHasNextPage(false);
 
@@ -176,17 +302,16 @@ function InboxPanes(props: InboxViewProps) {
 
       const offset = queryType === 'load-more' ? currentChannels.length : 0;
       const found = await client.queryChannels(
-        { members: { $in: [props.userId] }, organization_id: props.organizationId },
+        filters,
         { last_message_at: -1 },
         { state: true, watch: true, presence: true, limit: 30, offset }
       );
+      const matched = keepAllowed(found);
 
-      for (const channel of found) applyDisplayName(channel, names);
-
-      setChannels(queryType === 'load-more' ? [...currentChannels, ...found] : found);
+      setChannels(queryType === 'load-more' ? [...currentChannels, ...matched] : matched);
       setHasNextPage(found.length === 30);
     },
-    [client, names, props.organizationId, props.userId]
+    [allowedKey, client, filters, keepAllowed]
   );
 
   useEffect(() => {
@@ -219,12 +344,15 @@ function InboxPanes(props: InboxViewProps) {
   }, [client, names, props.focusKey, setActiveChannel]);
 
   const sendThroughApi = useCallback(
-    async (channel: Channel, message: { text?: string; user?: LocalMessage['user'] }) => {
+    async (channel: Channel, message: OutgoingMessage) => {
       const text = message.text?.trim() ?? '';
 
-      if (!text) return;
+      if (!text || !channel.id) return;
 
-      const id = await props.onSend(channel.type, channel.id ?? '', text);
+      const id = await props.onSend(channel.type, channel.id, text, {
+        id: message.id,
+        parentId: message.parent_id
+      });
 
       if (!id) throw new Error('Message was not sent');
 
@@ -237,7 +365,8 @@ function InboxPanes(props: InboxViewProps) {
           type: 'regular' as const,
           user: message.user ?? { id: props.userId, name: props.userName },
           created_at: createdAt,
-          updated_at: createdAt
+          updated_at: createdAt,
+          ...(message.parent_id ? { parent_id: message.parent_id } : {})
         }
       } as Awaited<ReturnType<Channel['sendMessage']>>;
     },
@@ -280,11 +409,6 @@ function InboxPanes(props: InboxViewProps) {
     setActiveChannel(undefined);
   }
 
-  const filters = {
-    members: { $in: [props.userId] },
-    organization_id: props.organizationId
-  } as ChannelFilters;
-
   return (
     <InboxPreview.Provider value={preview}>
       <div className="messaging-inbox__panes">
@@ -294,6 +418,8 @@ function InboxPanes(props: InboxViewProps) {
               filters={filters}
               sort={{ last_message_at: -1 }}
               options={{ state: true, watch: true, presence: true, limit: 30 }}
+              allowNewMessagesFromUnfilteredChannels={false}
+              channelRenderFilterFn={keepAllowed}
               customQueryChannels={queryChannels}
               Preview={NamedPreview}
               EmptyStateIndicator={EmptyChannels}
@@ -317,54 +443,68 @@ function InboxPanes(props: InboxViewProps) {
           </aside>
         ) : null}
         {showThread ? (
-          <section className="messaging-inbox__thread" data-testid="messaging-thread">
-            <StreamChannel doSendMessageRequest={sendThroughApi}>
-              <Window>
-                <div className="messaging-inbox__header" data-testid="messaging-channel-header">
-                  {narrow && openedKey ? (
-                    <button type="button" className="messaging-inbox__back" onClick={goBack}>
-                      {props.labels.back}
-                    </button>
-                  ) : null}
-                  <ChannelHeader />
-                  {props.roleIsAdmin && activeKey ? (
-                    <div className="messaging-inbox__exports">
-                      <button
-                        type="button"
-                        className="messaging-inbox__export"
-                        onClick={() => {
-                          const channelType = listed?.channelType ?? activeChannel?.type;
-                          const channelId = listed?.channelId ?? activeChannel?.id;
-
-                          if (!channelType || !channelId) return;
-
-                          props.onExport(channelType, channelId, 'json');
-                        }}
-                      >
-                        {props.labels.export}
+          <section
+            className="messaging-inbox__thread"
+            data-compose={canCompose ? 'true' : 'false'}
+            data-testid="messaging-thread"
+          >
+            {activeKey ? (
+              <StreamChannel ThreadHeader={InboxThreadHeader} doSendMessageRequest={sendThroughApi}>
+                <Window>
+                  <div className="messaging-inbox__header" data-testid="messaging-channel-header">
+                    {narrow && openedKey ? (
+                      <button type="button" className="messaging-inbox__back" onClick={goBack}>
+                        {props.labels.back}
                       </button>
-                      <button
-                        type="button"
-                        className="messaging-inbox__export"
-                        onClick={() => {
-                          const channelType = listed?.channelType ?? activeChannel?.type;
-                          const channelId = listed?.channelId ?? activeChannel?.id;
+                    ) : null}
+                    <ChannelHeader />
+                    {props.roleIsAdmin && activeKey ? (
+                      <div className="messaging-inbox__exports">
+                        <button
+                          type="button"
+                          className="messaging-inbox__export"
+                          onClick={() => {
+                            const channelType = listed?.channelType ?? activeChannel?.type;
+                            const channelId = listed?.channelId ?? activeChannel?.id;
 
-                          if (!channelType || !channelId) return;
+                            if (!channelType || !channelId) return;
 
-                          props.onExport(channelType, channelId, 'csv');
-                        }}
-                      >
-                        {props.labels.exportCsv}
-                      </button>
-                    </div>
-                  ) : null}
-                </div>
-                <MessageList customMessageActions={messageActions} messageActions={['react']} />
-                {canCompose ? <MessageInput /> : null}
-              </Window>
-              <Thread />
-            </StreamChannel>
+                            props.onExport(channelType, channelId, 'json');
+                          }}
+                        >
+                          {props.labels.export}
+                        </button>
+                        <button
+                          type="button"
+                          className="messaging-inbox__export"
+                          onClick={() => {
+                            const channelType = listed?.channelType ?? activeChannel?.type;
+                            const channelId = listed?.channelId ?? activeChannel?.id;
+
+                            if (!channelType || !channelId) return;
+
+                            props.onExport(channelType, channelId, 'csv');
+                          }}
+                        >
+                          {props.labels.exportCsv}
+                        </button>
+                      </div>
+                    ) : null}
+                  </div>
+                  <MessageList customMessageActions={messageActions} messageActions={[...MESSAGE_ACTIONS]} />
+                  {canCompose ? <MessageInput /> : null}
+                </Window>
+                <Thread
+                  additionalMessageListProps={{
+                    customMessageActions: messageActions,
+                    messageActions: [...MESSAGE_ACTIONS]
+                  }}
+                  messageActions={[...MESSAGE_ACTIONS]}
+                />
+              </StreamChannel>
+            ) : (
+              <EmptyConversation />
+            )}
           </section>
         ) : null}
       </div>
@@ -374,24 +514,13 @@ function InboxPanes(props: InboxViewProps) {
 
 export function InboxView(props: InboxViewProps) {
   const client = useSharedChatClient(props.apiKey, props.token, props.userId, props.userName);
-  const themeStyle = {
-    '--str-chat__primary-color': props.brandColor,
-    '--str-chat__active-primary-color': props.brandColor,
-    '--str-chat__own-message-bubble-background-color': props.brandColor,
-    '--str-chat__own-message-bubble-color': '#ffffff',
-    '--str-chat__on-primary-color': '#ffffff',
-    '--str-chat__channel-list-background-color': '#f4f6f8',
-    '--str-chat__channel-preview-background-color': '#f4f6f8',
-    '--str-chat__message-list-background-color': '#ffffff',
-    '--str-chat__message-bubble-background-color': '#eef2f6',
-    '--str-chat__channel-background-color': '#ffffff'
-  } as CSSProperties;
+  const theme = useStreamTheme();
 
   if (!client) return <div className="messaging-inbox" data-testid="messaging-stream" />;
 
   return (
-    <div className="messaging-inbox" style={themeStyle} data-testid="messaging-stream">
-      <Chat client={client} theme="str-chat__theme-light">
+    <div className="messaging-inbox" data-testid="messaging-stream">
+      <Chat client={client} theme={theme}>
         <InboxPanes {...props} />
       </Chat>
     </div>
