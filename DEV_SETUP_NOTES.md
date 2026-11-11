@@ -145,10 +145,23 @@ and `PUBLIC_MESSAGING_ENABLED` on the dashboard. The API also needs `STREAM_API_
 `STREAM_API_SECRET` (server only). `PUBLIC_SERVER_URL` is the base for the Stream
 `before_message_send` webhook. Unread email digests are not sent; the API keeps a deferred
 hook until SMTP is configured and delivery is implemented. Fellows open Messages at `/lms/messages`.
-Tutors and admins open it from the organization sidebar. Cohort channels are created only for
-published courses. An adult–minor direct message adds the organization's safeguarding staff
-list (`organization.settings.safeguardingStaffIds`); when that list is unset, every non-minor
-administrator is added, and the conversation is denied when no eligible administrator remains.
+Tutors and admins open it from the organization sidebar. A direct message is named for the other
+fellow or mentor in the thread. Safeguarding staff and other admins in a supervised adult–minor
+thread see the fellow and mentor names together. A cohort channel is named with the published
+course title or titles (comma-separated when a group has more than one), plus Announcements or
+Discussion. If no course title is available, the cohort name is used instead. Cohort channels are
+created only for published courses. Loading the conversation list updates those cohort channels and re-checks
+each direct message that person belongs to. Opening a direct message from the directory, or
+opening an existing direct-message thread, re-checks that pair. Stream membership is then set
+to the computed member set: missing people are added and people who no longer belong are
+removed. The two direct-message participants are never removed. An adult–minor direct message
+adds the organization's safeguarding staff list (`organization.settings.safeguardingStaffIds`);
+when that list is unset, every non-minor administrator is added, and a new conversation is
+denied when no eligible administrator remains. A later change to that list is applied the next
+time the conversation list loads, that direct message is opened, or an admin saves the
+safeguarding staff list on the Messages page (which reloads the conversation list). If the
+conversation would now be denied,
+its current members are left unchanged.
 
 ---
 

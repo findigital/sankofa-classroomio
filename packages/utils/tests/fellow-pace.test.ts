@@ -2,7 +2,12 @@ import { describe, expect, it } from 'vitest';
 import * as z from 'zod';
 
 import { ROLE } from '../src/constants/roles';
-import { fellowPaceFlags, fellowsVisibleToViewer, safeguardingAccess } from '../src/functions/fellow-pace';
+import {
+  fellowPaceFlags,
+  fellowsVisibleToViewer,
+  paceFellowForViewer,
+  safeguardingAccess
+} from '../src/functions/fellow-pace';
 import { ZUpdateProfile } from '../src/validation/account/account';
 import {
   EMPTY_SAFEGUARDING,
@@ -173,6 +178,26 @@ describe('safeguarding access', () => {
       notes: null,
       consentAt: null
     });
+  });
+});
+
+describe('paceFellowForViewer', () => {
+  const fellow = {
+    email: 'fellow@example.com',
+    name: 'Bea Fellow',
+    mentors: [{ profileId: 'mentor', name: 'mentor@example.com' }]
+  };
+
+  it('drops email for a tutor and keeps a real name', () => {
+    expect(paceFellowForViewer(fellow, ROLE.TUTOR)).toEqual({
+      email: null,
+      name: 'Bea Fellow',
+      mentors: [{ profileId: 'mentor', name: '' }]
+    });
+  });
+
+  it('keeps the full record for an admin', () => {
+    expect(paceFellowForViewer(fellow, ROLE.ADMIN)).toEqual(fellow);
   });
 });
 

@@ -436,6 +436,34 @@ export async function listPaceFilters(
   }
 }
 
+/** A published, non-template course in this organization. */
+export async function publishedCourseBelongsToOrg(
+  organizationId: string,
+  courseId: string,
+  dbClient: DbOrTxClient = db
+): Promise<boolean> {
+  try {
+    const [row] = await dbClient
+      .select({ id: schema.course.id })
+      .from(schema.course)
+      .innerJoin(schema.group, eq(schema.course.groupId, schema.group.id))
+      .where(
+        and(
+          eq(schema.course.id, courseId),
+          eq(schema.group.organizationId, organizationId),
+          eq(schema.course.isPublished, true),
+          eq(schema.course.isTemplate, false)
+        )
+      )
+      .limit(1);
+
+    return Boolean(row);
+  } catch (error) {
+    console.error('publishedCourseBelongsToOrg error:', error);
+    throw new Error('Failed to resolve course');
+  }
+}
+
 export async function courseBelongsToOrg(
   organizationId: string,
   courseId: string,

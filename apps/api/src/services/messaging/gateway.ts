@@ -2,6 +2,7 @@ import { StreamChat, type Channel, type Message } from 'stream-chat';
 
 declare module 'stream-chat' {
   interface CustomChannelData {
+    name?: string;
     organization_id?: string;
     purpose?: string;
     cohort_id?: string;
@@ -36,6 +37,7 @@ export type EnsureMessagingChannel = {
   cohortId?: string;
   createdById: string;
   memberIds: string[];
+  protectedMemberIds?: string[];
 };
 
 export type InspectedChannel = {
@@ -65,6 +67,8 @@ export interface StreamGateway {
 const MESSAGE_PAGE = 100;
 const MESSAGE_PAGE_CAP = 20;
 const CHANNEL_QUERY_LIMIT = 100;
+const MEMBER_BATCH = 100;
+const MEMBER_PAGE_CAP = 100;
 const EMPTY_BLOCKLIST_WORD = '__sankofa_no_keywords__';
 
 function isMissing(error: unknown): boolean {
@@ -180,6 +184,11 @@ export class StreamServerGateway implements StreamGateway {
     await this.client.updateAppSettings({ before_message_send_hook_url: url });
   }
 
+  /**
+   * Creates the channel when it is missing and sets membership to memberIds.
+   * Ids in protectedMemberIds stay even when they are absent from memberIds.
+   * memberCount is Stream's member_count after that update.
+   */
   async ensureChannel(input: EnsureMessagingChannel): Promise<MessagingChannelSummary> {
     const channel = this.client.channel(input.channelType, input.channelId, {
       created_by_id: input.createdById,
@@ -188,7 +197,7 @@ export class StreamServerGateway implements StreamGateway {
       purpose: input.purpose,
       cohort_id: input.cohortId,
       staff_visible: true,
-      members: input.memberIds
+      members: input.memberIds.slice(0, MEMBER_BATCH)
     } as Channel['data']);
 
     try {
@@ -199,15 +208,17 @@ export class StreamServerGateway implements StreamGateway {
       }
     }
 
-    if (input.memberIds.length > 0) {
-      await channel.addMembers(input.memberIds).catch(async () => {
-        await channel.query({ state: true, watch: false, messages: { limit: 0 } });
-      });
+    await reconcileChannelMembers(channel, input);
+
+    if (input.purpose === 'announcement' || input.purpose === 'discussion') {
+      await channel.updatePartial({ set: { name: input.name } });
     }
 
+    const loaded = await channel.query({ state: true, watch: false, messages: { limit: 0 } });
+    const memberCount = typeof loaded.channel.member_count === 'number' ? loaded.channel.member_count : 0;
     const summary = summarize(channel);
 
-    if (summary) return summary;
+    if (summary) return { ...summary, memberCount };
 
     return {
       channelType: input.channelType,
@@ -215,7 +226,7 @@ export class StreamServerGateway implements StreamGateway {
       name: input.name,
       purpose: input.purpose,
       cohortId: input.cohortId ?? null,
-      memberCount: input.memberIds.length,
+      memberCount,
       lastMessageAt: null
     };
   }
@@ -354,6 +365,73 @@ export class StreamServerGateway implements StreamGateway {
 
       return summary ? [summary] : [];
     });
+  }
+}
+
+function memberUserId(member: { user_id?: string; user?: { id?: string } | null }): string {
+  return member.user_id || member.user?.id || '';
+}
+
+function idBatches(ids: string[]): string[][] {
+  const batches: string[][] = [];
+
+  for (let index = 0; index < ids.length; index += MEMBER_BATCH) {
+    batches.push(ids.slice(index, index + MEMBER_BATCH));
+  }
+
+  return batches;
+}
+
+async function listChannelMemberIds(channel: Channel): Promise<string[]> {
+  const ids = new Set<string>();
+  let afterId = '';
+
+  for (let page = 0; page < MEMBER_PAGE_CAP; page += 1) {
+    const options: { limit: number; user_id_gt?: string } = { limit: MEMBER_BATCH };
+
+    if (afterId) options.user_id_gt = afterId;
+
+    const response = await channel.queryMembers({}, { user_id: 1 }, options);
+    const batch = response.members ?? [];
+
+    if (batch.length === 0) break;
+
+    const lastId = memberUserId(batch[batch.length - 1] ?? {});
+
+    if (!lastId || lastId === afterId) break;
+
+    for (const member of batch) {
+      const id = memberUserId(member);
+
+      if (id) ids.add(id);
+    }
+
+    afterId = lastId;
+
+    if (batch.length < MEMBER_BATCH) break;
+  }
+
+  return [...ids];
+}
+
+async function reconcileChannelMembers(channel: Channel, input: EnsureMessagingChannel): Promise<void> {
+  const current = new Set(await listChannelMemberIds(channel));
+  const desired = new Set(input.memberIds.filter(Boolean));
+  const kept = new Set(desired);
+
+  for (const id of input.protectedMemberIds ?? []) {
+    if (id) kept.add(id);
+  }
+
+  const missing = [...desired].filter((id) => !current.has(id));
+  const extra = [...current].filter((id) => !kept.has(id));
+
+  for (const batch of idBatches(missing)) {
+    await channel.addMembers(batch);
+  }
+
+  for (const batch of idBatches(extra)) {
+    await channel.removeMembers(batch);
   }
 }
 

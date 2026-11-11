@@ -20,6 +20,7 @@ export type CohortRosterMember = MessagingProfile;
 export type CohortRoster = {
   groupId: string;
   name: string;
+  courseName: string;
   fellowDmEnabled: boolean;
   members: CohortRosterMember[];
 };
@@ -358,6 +359,7 @@ async function cohortRows(organizationId: string, profileId: string | null, dbCl
     .select({
       groupId: schema.group.id,
       name: schema.group.name,
+      courseTitle: schema.course.title,
       fellowDmEnabled: schema.messagingCohortSetting.fellowDmEnabled
     })
     .from(schema.group)
@@ -426,16 +428,31 @@ export async function listCohortRosters(
     }
 
     const seen = new Set<string>();
+    const titlesByGroup = new Map<string, Set<string>>();
+
+    for (const cohort of cohorts) {
+      const titles = titlesByGroup.get(cohort.groupId) ?? new Set<string>();
+      const title = cohort.courseTitle?.trim();
+
+      if (title) titles.add(title);
+
+      titlesByGroup.set(cohort.groupId, titles);
+    }
 
     return cohorts.flatMap((cohort) => {
       if (seen.has(cohort.groupId)) return [];
 
       seen.add(cohort.groupId);
 
+      const courseName = [...(titlesByGroup.get(cohort.groupId) ?? [])]
+        .sort((left, right) => left.localeCompare(right))
+        .join(', ');
+
       return [
         {
           groupId: cohort.groupId,
           name: cohort.name,
+          courseName: courseName || cohort.name,
           fellowDmEnabled: cohort.fellowDmEnabled ?? false,
           members: membersByGroup.get(cohort.groupId) ?? []
         }
