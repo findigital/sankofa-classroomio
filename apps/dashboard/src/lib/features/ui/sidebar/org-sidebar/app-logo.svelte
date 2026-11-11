@@ -6,6 +6,7 @@
   import { appBrandName } from '$lib/utils/functions/brand';
   import { shortenName } from '$lib/utils/functions/string';
   import { currentOrg, currentOrgPath, currentOrgPlan } from '$lib/utils/store/org';
+  import { showOrgPlanBadge } from '$lib/utils/constants/promos';
 
   const plan = $derived($currentOrgPlan?.planName || PLAN.BASIC);
   const brandName = $derived($currentOrg.name || appBrandName());
@@ -26,9 +27,11 @@
           </Avatar.Root>
 
           <span class="truncate font-normal">{brandName}</span>
-          <Badge variant="outline" class="capitalize">
-            {PLAN_NAMES[plan] || plan}
-          </Badge>
+          {#if showOrgPlanBadge(plan)}
+            <Badge variant="outline" class="capitalize">
+              {PLAN_NAMES[plan] || plan}
+            </Badge>
+          {/if}
         </a>
       {/snippet}
     </Sidebar.MenuButton>

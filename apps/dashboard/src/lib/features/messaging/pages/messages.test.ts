@@ -11,7 +11,7 @@ vi.mock('$env/static/public', () => ({
   PUBLIC_SERVER_URL: 'http://localhost:3002'
 }));
 
-vi.mock('$app/environment', () => ({ browser: false, dev: true, building: false }));
+vi.mock('$app/environment', () => ({ browser: true, dev: true, building: false }));
 
 vi.mock('$lib/utils/functions/translations', async () => {
   const { readable } = await import('svelte/store');
@@ -22,7 +22,13 @@ vi.mock('$lib/utils/functions/translations', async () => {
 
 vi.mock('$features/messaging/api/messaging.svelte', () => ({
   messagingApi: {
-    session: { disclosureAccepted: true, userId: 'me' },
+    session: {
+      apiKey: 'key',
+      token: 'token',
+      userId: 'me',
+      userName: 'Ada Mentor',
+      disclosureAccepted: true
+    },
     channels: [
       {
         channelType: 'mentor_dm',
@@ -54,14 +60,35 @@ vi.mock('$features/messaging/api/messaging-presence.svelte', () => ({
   }
 }));
 
+vi.mock('$features/messaging/components/inbox-view', () => ({
+  mountInbox(host: HTMLElement) {
+    return {
+      render(next: { channels: Array<{ name: string }> }) {
+        host.replaceChildren();
+        const list = document.createElement('aside');
+        list.dataset.testid = 'messaging-channel-list';
+        list.textContent = next.channels.map((channel) => channel.name).join('');
+        const thread = document.createElement('section');
+        thread.dataset.testid = 'messaging-thread';
+        host.append(list, thread);
+      },
+      destroy() {
+        host.replaceChildren();
+      }
+    };
+  }
+}));
+
 import MessagesPage from './messages.svelte';
 
 describe('Messages page', () => {
-  it('renders the inbox body, not only the title', () => {
+  it('renders the inbox body, not only the title', async () => {
     render(MessagesPage);
 
     expect(screen.getByText('messaging.heading')).toBeTruthy();
     expect(screen.getByText('messaging.notice.body')).toBeTruthy();
-    expect(screen.getByText('Bea Fellow')).toBeTruthy();
+    expect(await screen.findByText('Bea Fellow')).toBeTruthy();
+    expect(screen.getByTestId('messaging-channel-list')).toBeTruthy();
+    expect(screen.getByTestId('messaging-thread')).toBeTruthy();
   });
 });

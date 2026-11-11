@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv } from 'vite';
 
 import { sveltekit } from '@sveltejs/kit/vite';
+import react from '@vitejs/plugin-react';
 import mkcert from 'vite-plugin-mkcert';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -30,7 +31,7 @@ export default ({ mode }) => {
         }
       }
     },
-    plugins: [watchWorkspaceSources(), sveltekit(), ...(useHttps ? [mkcert()] : [])],
+    plugins: [watchWorkspaceSources(), sveltekit(), react({ include: /\.[jt]sx$/ }), ...(useHttps ? [mkcert()] : [])],
     server: {
       host,
       fs: {

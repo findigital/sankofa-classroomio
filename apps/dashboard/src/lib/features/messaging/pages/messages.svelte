@@ -1,7 +1,5 @@
 <script lang="ts">
   import { browser } from '$app/environment';
-  import { onDestroy } from 'svelte';
-  import type { Event } from 'stream-chat';
 
   import { Button } from '@cio/ui/base/button';
   import { CheckboxField } from '@cio/ui/custom/checkbox-field';
@@ -9,53 +7,40 @@
   import * as Select from '@cio/ui/base/select';
   import { Switch } from '@cio/ui/base/switch';
   import { InputField } from '@cio/ui/custom/input-field';
-  import { TextareaField } from '@cio/ui/custom/textarea-field';
   import { Skeleton } from '@cio/ui/base/skeleton';
   import { ROLE } from '@cio/utils/constants';
 
   import { messagingApi } from '$features/messaging/api/messaging.svelte';
   import { messagingPresence } from '$features/messaging/api/messaging-presence.svelte';
-  import type { MessagingChannel, MessagingThreadMessage } from '$features/messaging/utils/types';
+  import { brandColor } from '$features/messaging/utils/brand-color';
+  import type { InboxViewProps } from '$features/messaging/utils/inbox-types';
+  import type { MessagingChannel } from '$features/messaging/utils/types';
   import { MESSAGING_ENABLED } from '$lib/utils/constants/messaging';
   import { t } from '$lib/utils/functions/translations';
   import { currentOrg } from '$lib/utils/store/org';
 
   let loadedOrgId = '';
-  let draft = $state('');
   let keywordPhrase = $state('');
   let keywordAction = $state<'flag' | 'block'>('flag');
   let selected = $state<MessagingChannel | null>(null);
+  let focusChannel = $state<MessagingChannel | null>(null);
   let staffLimited = $state(false);
   let staffChecks = $state<Record<string, boolean>>({});
-  let stopLiveMessages: (() => void) | null = null;
+  let inboxHost = $state<HTMLDivElement | null>(null);
+  let paintInbox = $state<((props: InboxViewProps) => void) | null>(null);
 
   function channelKey(channel: MessagingChannel) {
     return `${channel.channelType}:${channel.channelId}`;
   }
 
-  function appendLiveMessage(message: MessagingThreadMessage) {
-    const existing = messagingApi.messages ?? [];
+  function sentMessageId(sent: unknown) {
+    if (!sent || typeof sent !== 'object' || !('data' in sent)) return null;
 
-    if (existing.some((item) => item.id === message.id)) return;
+    const data = sent.data;
 
-    messagingApi.messages = [...existing, message];
-  }
+    if (!data || typeof data !== 'object' || !('id' in data) || typeof data.id !== 'string') return null;
 
-  function appendFromEvent(event: Event) {
-    const message = event.message;
-
-    if (!message?.id || !selected) return;
-    if (event.channel_type !== selected.channelType || event.channel_id !== selected.channelId) return;
-
-    const createdAt = message.created_at ? new Date(message.created_at).toISOString() : '';
-
-    appendLiveMessage({
-      id: message.id,
-      text: message.text ?? '',
-      userId: message.user?.id ?? '',
-      userName: message.user?.name ?? '',
-      createdAt
-    });
+    return data.id;
   }
 
   function applySafeguarding() {
@@ -81,8 +66,6 @@
     if (!browser || !session || !organizationId) return;
 
     await messagingPresence.connect(session, organizationId);
-    stopLiveMessages?.();
-    stopLiveMessages = messagingPresence.onMessage(appendFromEvent);
   }
 
   async function saveStaff() {
@@ -99,34 +82,28 @@
     }
   }
 
-  async function selectChannel(channel: MessagingChannel, asAdmin: boolean) {
+  async function selectAdminChannel(channel: MessagingChannel) {
     selected = channel;
     messagingApi.messages = null;
-
-    if (asAdmin) {
-      await messagingApi.loadAdminThread(channel.channelType, channel.channelId);
-      return;
-    }
-
-    await messagingApi.loadThread(channel.channelType, channel.channelId);
+    await messagingApi.loadAdminThread(channel.channelType, channel.channelId);
   }
 
-  async function sendMessage() {
-    if (!selected || !messagingApi.session?.disclosureAccepted) return;
+  async function openPerson(profileId: string) {
+    const opened = await messagingApi.openDirect(profileId);
 
-    const text = draft;
-    draft = '';
-    const sent = await messagingApi.send(selected.channelType, selected.channelId, text);
+    if (opened) focusChannel = opened;
+  }
 
-    if (!sent) draft = text;
+  async function exportChannel(channelType: string, channelId: string, format: 'json' | 'csv') {
+    const file = await messagingApi.exportChannel(channelType, channelId, format);
+
+    if (file) messagingApi.downloadExport(file.data);
   }
 
   async function exportSelected(format: 'json' | 'csv') {
     if (!selected) return;
 
-    const file = await messagingApi.exportChannel(selected.channelType, selected.channelId, format);
-
-    if (file) messagingApi.downloadExport(file.data);
+    await exportChannel(selected.channelType, selected.channelId, format);
   }
 
   $effect(() => {
@@ -136,6 +113,7 @@
 
     loadedOrgId = organizationId;
     selected = null;
+    focusChannel = null;
     messagingApi.channels = null;
     messagingApi.messages = null;
     void messagingApi.loadSession().then(() => connectStream().catch(() => undefined));
@@ -151,8 +129,91 @@
     }
   });
 
-  onDestroy(() => {
-    stopLiveMessages?.();
+  $effect(() => {
+    const host = inboxHost;
+
+    if (!browser || !host) return;
+
+    let cancelled = false;
+    let destroy = () => undefined;
+
+    void import('$features/messaging/components/inbox-view').then((module) => {
+      if (cancelled) return;
+
+      const mounted = module.mountInbox(host);
+      destroy = mounted.destroy;
+      paintInbox = mounted.render;
+    });
+
+    return () => {
+      cancelled = true;
+      destroy();
+      paintInbox = null;
+    };
+  });
+
+  $effect(() => {
+    const render = paintInbox;
+    const session = messagingApi.session;
+    const channels = messagingApi.channels;
+
+    if (!render || !session || !channels) return;
+
+    const organizationId = $currentOrg.id;
+    const theme = $currentOrg.theme;
+    const roleId = $currentOrg.roleId;
+    const directory = messagingApi.directory ?? [];
+    const focused = focusChannel;
+
+    render({
+      apiKey: session.apiKey,
+      token: session.token,
+      userId: session.userId,
+      userName: session.userName,
+      organizationId,
+      channels: channels.map((channel) => ({
+        channelType: channel.channelType,
+        channelId: channel.channelId,
+        name: channel.name ?? '',
+        purpose: channel.purpose
+      })),
+      directory: directory.map((person) => ({
+        profileId: person.profileId,
+        name: person.name
+      })),
+      brandColor: brandColor(theme),
+      disclosureAccepted: session.disclosureAccepted,
+      canPostAnnouncements: roleId === ROLE.ADMIN || roleId === ROLE.TUTOR,
+      roleIsAdmin: roleId === ROLE.ADMIN,
+      focusKey: focused ? channelKey(focused) : null,
+      labels: {
+        flag: $t('messaging.flag'),
+        mute: $t('messaging.mute'),
+        back: $t('common.back'),
+        directory: $t('messaging.directory'),
+        open: $t('messaging.open'),
+        export: $t('messaging.export'),
+        exportCsv: $t('messaging.export_csv'),
+        empty: $t('messaging.empty')
+      },
+      onSend: async (channelType, channelId, text) => {
+        const sent = await messagingApi.send(channelType, channelId, text, { quiet: true });
+
+        return sentMessageId(sent);
+      },
+      onFlag: (channelType, channelId, messageId) => {
+        void messagingApi.flag(channelType, channelId, messageId);
+      },
+      onMute: (userId) => {
+        void messagingApi.mute(userId);
+      },
+      onOpenDirect: (profileId) => {
+        void openPerson(profileId);
+      },
+      onExport: (channelType, channelId, format) => {
+        void exportChannel(channelType, channelId, format);
+      }
+    });
   });
 </script>
 
@@ -184,62 +245,32 @@
             {/if}
           </div>
 
-          <div class="grid min-h-0 flex-1 gap-4 md:grid-cols-[16rem_1fr]">
-            <aside class="min-h-0 overflow-y-auto" data-testid="messaging-channel-list">
-              <h2 class="mb-2 text-sm font-semibold">{$t('messaging.channels')}</h2>
-              {#if !messagingApi.channels}
-                {#each [0, 1, 2] as index (index)}
-                  <Skeleton class="mb-2 h-10 w-full" />
-                {/each}
-              {:else if messagingApi.channels.length === 0}
-                <p class="text-sm">{$t('messaging.empty')}</p>
-              {:else}
-                <ul class="space-y-1">
-                  {#each messagingApi.channels as channel (channelKey(channel))}
-                    <li>
-                      <button
-                        type="button"
-                        class="ui:hover:bg-muted w-full rounded-md px-2 py-1 text-left text-sm"
-                        onclick={() => selectChannel(channel, false)}
-                      >
-                        {channel.name || channel.purpose}
-                      </button>
-                    </li>
-                  {/each}
-                </ul>
-              {/if}
+          {#if !messagingApi.session || !messagingApi.channels}
+            <div class="min-h-0 flex-1" data-testid="messaging-inbox-loading">
+              {#each [0, 1, 2] as index (index)}
+                <Skeleton class="mb-2 h-10 w-full" />
+              {/each}
+            </div>
+          {:else}
+            <div class="flex min-h-0 flex-1 flex-col" bind:this={inboxHost} data-testid="messaging-inbox"></div>
+          {/if}
 
-              {#if messagingApi.directory && messagingApi.directory.length > 0}
-                <h2 class="mt-4 mb-2 text-sm font-semibold">{$t('messaging.directory')}</h2>
-                <ul class="space-y-1">
-                  {#each messagingApi.directory as person (person.profileId)}
-                    <li class="flex items-center justify-between gap-2 text-sm">
-                      <span>{person.name}</span>
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onclick={async () => {
-                          const opened = await messagingApi.openDirect(person.profileId);
-
-                          if (opened) await selectChannel(opened, false);
-                        }}
-                      >
-                        {$t('messaging.open')}
-                      </Button>
-                    </li>
-                  {/each}
-                </ul>
-              {/if}
-            </aside>
-
-            <section class="flex min-h-0 flex-col overflow-hidden">
-              {#if !selected}
-                <p class="text-sm">{$t('messaging.select')}</p>
-              {:else}
-                <div class="mb-2 flex items-center justify-between gap-2">
-                  <h2 class="text-sm font-semibold">{selected.name || selected.purpose}</h2>
-                  {#if $currentOrg.roleId === ROLE.ADMIN}
-                    <div class="flex gap-2">
+          {#if $currentOrg.roleId === ROLE.ADMIN}
+            <div class="max-h-64 shrink-0 space-y-4 overflow-y-auto border-t pt-4">
+              <section>
+                <h2 class="mb-2 text-sm font-semibold">{$t('messaging.all_channels')}</h2>
+                {#if messagingApi.adminChannels}
+                  <ul class="space-y-1">
+                    {#each messagingApi.adminChannels as channel (channelKey(channel))}
+                      <li>
+                        <button type="button" class="text-sm underline" onclick={() => selectAdminChannel(channel)}>
+                          {channel.name || channel.purpose}
+                        </button>
+                      </li>
+                    {/each}
+                  </ul>
+                  {#if selected}
+                    <div class="mt-2 flex gap-2">
                       <Button
                         size="sm"
                         variant="outline"
@@ -252,72 +283,14 @@
                         {$t('messaging.export_csv')}
                       </Button>
                     </div>
+                    <ul class="mt-2 space-y-1 text-sm">
+                      {#each messagingApi.messages ?? [] as message (message.id)}
+                        <li>
+                          {message.userName}: {message.text}
+                        </li>
+                      {/each}
+                    </ul>
                   {/if}
-                </div>
-                <div class="min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
-                  {#if !messagingApi.messages}
-                    <Skeleton class="h-16 w-full" />
-                  {:else}
-                    {#each messagingApi.messages as message (message.id)}
-                      <article class="rounded-md border p-2 text-sm">
-                        <p class="font-medium">{message.userName}</p>
-                        <p class="whitespace-pre-wrap">{message.text}</p>
-                        <div class="mt-2 flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            onclick={() =>
-                              selected && messagingApi.flag(selected.channelType, selected.channelId, message.id)}
-                          >
-                            {$t('messaging.flag')}
-                          </Button>
-                          {#if message.userId && message.userId !== messagingApi.session?.userId}
-                            <Button size="sm" variant="secondary" onclick={() => messagingApi.mute(message.userId)}>
-                              {$t('messaging.mute')}
-                            </Button>
-                          {/if}
-                        </div>
-                      </article>
-                    {/each}
-                  {/if}
-                </div>
-                {#if selected.purpose !== 'announcement' || $currentOrg.roleId === ROLE.ADMIN || $currentOrg.roleId === ROLE.TUTOR}
-                  <form
-                    class="mt-3"
-                    onsubmit={(event) => {
-                      event.preventDefault();
-                      void sendMessage();
-                    }}
-                  >
-                    <TextareaField label={$t('messaging.compose')} bind:value={draft} />
-                    <Button
-                      class="mt-2"
-                      type="submit"
-                      testId="messaging-send"
-                      disabled={!messagingApi.session?.disclosureAccepted}
-                    >
-                      {$t('messaging.send')}
-                    </Button>
-                  </form>
-                {/if}
-              {/if}
-            </section>
-          </div>
-
-          {#if $currentOrg.roleId === ROLE.ADMIN}
-            <div class="max-h-64 shrink-0 space-y-4 overflow-y-auto border-t pt-4">
-              <section>
-                <h2 class="mb-2 text-sm font-semibold">{$t('messaging.all_channels')}</h2>
-                {#if messagingApi.adminChannels}
-                  <ul class="space-y-1">
-                    {#each messagingApi.adminChannels as channel (channelKey(channel))}
-                      <li>
-                        <button type="button" class="text-sm underline" onclick={() => selectChannel(channel, true)}>
-                          {channel.name || channel.purpose}
-                        </button>
-                      </li>
-                    {/each}
-                  </ul>
                 {/if}
               </section>
 
