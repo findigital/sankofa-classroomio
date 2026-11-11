@@ -12,6 +12,7 @@ import { AppError, ErrorCodes } from '@api/utils/errors';
 import { cohortChannelId, isListedCohortChannel } from '@cio/utils/functions/messaging';
 
 import { assertMessagingAvailable } from './availability';
+import { reconcileExistingDirectMessage } from './direct';
 import { type MessagingChannelSummary, type StreamGateway, type StreamPerson } from './gateway';
 
 export type DirectCandidate = {
@@ -89,8 +90,28 @@ export async function syncCohortChannels(
 
   const publishedGroupIds = new Set(rosters.map((cohort) => cohort.groupId));
   const channels = await gateway.queryMemberChannels(profileId, organizationId);
+  let reconciledDirectMessage = false;
 
-  return channels.filter((channel) => isListedCohortChannel(channel, publishedGroupIds));
+  for (const channel of channels) {
+    if (channel.purpose !== 'fellow_dm' && channel.purpose !== 'mentor_dm') continue;
+
+    const inspected = await gateway.inspectChannel(channel.channelType, channel.channelId);
+
+    if (!inspected) continue;
+
+    const reconciled = await reconcileExistingDirectMessage(
+      organizationId,
+      inspected.purpose || channel.purpose,
+      inspected.memberIds,
+      gateway
+    );
+
+    reconciledDirectMessage = reconciledDirectMessage || reconciled;
+  }
+
+  const visible = reconciledDirectMessage ? await gateway.queryMemberChannels(profileId, organizationId) : channels;
+
+  return visible.filter((channel) => isListedCohortChannel(channel, publishedGroupIds));
 }
 
 export async function listDirectCandidates(

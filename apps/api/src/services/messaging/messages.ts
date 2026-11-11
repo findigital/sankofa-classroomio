@@ -11,6 +11,7 @@ import {
 } from '@cio/utils/functions/messaging';
 
 import { assertMessagingAvailable } from './availability';
+import { reconcileExistingDirectMessage } from './direct';
 import { type MessagingChannelSummary, type StreamGateway } from './gateway';
 import { createKeywordFlag, keywordsFor } from './moderation';
 
@@ -101,6 +102,10 @@ export async function readMessagingChannel(
 
   if (!isMember && roleId !== ROLE.ADMIN) {
     throw new AppError('You are not in this conversation', ErrorCodes.MESSAGING_FORBIDDEN, 403);
+  }
+
+  if (channel.purpose === 'fellow_dm' || channel.purpose === 'mentor_dm') {
+    await reconcileExistingDirectMessage(organizationId, channel.purpose, channel.memberIds, gateway);
   }
 
   const messages = await gateway.readMessages(channelType, channelId);

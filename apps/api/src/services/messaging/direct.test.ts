@@ -16,7 +16,7 @@ const queries = vi.hoisted(() => ({
 
 vi.mock('@cio/db/queries/messaging', () => queries);
 
-import { openDirectMessage } from './direct';
+import { openDirectMessage, reconcileExistingDirectMessage } from './direct';
 
 const ORG_ID = '3f2504e0-4f89-11d3-9a0c-0305e82c3301';
 const MENTOR_ID = '33333333-3333-4333-8333-333333333333';
@@ -109,7 +109,8 @@ describe('openDirectMessage', () => {
     expect(stream.ensureChannel).toHaveBeenCalledWith(
       expect.objectContaining({
         channelType: 'mentor_dm',
-        memberIds: expect.arrayContaining([MENTOR_ID, MINOR_ID, STAFF_ID])
+        memberIds: expect.arrayContaining([MENTOR_ID, MINOR_ID, STAFF_ID]),
+        protectedMemberIds: [MENTOR_ID, MINOR_ID]
       })
     );
   });
@@ -157,6 +158,56 @@ describe('openDirectMessage', () => {
     await expect(openDirectMessage(ORG_ID, MENTOR_ID, MINOR_ID, stream)).rejects.toMatchObject({
       code: ErrorCodes.MESSAGING_MINOR_ADULT_REQUIRES_STAFF
     });
+    expect(stream.ensureChannel).not.toHaveBeenCalled();
+  });
+
+  it('reopens an existing direct message so membership can change', async () => {
+    queries.listMessagingProfiles.mockResolvedValue([
+      profile(MENTOR_ID, ROLE.TUTOR, false),
+      profile(MINOR_ID, ROLE.STUDENT, true),
+      profile(STAFF_ID, ROLE.ADMIN, false)
+    ]);
+    queries.mentorPairAssigned.mockResolvedValue(true);
+    const stream = gateway();
+    vi.mocked(stream.ensureChannel).mockResolvedValue({
+      channelType: 'mentor_dm',
+      channelId: 'mdm',
+      name: 'mentor_dm',
+      purpose: 'mentor_dm',
+      cohortId: null,
+      memberCount: 3,
+      lastMessageAt: null
+    });
+
+    const reconciled = await reconcileExistingDirectMessage(
+      ORG_ID,
+      'mentor_dm',
+      [MENTOR_ID, MINOR_ID, STAFF_ID],
+      stream
+    );
+
+    expect(reconciled).toBe(true);
+    expect(stream.ensureChannel).toHaveBeenCalledWith(
+      expect.objectContaining({
+        channelType: 'mentor_dm',
+        memberIds: expect.arrayContaining([MENTOR_ID, MINOR_ID, STAFF_ID]),
+        protectedMemberIds: expect.arrayContaining([MENTOR_ID, MINOR_ID])
+      })
+    );
+  });
+
+  it('leaves an existing direct message unchanged when it would now be denied', async () => {
+    queries.listMessagingProfiles.mockResolvedValue([
+      profile(MENTOR_ID, ROLE.TUTOR, false),
+      profile(MINOR_ID, ROLE.STUDENT, true)
+    ]);
+    queries.readSafeguardingStaffIds.mockResolvedValue([]);
+    queries.mentorPairAssigned.mockResolvedValue(true);
+    const stream = gateway();
+
+    const reconciled = await reconcileExistingDirectMessage(ORG_ID, 'mentor_dm', [MENTOR_ID, MINOR_ID], stream);
+
+    expect(reconciled).toBe(false);
     expect(stream.ensureChannel).not.toHaveBeenCalled();
   });
 });

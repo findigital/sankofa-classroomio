@@ -93,7 +93,10 @@
       : null;
     const saved = await messagingApi.saveSafeguarding(staffIds);
 
-    if (saved) applySafeguarding();
+    if (saved) {
+      applySafeguarding();
+      await messagingApi.loadChannels();
+    }
   }
 
   async function selectChannel(channel: MessagingChannel, asAdmin: boolean) {

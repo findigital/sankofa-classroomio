@@ -121,6 +121,40 @@ export async function openDirectMessage(
     name: decision.channelType,
     purpose: decision.channelType,
     createdById: requesterId,
-    memberIds: decision.memberIds
+    memberIds: decision.memberIds,
+    protectedMemberIds: [requesterId, targetId]
   });
+}
+
+/**
+ * Re-applies direct-message membership for an existing channel.
+ * A denied decision leaves the current members in place.
+ */
+export async function reconcileExistingDirectMessage(
+  organizationId: string,
+  purpose: string,
+  memberIds: string[],
+  gateway: StreamGateway
+): Promise<boolean> {
+  if (purpose !== 'fellow_dm' && purpose !== 'mentor_dm') return false;
+
+  const profiles = await listMessagingProfiles(organizationId, memberIds);
+  const participants = profiles.filter((profile) => profile.roleId === ROLE.STUDENT || profile.roleId === ROLE.TUTOR);
+
+  if (participants.length !== 2) return false;
+
+  const first = participants[0];
+  const second = participants[1];
+
+  if (!first || !second) return false;
+
+  try {
+    await openDirectMessage(organizationId, first.profileId, second.profileId, gateway);
+  } catch (error) {
+    if (error instanceof AppError && error.statusCode === 403) return false;
+
+    throw error;
+  }
+
+  return true;
 }
