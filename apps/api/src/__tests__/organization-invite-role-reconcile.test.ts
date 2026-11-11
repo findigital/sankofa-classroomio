@@ -71,6 +71,7 @@ vi.mock('@api/services/jobs', () => ({ enqueueTransactionalEmail: vi.fn() }));
 vi.mock('@cio/email', () => ({
   buildEmailBranding: vi.fn(),
   buildEmailFromName: vi.fn(),
+  buildOrgEmailFromName: vi.fn(),
   sanitizeEmailSubject: vi.fn()
 }));
 vi.mock('@api/services/course/compliance', () => ({
