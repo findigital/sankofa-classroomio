@@ -15,7 +15,7 @@
 </script>
 
 <svelte:head>
-  <title>Reset Password - ClassroomIO</title>
+  <title>Reset Password - {appBrandName()}</title>
 </svelte:head>
 
 <AuthUI isLogin={false} showOnlyContent={true}>

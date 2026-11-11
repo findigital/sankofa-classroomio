@@ -63,6 +63,8 @@
   variant="page"
   layout="full-page"
   showLogo={true}
+  logoName={appBrandName()}
+  logoHref="/"
   class="h-fit! max-h-none! flex-none!"
 >
   {#if type === 'legacy_method_blocked'}

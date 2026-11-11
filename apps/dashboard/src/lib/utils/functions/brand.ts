@@ -16,6 +16,14 @@ export function defaultDocumentTitle(): string {
   return 'Learning platform';
 }
 
+export function brandedPageTitle(label: string): string {
+  const pageLabel = label.trim();
+  const brand = appBrandName();
+  if (!pageLabel) return brand;
+
+  return `${pageLabel} - ${brand}`;
+}
+
 export function supportEmail(): string {
   return publicEnv.PUBLIC_SUPPORT_EMAIL?.trim() || '';
 }

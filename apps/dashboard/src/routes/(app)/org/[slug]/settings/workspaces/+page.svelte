@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import * as Page from '@cio/ui/base/page';
 
   import { WorkspacesPage } from '$features/account';
@@ -6,7 +7,7 @@
 </script>
 
 <svelte:head>
-  <title>{$t('account.workspaces.page_title')} - ClassroomIO</title>
+  <title>{$t('account.workspaces.page_title')} - {appBrandName()}</title>
 </svelte:head>
 
 <Page.Header>

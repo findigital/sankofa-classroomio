@@ -16,6 +16,7 @@
   import { TagFormModal, TagGroupFormModal } from '$features/tag/components';
   import type { OrganizationTag, OrganizationTagGroup, OrganizationTagGroups } from '$features/tag/utils';
   import { t } from '$lib/utils/functions/translations';
+  import { brandedPageTitle } from '$lib/utils/functions/brand';
 
   interface Props {
     initialTagGroups: OrganizationTagGroups;
@@ -76,7 +77,7 @@
 </script>
 
 <svelte:head>
-  <title>{$t('tags_admin.page_title')}</title>
+  <title>{brandedPageTitle($t('tags_admin.page_title'))}</title>
 </svelte:head>
 
 <Page.Root class="w-full">

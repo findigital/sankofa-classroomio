@@ -5,6 +5,7 @@
   import { authValidation } from '$lib/utils/functions/validator';
   import { currentOrg } from '$lib/utils/store/org';
   import { appBrandName } from '$lib/utils/functions/brand';
+  import SourceOffer from '$features/ui/source-offer.svelte';
   import { authClient } from '$lib/utils/services/auth/client';
   import { page } from '$app/state';
   import { resolve } from '$app/paths';
@@ -229,4 +230,8 @@
       </div>
     {/if}
   </div>
+
+  {#snippet footer()}
+    <SourceOffer />
+  {/snippet}
 </AuthUI>

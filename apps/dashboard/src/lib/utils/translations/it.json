@@ -1431,7 +1431,7 @@
     }
   },
   "media_manager": {
-    "page_title": "Direttore multimediale - ClassroomIO",
+    "page_title": "Direttore multimediale",
     "heading": "Direttore multimediale",
     "page_subtitle": "Conserva file, video e collegamenti ai tuoi corsi in un'unica libreria.",
     "empty": "Nessuna risorsa trovata",
@@ -1581,7 +1581,7 @@
     }
   },
   "tags_admin": {
-    "page_title": "Tag - ClassroomIO",
+    "page_title": "Tag",
     "heading": "Tag",
     "page_subtitle": "Organizza i corsi con etichette in modo che filtri ed elenchi siano facili da scansionare.",
     "create": "Creare",
@@ -1639,7 +1639,7 @@
     }
   },
   "public_courses": {
-    "page_title": "Corsi - ClassroomIO",
+    "page_title": "Corsi",
     "heading": "Corsi",
     "subtitle": "Sfoglia tutti i corsi pubblicati",
     "clear_filters": "Cancella filtri",
@@ -5629,7 +5629,7 @@
   },
   "invite": {
     "organization": {
-      "page_title": "Giuntura {orgName} su ClassroomIO",
+      "page_title": "Giuntura {orgName}",
       "invitation_student": "Sei stato invitato a entrare {orgName} come studente.",
       "invitation_teacher": "Sei stato invitato a entrare {orgName} come insegnante.",
       "invitation_admin": "Sei stato invitato a entrare {orgName} come amministratore.",
@@ -5657,7 +5657,7 @@
       "loading": "Caricamento invito..."
     },
     "link": {
-      "page_title": "Giuntura {orgName} su ClassroomIO",
+      "page_title": "Giuntura {orgName}",
       "invitation_student": "Sei stato invitato a partecipare {orgName} come studente.",
       "invitation_teacher": "Sei stato invitato a partecipare {orgName} come insegnante.",
       "invitation_admin": "Sei stato invitato a partecipare {orgName} come amministratore.",
@@ -6285,7 +6285,7 @@
     "generate_failed": "Impossibile creare il collegamento di invito",
     "toggle_failed": "Impossibile aggiornare il collegamento di invito",
     "join": {
-      "page_title": "Giuntura {resourceName} su ClassroomIO",
+      "page_title": "Giuntura {resourceName}",
       "invitation": "Sei stato invitato a partecipare {resourceName} A {orgName}.",
       "course_button": "Iscriviti al corso",
       "cohort_button": "Unisciti alla coorte",
@@ -6558,8 +6558,8 @@
   },
   "oauth": {
     "consent": {
-      "page_title": "Collega un'app a ClassroomIO",
-      "title": "Collega {client} a ClassroomIO",
+      "page_title": "Collega un'app a {brand}",
+      "title": "Collega {client} a {brand}",
       "workspace": "Spazio di lavoro: {workspace}",
       "permissions_heading": "{client} potrà:",
       "stay_connected": "Rimani connesso finché non rimuovi l'accesso",

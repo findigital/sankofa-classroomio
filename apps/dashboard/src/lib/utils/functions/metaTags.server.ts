@@ -8,9 +8,16 @@ import { appBrandName, defaultDocumentTitle, twitterSiteMeta } from '$lib/utils/
 
 const isSelfHosted = PUBLIC_IS_SELFHOSTED === 'true';
 
-const DEFAULT_DESCRIPTION =
-  'One platform for customer academies, partner certification, and employee training. Build courses with AI, publish under your domain, and track completions.';
-const CLOUD_OG_IMAGE = 'https://brand.cdn.clsrio.com/og/classroomio-opengraph.jpg';
+const DEFAULT_DESCRIPTION = 'Courses, lessons, and training in one place.';
+
+function openGraphImageType(imageUrl: string): string {
+  const path = imageUrl.split('?')[0].toLowerCase();
+  if (path.endsWith('.jpg') || path.endsWith('.jpeg')) return 'image/jpeg';
+  if (path.endsWith('.webp')) return 'image/webp';
+  if (path.endsWith('.gif')) return 'image/gif';
+
+  return 'image/png';
+}
 const ORG_OG_WIDTH = 1200;
 const ORG_OG_HEIGHT = 630;
 
@@ -36,7 +43,7 @@ async function resolveOgImageUrl(url: URL, orgSiteInfo: OrgSiteInfo): Promise<st
   if (isSelfHosted) {
     const org = orgSiteInfo.org;
     if (!org) {
-      return CLOUD_OG_IMAGE;
+      return new URL('/logo-512.png', url.origin).href;
     }
 
     const orgImage =
@@ -52,7 +59,7 @@ async function resolveOgImageUrl(url: URL, orgSiteInfo: OrgSiteInfo): Promise<st
     }
   }
 
-  return CLOUD_OG_IMAGE;
+  return new URL('/logo-512.png', url.origin).href;
 }
 
 function buildOrgOpenGraphImages(ogImageUrl: string, orgName: string) {
@@ -111,30 +118,19 @@ export async function getBaseMetaTags(url: URL, orgSiteInfo: OrgSiteInfo): Promi
   const usesDynamicOrgOg =
     orgSiteInfo.isOrgSite && Boolean(orgSiteInfo.org?.siteName) && !publicEnv.PUBLIC_OG_IMAGE_URL?.trim();
 
+  const imageAlt = `${siteName} learning platform`;
   const openGraphImages = usesDynamicOrgOg
     ? buildOrgOpenGraphImages(ogImageUrl, siteName)
     : [
         {
           url: ogImageUrl,
-          alt: `${siteName} platform for customer, partner, and employee education`,
-          width: 1920,
-          height: 1080,
+          alt: imageAlt,
+          width: 512,
+          height: 512,
           secureUrl: ogImageUrl.startsWith('https://') ? ogImageUrl : undefined,
-          type: 'image/jpeg'
-        },
-        {
-          url: 'https://brand.cdn.clsrio.com/og/classroomio-opengraph.webp',
-          alt: `${siteName} platform for customer, partner, and employee education`,
-          width: 1920,
-          height: 1080,
-          secureUrl: 'https://brand.cdn.clsrio.com/og/classroomio-opengraph.webp',
-          type: 'image/webp'
+          type: openGraphImageType(ogImageUrl)
         }
       ];
-
-  const imageAlt = usesDynamicOrgOg
-    ? `${siteName} learning platform`
-    : `${siteName} platform for customer, partner, and employee education`;
 
   return Object.freeze({
     title,

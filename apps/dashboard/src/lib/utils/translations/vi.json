@@ -3680,7 +3680,7 @@
     "tools": "Công cụ"
   },
   "media_manager": {
-    "page_title": "Trình quản lý phương tiện - ClassroomIO",
+    "page_title": "Trình quản lý phương tiện",
     "heading": "Trình quản lý phương tiện",
     "empty": "Không tìm thấy nội dung nào",
     "usage": {
@@ -4960,7 +4960,7 @@
     "confirm_link_suffix": "để xác nhận email của bạn"
   },
   "public_courses": {
-    "page_title": "Khóa học - ClassroomIO",
+    "page_title": "Khóa học",
     "heading": "Khóa học",
     "subtitle": "Duyệt tất cả các khóa học được xuất bản",
     "clear_filters": "Xóa bộ lọc",
@@ -4993,7 +4993,7 @@
     }
   },
   "tags_admin": {
-    "page_title": "Thẻ - ClassroomIO",
+    "page_title": "Thẻ",
     "heading": "Thẻ",
     "create": "Tạo",
     "tag_modal": {
@@ -5052,7 +5052,7 @@
   },
   "invite": {
     "organization": {
-      "page_title": "Tham gia cùng {orgName} trên ClassroomIO",
+      "page_title": "Tham gia cùng {orgName}",
       "invitation_student": "Bạn được mời vào {orgName} với vai trò học viên.",
       "invitation_teacher": "Bạn được mời vào {orgName} với vai trò giáo viên.",
       "invitation_admin": "Bạn được mời vào {orgName} với vai trò quản trị viên.",
@@ -5080,7 +5080,7 @@
       "loading": "Đang tải lời mời..."
     },
     "link": {
-      "page_title": "Tham gia cùng {orgName} trên ClassroomIO",
+      "page_title": "Tham gia cùng {orgName}",
       "invitation_student": "Bạn đã được mời tham gia {orgName} với tư cách là sinh viên.",
       "invitation_teacher": "Bạn đã được mời tham gia {orgName} với tư cách là giáo viên.",
       "invitation_admin": "Bạn đã được mời tham gia {orgName} với tư cách quản trị viên.",
@@ -6298,7 +6298,7 @@
       "disabled": "Liên kết mời đã bị vô hiệu hóa"
     },
     "join": {
-      "page_title": "Tham gia {resourceName} trên ClassroomIO",
+      "page_title": "Tham gia {resourceName}",
       "invitation": "Bạn đã được mời tham gia {resourceName} tại {orgName}.",
       "course_button": "Tham gia khóa học",
       "cohort_button": "Tham gia nhóm",
@@ -6588,8 +6588,8 @@
   },
   "oauth": {
     "consent": {
-      "page_title": "Kết nối ứng dụng với ClassroomIO",
-      "title": "Kết nối {client} với ClassroomIO",
+      "page_title": "Kết nối ứng dụng với {brand}",
+      "title": "Kết nối {client} với {brand}",
       "workspace": "Không gian làm việc: {workspace}",
       "permissions_heading": "{client} sẽ có thể:",
       "stay_connected": "Giữ kết nối cho đến khi bạn gỡ quyền truy cập",

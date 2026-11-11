@@ -3680,7 +3680,7 @@
     "tools": "Værktøjer"
   },
   "media_manager": {
-    "page_title": "Medieadministrator - ClassroomIO",
+    "page_title": "Medieadministrator",
     "heading": "Mediemanager",
     "empty": "Ingen aktiver fundet",
     "usage": {
@@ -4960,7 +4960,7 @@
     "confirm_link_suffix": "for at bekræfte din e-mail"
   },
   "public_courses": {
-    "page_title": "Kurser - ClassroomIO",
+    "page_title": "Kurser",
     "heading": "Kurser",
     "subtitle": "Gennemse alle offentliggjorte kurser",
     "clear_filters": "Ryd filtre",
@@ -4993,7 +4993,7 @@
     }
   },
   "tags_admin": {
-    "page_title": "Mærker - ClassroomIO",
+    "page_title": "Mærker",
     "heading": "Mærker",
     "create": "Opret",
     "tag_modal": {
@@ -5052,7 +5052,7 @@
   },
   "invite": {
     "organization": {
-      "page_title": "Tilmeld dig {orgName} på ClassroomIO",
+      "page_title": "Tilmeld dig {orgName}",
       "invitation_student": "Du er blevet inviteret til {orgName} som elev.",
       "invitation_teacher": "Du er blevet inviteret til {orgName} som lærer.",
       "invitation_admin": "Du er blevet inviteret til {orgName} som administrator.",
@@ -5080,7 +5080,7 @@
       "loading": "Indlæser invitation..."
     },
     "link": {
-      "page_title": "Tilmeld dig {orgName} på ClassroomIO",
+      "page_title": "Tilmeld dig {orgName}",
       "invitation_student": "Du er blevet inviteret til at deltage i {orgName} som elev.",
       "invitation_teacher": "Du er blevet inviteret til at deltage i {orgName} som lærer.",
       "invitation_admin": "Du er blevet inviteret til at deltage i {orgName} som administrator.",
@@ -6298,7 +6298,7 @@
       "disabled": "Invitationslink deaktiveret"
     },
     "join": {
-      "page_title": "Tilmeld dig {resourceName} på ClassroomIO",
+      "page_title": "Tilmeld dig {resourceName}",
       "invitation": "Du er blevet inviteret til at deltage i {resourceName} på {orgName}.",
       "course_button": "Tilmeld dig kurset",
       "cohort_button": "Tilmeld dig kohorte",
@@ -6588,8 +6588,8 @@
   },
   "oauth": {
     "consent": {
-      "page_title": "Forbind en app til ClassroomIO",
-      "title": "Forbind {client} til ClassroomIO",
+      "page_title": "Forbind en app til {brand}",
+      "title": "Forbind {client} til {brand}",
       "workspace": "Arbejdsområde: {workspace}",
       "permissions_heading": "{client} vil kunne:",
       "stay_connected": "Forbliv forbundet, indtil du fjerner adgangen",

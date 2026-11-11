@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { preventDefault } from '$lib/utils/functions/svelte';
 
   import { goto } from '$app/navigation';
@@ -92,7 +93,7 @@
 </script>
 
 <svelte:head>
-  <title>{$t('components.quiz.title')} - ClassroomIO</title>
+  <title>{$t('components.quiz.title')} - {appBrandName()}</title>
 </svelte:head>
 
 <Dialog.Root

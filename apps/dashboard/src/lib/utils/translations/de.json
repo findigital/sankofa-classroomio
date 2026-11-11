@@ -3680,7 +3680,7 @@
     "tools": "Werkzeuge"
   },
   "media_manager": {
-    "page_title": "Medienverwaltung - ClassroomIO",
+    "page_title": "Medienverwaltung",
     "heading": "Medienmanager",
     "empty": "Keine Vermögenswerte gefunden",
     "usage": {
@@ -4960,7 +4960,7 @@
     "confirm_link_suffix": "um Ihre E-Mail zu bestätigen"
   },
   "public_courses": {
-    "page_title": "Kurse - ClassroomIO",
+    "page_title": "Kurse",
     "heading": "Kurse",
     "subtitle": "Durchsuchen Sie alle veröffentlichten Kurse",
     "clear_filters": "Filter löschen",
@@ -4993,7 +4993,7 @@
     }
   },
   "tags_admin": {
-    "page_title": "Schlagwörter - ClassroomIO",
+    "page_title": "Schlagwörter",
     "heading": "Schlagwörter",
     "create": "Erstellen",
     "tag_modal": {
@@ -5052,7 +5052,7 @@
   },
   "invite": {
     "organization": {
-      "page_title": "Treten Sie {orgName} auf ClassroomIO bei",
+      "page_title": "Treten Sie {orgName} bei",
       "invitation_student": "Sie wurden zu {orgName} als Schüler/in eingeladen.",
       "invitation_teacher": "Sie wurden zu {orgName} als Lehrer/in eingeladen.",
       "invitation_admin": "Sie wurden zu {orgName} als Administrator/in eingeladen.",
@@ -5080,7 +5080,7 @@
       "loading": "Einladung wird geladen…"
     },
     "link": {
-      "page_title": "Treten Sie {orgName} auf ClassroomIO bei",
+      "page_title": "Treten Sie {orgName} bei",
       "invitation_student": "Sie wurden eingeladen, sich {orgName} als Student anzuschließen.",
       "invitation_teacher": "Sie wurden eingeladen, sich {orgName} als Lehrer anzuschließen.",
       "invitation_admin": "Sie wurden eingeladen, {orgName} als Administrator beizutreten.",
@@ -6298,7 +6298,7 @@
       "disabled": "Einladungslink deaktiviert"
     },
     "join": {
-      "page_title": "Treten Sie {resourceName} auf ClassroomIO bei",
+      "page_title": "Treten Sie {resourceName} bei",
       "invitation": "Sie wurden eingeladen, {resourceName} bei {orgName} beizutreten.",
       "course_button": "Kurs beitreten",
       "cohort_button": "Gruppe beitreten",
@@ -6588,8 +6588,8 @@
   },
   "oauth": {
     "consent": {
-      "page_title": "Eine App mit ClassroomIO verbinden",
-      "title": "{client} mit ClassroomIO verbinden",
+      "page_title": "Eine App mit {brand} verbinden",
+      "title": "{client} mit {brand} verbinden",
       "workspace": "Workspace: {workspace}",
       "permissions_heading": "{client} kann Folgendes:",
       "stay_connected": "Verbunden bleiben, bis du den Zugriff entfernst",

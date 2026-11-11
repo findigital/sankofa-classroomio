@@ -3680,7 +3680,7 @@
     "tools": "Outils"
   },
   "media_manager": {
-    "page_title": "Gestionnaire de médias - ClassroomIO",
+    "page_title": "Gestionnaire de médias",
     "heading": "Gestionnaire de médias",
     "empty": "Aucun élément trouvé",
     "usage": {
@@ -4960,7 +4960,7 @@
     "confirm_link_suffix": "pour confirmer votre email"
   },
   "public_courses": {
-    "page_title": "Cours - ClassroomIO",
+    "page_title": "Cours",
     "heading": "Cours",
     "subtitle": "Parcourez tous les cours publiés",
     "clear_filters": "Effacer les filtres",
@@ -4993,7 +4993,7 @@
     }
   },
   "tags_admin": {
-    "page_title": "Étiquettes - ClassroomIO",
+    "page_title": "Étiquettes",
     "heading": "Étiquettes",
     "create": "Créer",
     "tag_modal": {
@@ -5052,7 +5052,7 @@
   },
   "invite": {
     "organization": {
-      "page_title": "Rejoignez {orgName} sur ClassroomIO",
+      "page_title": "Rejoignez {orgName}",
       "invitation_student": "Vous avez été invité(e) dans {orgName} en tant qu'étudiant.",
       "invitation_teacher": "Vous avez été invité(e) dans {orgName} en tant qu'enseignant.",
       "invitation_admin": "Vous avez été invité(e) dans {orgName} en tant qu'administrateur.",
@@ -5080,7 +5080,7 @@
       "loading": "Chargement de l'invitation…"
     },
     "link": {
-      "page_title": "Rejoignez {orgName} sur ClassroomIO",
+      "page_title": "Rejoignez {orgName}",
       "invitation_student": "Vous avez été invité à rejoindre {orgName} en tant qu'étudiant.",
       "invitation_teacher": "Vous avez été invité à rejoindre {orgName} en tant qu'enseignant.",
       "invitation_admin": "Vous avez été invité à rejoindre {orgName} en tant qu'administrateur.",
@@ -6298,7 +6298,7 @@
       "disabled": "Lien d'invitation désactivé"
     },
     "join": {
-      "page_title": "Rejoindre {resourceName} sur ClassroomIO",
+      "page_title": "Rejoindre {resourceName}",
       "invitation": "Vous avez été invité(e) à rejoindre {resourceName} sur {orgName}.",
       "course_button": "Rejoindre le cours",
       "cohort_button": "Rejoindre la cohorte",
@@ -6588,8 +6588,8 @@
   },
   "oauth": {
     "consent": {
-      "page_title": "Connecter une application à ClassroomIO",
-      "title": "Connecter {client} à ClassroomIO",
+      "page_title": "Connecter une application à {brand}",
+      "title": "Connecter {client} à {brand}",
       "workspace": "Espace de travail : {workspace}",
       "permissions_heading": "{client} pourra :",
       "stay_connected": "Rester connecté jusqu'à ce que vous retiriez l'accès",

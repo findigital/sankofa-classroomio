@@ -1441,7 +1441,7 @@
     }
   },
   "media_manager": {
-    "page_title": "Medya Yöneticisi - SınıfIO",
+    "page_title": "Medya Yöneticisi",
     "heading": "Medya Yöneticisi",
     "page_subtitle": "Kurslarınıza ilişkin dosyaları, videoları ve bağlantıları tek bir kitaplıkta saklayın.",
     "empty": "Varlık bulunamadı",
@@ -1591,7 +1591,7 @@
     }
   },
   "tags_admin": {
-    "page_title": "Tags - ClassroomIO",
+    "page_title": "Tags",
     "heading": "Tags",
     "page_subtitle": "Filtrelerin ve listelerin taranmasının kolay olması için dersleri etiketlerle düzenleyin.",
     "create": "Create",
@@ -1649,7 +1649,7 @@
     }
   },
   "public_courses": {
-    "page_title": "Kurslar - SınıfIO",
+    "page_title": "Kurslar",
     "heading": "Kurslar",
     "subtitle": "Yayınlanan tüm kurslara göz atın",
     "clear_filters": "Filtreleri Temizle",
@@ -5639,7 +5639,7 @@
   },
   "invite": {
     "organization": {
-      "page_title": "Sınıfta {orgName}'e katılınIO",
+      "page_title": "{orgName}'e katılın",
       "invitation_student": "{orgName}'e öğrenci olarak davet edildiniz.",
       "invitation_teacher": "{orgName}'e öğretmen olarak davet edildiniz.",
       "invitation_admin": "{orgName}'e yönetici olarak davet edildiniz.",
@@ -5667,7 +5667,7 @@
       "loading": "LDavet yükleniyor..."
     },
     "link": {
-      "page_title": "Classroom'da {orgName}'e katılınIO",
+      "page_title": "{orgName}'e katılın",
       "invitation_student": "{orgName}'e öğrenci olarak katılmaya davet edildiniz.",
       "invitation_teacher": "{orgName}'e öğretmen olarak katılmaya davet edildiniz.",
       "invitation_admin": "{orgName}'e öğrenci olarak katılmaya davet edildiniz. admin.",
@@ -6295,7 +6295,7 @@
     "generate_failed": "Davet bağlantısı oluşturulamadı",
     "toggle_failed": "Davet bağlantısı güncellenemedi",
     "join": {
-      "page_title": "Classroom'da {resourceName}'e katılınIO",
+      "page_title": "{resourceName}'e katılın",
       "invitation": "{orgName}'te {resourceName}'e katılmaya davet edildiniz.",
       "course_button": "Kursa katılın",
       "cohort_button": "Gruba katılın",
@@ -6568,8 +6568,8 @@
   },
   "oauth": {
     "consent": {
-      "page_title": "ClassroomIO'ya bir uygulama bağla",
-      "title": "{client} uygulamasını ClassroomIO'ya bağla",
+      "page_title": "{brand}'ya bir uygulama bağla",
+      "title": "{client} uygulamasını {brand}'ya bağla",
       "workspace": "Çalışma alanı: {workspace}",
       "permissions_heading": "{client} şunları yapabilecek:",
       "stay_connected": "Erişimi kaldırana kadar bağlı kal",

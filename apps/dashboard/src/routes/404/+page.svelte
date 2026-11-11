@@ -3,12 +3,13 @@
   import { Button } from '@cio/ui/base/button';
   import SearchXIcon from '@lucide/svelte/icons/search-x';
   import { Empty } from '@cio/ui/custom/empty';
+  import { appBrandName } from '$lib/utils/functions/brand';
 
   let query = $derived(new URLSearchParams(page.url.search));
   let isOrg = $derived(query.get('type') === 'org');
 
   function handleClick() {
-    window.location.href = isOrg ? 'https://classroomio.com' : '/';
+    window.location.href = '/';
   }
 </script>
 
@@ -19,6 +20,8 @@
   variant="page"
   layout="full-page"
   showLogo={true}
+  logoName={appBrandName()}
+  logoHref="/"
 >
   <Button onclick={handleClick}>Back to Safety</Button>
 </Empty>

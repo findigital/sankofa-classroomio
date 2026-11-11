@@ -2,11 +2,16 @@
   import { cn } from '../../tools';
 
   interface Props {
+    name?: string;
+    href?: string;
     tagline?: string;
+    logoAlt?: string;
     class?: string;
   }
 
-  let { tagline = 'One Platform for Customer, Partner, and Employee Training', class: className }: Props = $props();
+  let { name = '', href = '/', tagline = '', logoAlt = '', class: className }: Props = $props();
+
+  const alt = $derived(logoAlt || name || 'Logo');
 </script>
 
 <div
@@ -15,15 +20,14 @@
     className
   )}
 >
-  <a
-    href="https://classroomio.com"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="ui:flex ui:items-center ui:justify-center ui:gap-2"
-  >
-    <img src="/logo-512.png" class="ui:h-7 ui:w-7" alt="ClassroomIO Logo" />
-    <span class="ui:text-foreground ui:text-md">ClassroomIO</span>
+  <a {href} class="ui:flex ui:items-center ui:justify-center ui:gap-2">
+    <img src="/logo-512.png" class="ui:h-7 ui:w-7" {alt} />
+    {#if name}
+      <span class="ui:text-foreground ui:text-md">{name}</span>
+    {/if}
   </a>
 
-  <p class="ui:text-muted-foreground ui:text-sm">{tagline}</p>
+  {#if tagline}
+    <p class="ui:text-muted-foreground ui:text-sm">{tagline}</p>
+  {/if}
 </div>

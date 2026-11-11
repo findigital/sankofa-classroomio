@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { Button } from '@cio/ui/base/button';
   import { ExportMenu } from '$features/ui';
   import { orgApi } from '$features/org/api/org.svelte';
@@ -51,7 +52,7 @@
 </script>
 
 <svelte:head>
-  <title>Audience - ClassroomIO</title>
+  <title>Audience - {appBrandName()}</title>
 </svelte:head>
 
 <Page.Root class="mx-auto w-full max-w-6xl">

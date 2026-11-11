@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { ProfilePage } from '$features/settings/pages';
   import { VisitOrgSiteButton } from '$features/ui';
   import { t } from '$lib/utils/functions/translations';
@@ -23,7 +24,7 @@
 </script>
 
 <svelte:head>
-  <title>Settings - ClassroomIO</title>
+  <title>Settings - {appBrandName()}</title>
 </svelte:head>
 
 <Page.Header>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { onMount } from 'svelte';
   import { resolve } from '$app/paths';
   import * as Page from '@cio/ui/base/page';
@@ -46,7 +47,7 @@
 </script>
 
 <svelte:head>
-  <title>{$t('cohorts.goals.heading')} · ClassroomIO</title>
+  <title>{$t('cohorts.goals.heading')} - {appBrandName()}</title>
 </svelte:head>
 
 <Page.Root class="w-full">

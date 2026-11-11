@@ -3680,7 +3680,7 @@
     "tools": "Инструменты"
   },
   "media_manager": {
-    "page_title": "Медиаменеджер — ClassroomIO",
+    "page_title": "Медиаменеджер",
     "heading": "Медиа-менеджер",
     "empty": "Активы не найдены",
     "usage": {
@@ -4960,7 +4960,7 @@
     "confirm_link_suffix": "чтобы подтвердить свою электронную почту"
   },
   "public_courses": {
-    "page_title": "Курсы - ClassroomIO",
+    "page_title": "Курсы",
     "heading": "Курсы",
     "subtitle": "Просмотреть все опубликованные курсы",
     "clear_filters": "Очистить фильтры",
@@ -4993,7 +4993,7 @@
     }
   },
   "tags_admin": {
-    "page_title": "Теги — ClassroomIO",
+    "page_title": "Теги",
     "heading": "Теги",
     "create": "Создать",
     "tag_modal": {
@@ -5052,7 +5052,7 @@
   },
   "invite": {
     "organization": {
-      "page_title": "Присоединяйтесь к {orgName} в ClassroomIO.",
+      "page_title": "Присоединяйтесь к {orgName}",
       "invitation_student": "Вас пригласили в {orgName} в качестве ученика.",
       "invitation_teacher": "Вас пригласили в {orgName} в качестве преподавателя.",
       "invitation_admin": "Вас пригласили в {orgName} в качестве администратора.",
@@ -5080,7 +5080,7 @@
       "loading": "Загрузка приглашения..."
     },
     "link": {
-      "page_title": "Присоединяйтесь к {orgName} в ClassroomIO.",
+      "page_title": "Присоединяйтесь к {orgName}",
       "invitation_student": "Вас пригласили присоединиться к {orgName} в качестве студента.",
       "invitation_teacher": "Вас пригласили присоединиться к {orgName} в качестве преподавателя.",
       "invitation_admin": "Вас пригласили присоединиться к {orgName} в качестве администратора.",
@@ -6298,7 +6298,7 @@
       "disabled": "Ссылка-приглашение отключена"
     },
     "join": {
-      "page_title": "Присоединяйтесь к {resourceName} на ClassroomIO",
+      "page_title": "Присоединяйтесь к {resourceName}",
       "invitation": "Вас пригласили присоединиться к {resourceName} в {orgName}.",
       "course_button": "Присоединиться к курсу",
       "cohort_button": "Присоединиться к группе",
@@ -6588,8 +6588,8 @@
   },
   "oauth": {
     "consent": {
-      "page_title": "Подключите приложение к ClassroomIO",
-      "title": "Подключить {client} к ClassroomIO",
+      "page_title": "Подключите приложение к {brand}",
+      "title": "Подключить {client} к {brand}",
       "workspace": "Рабочее пространство: {workspace}",
       "permissions_heading": "{client} сможет:",
       "stay_connected": "Оставаться подключённым, пока вы не отзовёте доступ",

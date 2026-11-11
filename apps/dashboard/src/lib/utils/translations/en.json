@@ -1431,7 +1431,7 @@
     }
   },
   "media_manager": {
-    "page_title": "Media Manager - ClassroomIO",
+    "page_title": "Media Manager",
     "heading": "Media Manager",
     "page_subtitle": "Keep files, videos, and links for your courses in one library.",
     "empty": "No assets found",
@@ -1581,7 +1581,7 @@
     }
   },
   "tags_admin": {
-    "page_title": "Tags - ClassroomIO",
+    "page_title": "Tags",
     "heading": "Tags",
     "page_subtitle": "Organize courses with labels so filters and lists stay easy to scan.",
     "create": "Create",
@@ -1639,7 +1639,7 @@
     }
   },
   "public_courses": {
-    "page_title": "Courses - ClassroomIO",
+    "page_title": "Courses",
     "heading": "Courses",
     "subtitle": "Browse all published courses",
     "clear_filters": "Clear Filters",
@@ -5629,7 +5629,7 @@
   },
   "invite": {
     "organization": {
-      "page_title": "Join {orgName} on ClassroomIO",
+      "page_title": "Join {orgName}",
       "invitation_student": "You've been invited into {orgName} as a student.",
       "invitation_teacher": "You've been invited into {orgName} as a teacher.",
       "invitation_admin": "You've been invited into {orgName} as an admin.",
@@ -5657,7 +5657,7 @@
       "loading": "Loading invite..."
     },
     "link": {
-      "page_title": "Join {orgName} on ClassroomIO",
+      "page_title": "Join {orgName}",
       "invitation_student": "You've been invited to join {orgName} as a student.",
       "invitation_teacher": "You've been invited to join {orgName} as a teacher.",
       "invitation_admin": "You've been invited to join {orgName} as an admin.",
@@ -6285,7 +6285,7 @@
     "generate_failed": "Could not create the invite link",
     "toggle_failed": "Could not update the invite link",
     "join": {
-      "page_title": "Join {resourceName} on ClassroomIO",
+      "page_title": "Join {resourceName}",
       "invitation": "You've been invited to join {resourceName} at {orgName}.",
       "course_button": "Join course",
       "cohort_button": "Join cohort",
@@ -6574,8 +6574,8 @@
   },
   "oauth": {
     "consent": {
-      "page_title": "Connect an app to ClassroomIO",
-      "title": "Connect {client} to ClassroomIO",
+      "page_title": "Connect an app to {brand}",
+      "title": "Connect {client} to {brand}",
       "workspace": "Workspace: {workspace}",
       "permissions_heading": "{client} will be able to:",
       "stay_connected": "Stay connected until you remove access",

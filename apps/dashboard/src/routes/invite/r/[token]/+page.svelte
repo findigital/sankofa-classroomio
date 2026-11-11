@@ -11,6 +11,7 @@
   import { snackbar } from '$features/ui/snackbar/store';
   import { page } from '$app/state';
   import { t } from '$lib/utils/functions/translations';
+  import { brandedPageTitle } from '$lib/utils/functions/brand';
 
   let { data } = $props();
 
@@ -87,7 +88,7 @@
 </script>
 
 <svelte:head>
-  <title>{$t('invite_link.join.page_title', { resourceName })}</title>
+  <title>{brandedPageTitle($t('invite_link.join.page_title', { resourceName }))}</title>
 </svelte:head>
 
 <AuthUI

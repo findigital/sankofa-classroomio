@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import * as Sidebar from '@cio/ui/base/sidebar';
@@ -210,7 +211,7 @@
 </script>
 
 <svelte:head>
-  <title>{courseApi.course?.title || 'ClassroomIO Course'}</title>
+  <title>{courseApi.course?.title || appBrandName()}</title>
 </svelte:head>
 
 {#if isCourseReady}

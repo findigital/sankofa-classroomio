@@ -3680,7 +3680,7 @@
     "tools": "Herramientas"
   },
   "media_manager": {
-    "page_title": "Administrador de medios - ClassroomIO",
+    "page_title": "Administrador de medios",
     "heading": "Gerente de Medios",
     "empty": "No se encontraron activos",
     "usage": {
@@ -4960,7 +4960,7 @@
     "confirm_link_suffix": "para confirmar tu correo electrónico"
   },
   "public_courses": {
-    "page_title": "Cursos - ClassroomIO",
+    "page_title": "Cursos",
     "heading": "Cursos",
     "subtitle": "Explorar todos los cursos publicados",
     "clear_filters": "Borrar filtros",
@@ -4993,7 +4993,7 @@
     }
   },
   "tags_admin": {
-    "page_title": "Etiquetas - ClassroomIO",
+    "page_title": "Etiquetas",
     "heading": "Etiquetas",
     "create": "crear",
     "tag_modal": {
@@ -5052,7 +5052,7 @@
   },
   "invite": {
     "organization": {
-      "page_title": "Únase a {orgName} en ClassroomIO",
+      "page_title": "Únase a {orgName}",
       "invitation_student": "Has sido invitado a {orgName} como estudiante.",
       "invitation_teacher": "Has sido invitado a {orgName} como profesor.",
       "invitation_admin": "Has sido invitado a {orgName} como administrador.",
@@ -5080,7 +5080,7 @@
       "loading": "Cargando invitación..."
     },
     "link": {
-      "page_title": "Únase a {orgName} en ClassroomIO",
+      "page_title": "Únase a {orgName}",
       "invitation_student": "Te invitaron a unirte a {orgName} como estudiante.",
       "invitation_teacher": "Te han invitado a unirte a {orgName} como profesor.",
       "invitation_admin": "Le invitaron a unirse a {orgName} como administrador.",
@@ -6298,7 +6298,7 @@
       "disabled": "Enlace de invitación deshabilitado"
     },
     "join": {
-      "page_title": "Únete a {resourceName} en ClassroomIO",
+      "page_title": "Únete a {resourceName}",
       "invitation": "Te han invitado a unirte a {resourceName} en {orgName}.",
       "course_button": "Unirse al curso",
       "cohort_button": "Unirse al grupo",
@@ -6588,8 +6588,8 @@
   },
   "oauth": {
     "consent": {
-      "page_title": "Conecta una app con ClassroomIO",
-      "title": "Conectar {client} con ClassroomIO",
+      "page_title": "Conecta una app con {brand}",
+      "title": "Conectar {client} con {brand}",
       "workspace": "Espacio de trabajo: {workspace}",
       "permissions_heading": "{client} podrá:",
       "stay_connected": "Mantener la conexión hasta que quites el acceso",

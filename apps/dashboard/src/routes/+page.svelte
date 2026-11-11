@@ -16,7 +16,7 @@
   import { t } from '$lib/utils/functions/translations';
   import { resolveOrgLandingAuthAction } from '$features/org/utils/org-landing-auth-action';
   import { resolveOrgLandingLearnerAccount } from '$features/org/utils/org-landing-learner-account';
-  import { defaultDocumentTitle } from '$lib/utils/functions/brand';
+  import { appBrandName, defaultDocumentTitle, supportEmail } from '$lib/utils/functions/brand';
   import SourceOffer from '$features/ui/source-offer.svelte';
 
   let { data } = $props();
@@ -24,6 +24,7 @@
   const hasSetupError = $derived(!appInitApi.loading && !!appInitApi.error);
 
   const pageTitle = $derived(data.isOrgSite && data.org ? data.org.name : defaultDocumentTitle());
+  const helpAddress = $derived(supportEmail());
 
   const authAction = $derived(
     resolveOrgLandingAuthAction({
@@ -90,16 +91,20 @@
     variant="page"
     layout="full-page"
     showLogo={true}
+    logoName={appBrandName()}
+    logoHref="/"
   >
     <p class="my-2 text-red-500">{appInitApi.error}</p>
     <div class="flex gap-2">
       <Button variant="secondary" onclick={() => window.location.reload()}>Reload Page</Button>
-      <Button variant="default" href="https://classroomio.com/contact">Contact Us</Button>
+      {#if helpAddress}
+        <Button variant="default" href={`mailto:${helpAddress}`}>Contact Us</Button>
+      {/if}
     </div>
   </Empty>
 {:else}
   <div class="m-2 flex h-screen w-screen flex-col items-center justify-center font-sans sm:m-0">
-    <SimpleLogoNav />
+    <SimpleLogoNav name={appBrandName()} href="/" />
     <Block.Loader
       blockText={false}
       title={$t('common.loading_states.opening_academy.title')}

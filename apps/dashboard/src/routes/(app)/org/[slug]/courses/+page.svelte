@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import CoursesPage from '$features/course/pages/courses.svelte';
   import TemplateRow from '$features/course/components/template-row.svelte';
   import { Button } from '@cio/ui/base/button';
@@ -226,7 +227,7 @@
 </script>
 
 <svelte:head>
-  <title>Courses - ClassroomIO</title>
+  <title>Courses - {appBrandName()}</title>
 </svelte:head>
 
 <Page.Root class="w-full gap-0">

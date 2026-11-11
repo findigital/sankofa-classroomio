@@ -3,6 +3,7 @@
   import LockIcon from '@lucide/svelte/icons/lock';
   import { Empty } from '@cio/ui/custom/empty';
   import { t } from '$lib/utils/functions/translations';
+  import { appBrandName } from '$lib/utils/functions/brand';
 </script>
 
 <div class="flex h-screen w-screen flex-col items-center justify-center">
@@ -13,7 +14,9 @@
     variant="page"
     layout="full-page"
     showLogo={true}
+    logoName={appBrandName()}
+    logoHref="/"
   >
-    <Button href="https://classroomio.com">{$t('common.restricted_page.home')}</Button>
+    <Button href="/">{$t('common.restricted_page.home')}</Button>
   </Empty>
 </div>

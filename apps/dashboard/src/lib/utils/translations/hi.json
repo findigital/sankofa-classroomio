@@ -3680,7 +3680,7 @@
     "tools": "उपकरण"
   },
   "media_manager": {
-    "page_title": "मीडिया मैनेजर - क्लासरूमआईओ",
+    "page_title": "मीडिया मैनेजर",
     "heading": "मीडिया मैनेजर",
     "empty": "कोई संपत्ति नहीं मिली",
     "usage": {
@@ -4960,7 +4960,7 @@
     "confirm_link_suffix": "अपने ईमेल की पुष्टि करने के लिए"
   },
   "public_courses": {
-    "page_title": "पाठ्यक्रम - क्लासरूमआईओ",
+    "page_title": "पाठ्यक्रम",
     "heading": "पाठ्यक्रम",
     "subtitle": "सभी प्रकाशित पाठ्यक्रम ब्राउज़ करें",
     "clear_filters": "फ़िल्टर साफ़ करें",
@@ -4993,7 +4993,7 @@
     }
   },
   "tags_admin": {
-    "page_title": "टैग - क्लासरूमआईओ",
+    "page_title": "टैग",
     "heading": "टैग",
     "create": "बनाएँ",
     "tag_modal": {
@@ -5052,7 +5052,7 @@
   },
   "invite": {
     "organization": {
-      "page_title": "ClassroomIO पर {orgName} से जुड़ें",
+      "page_title": "{orgName} से जुड़ें",
       "invitation_student": "आपको {orgName} में छात्र के रूप में आमंत्रित किया गया है।",
       "invitation_teacher": "आपको {orgName} में शिक्षक के रूप में आमंत्रित किया गया है।",
       "invitation_admin": "आपको {orgName} में व्यवस्थापक के रूप में आमंत्रित किया गया है।",
@@ -5080,7 +5080,7 @@
       "loading": "आमंत्रण लोड हो रहा है..."
     },
     "link": {
-      "page_title": "ClassroomIO पर {orgName} से जुड़ें",
+      "page_title": "{orgName} से जुड़ें",
       "invitation_student": "आपको एक छात्र के रूप में {orgName} में शामिल होने के लिए आमंत्रित किया गया है।",
       "invitation_teacher": "आपको एक शिक्षक के रूप में {orgName} में शामिल होने के लिए आमंत्रित किया गया है।",
       "invitation_admin": "आपको एक व्यवस्थापक के रूप में {orgName} से जुड़ने के लिए आमंत्रित किया गया है।",
@@ -6298,7 +6298,7 @@
       "disabled": "आमंत्रण लिंक निष्क्रिय है"
     },
     "join": {
-      "page_title": "क्लासरूमआईओ पर {resourceName} से जुड़ें",
+      "page_title": "{resourceName} से जुड़ें",
       "invitation": "आपको {orgName} पर {resourceName} से जुड़ने के लिए आमंत्रित किया गया है।",
       "course_button": "कोर्स से जुड़ें",
       "cohort_button": "कोहोर्ट से जुड़ें",
@@ -6588,8 +6588,8 @@
   },
   "oauth": {
     "consent": {
-      "page_title": "ClassroomIO से कोई ऐप कनेक्ट करें",
-      "title": "{client} को ClassroomIO से कनेक्ट करें",
+      "page_title": "{brand} से कोई ऐप कनेक्ट करें",
+      "title": "{client} को {brand} से कनेक्ट करें",
       "workspace": "वर्कस्पेस: {workspace}",
       "permissions_heading": "{client} यह कर सकेगा:",
       "stay_connected": "जब तक आप एक्सेस न हटाएँ, कनेक्टेड रहें",

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { page } from '$app/state';
   import * as Sidebar from '@cio/ui/base/sidebar';
   import { Empty } from '@cio/ui/custom/empty';
@@ -32,7 +33,7 @@
 </script>
 
 <svelte:head>
-  <title>{cohortApi.cohort?.name || 'Cohort'} - ClassroomIO</title>
+  <title>{cohortApi.cohort?.name || 'Cohort'} - {appBrandName()}</title>
 </svelte:head>
 
 <Sidebar.Provider data-sveltekit-preload-data="off">

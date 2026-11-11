@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import { Button } from '@cio/ui/base/button';
@@ -242,7 +243,7 @@
 </script>
 
 <svelte:head>
-  <title>Join {data.course?.title ?? 'Course'} on ClassroomIO</title>
+  <title>Join {data.course?.title ?? 'Course'} on {appBrandName()}</title>
   <meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 

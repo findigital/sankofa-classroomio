@@ -3680,7 +3680,7 @@
     "tools": "Ferramentas"
   },
   "media_manager": {
-    "page_title": "Gerenciador de mídia - ClassroomIO",
+    "page_title": "Gerenciador de mídia",
     "heading": "Gerente de mídia",
     "empty": "Nenhum recurso encontrado",
     "usage": {
@@ -4960,7 +4960,7 @@
     "confirm_link_suffix": "para confirmar seu e-mail"
   },
   "public_courses": {
-    "page_title": "Cursos - ClassroomIO",
+    "page_title": "Cursos",
     "heading": "Cursos",
     "subtitle": "Navegue por todos os cursos publicados",
     "clear_filters": "Limpar filtros",
@@ -4993,7 +4993,7 @@
     }
   },
   "tags_admin": {
-    "page_title": "Etiquetas - ClassroomIO",
+    "page_title": "Etiquetas",
     "heading": "Etiquetas",
     "create": "Criar",
     "tag_modal": {
@@ -5052,7 +5052,7 @@
   },
   "invite": {
     "organization": {
-      "page_title": "Junte-se a {orgName} no ClassroomIO",
+      "page_title": "Junte-se a {orgName}",
       "invitation_student": "Você foi convidado para {orgName} como aluno.",
       "invitation_teacher": "Você foi convidado para {orgName} como professor.",
       "invitation_admin": "Você foi convidado para {orgName} como administrador.",
@@ -5080,7 +5080,7 @@
       "loading": "Carregando convite..."
     },
     "link": {
-      "page_title": "Junte-se a {orgName} no ClassroomIO",
+      "page_title": "Junte-se a {orgName}",
       "invitation_student": "Você foi convidado para ingressar em {orgName} como estudante.",
       "invitation_teacher": "Você foi convidado para ingressar em {orgName} como professor.",
       "invitation_admin": "Você foi convidado para ingressar em {orgName} como administrador.",
@@ -6298,7 +6298,7 @@
       "disabled": "Link de convite desativado"
     },
     "join": {
-      "page_title": "Inscreva-se no {resourceName} no ClassroomIO",
+      "page_title": "Inscreva-se no {resourceName}",
       "invitation": "Você foi convidado(a) a se inscrever no {resourceName} na {orgName}.",
       "course_button": "Inscreva-se no curso",
       "cohort_button": "Inscreva-se na turma",
@@ -6588,8 +6588,8 @@
   },
   "oauth": {
     "consent": {
-      "page_title": "Conecte um app ao ClassroomIO",
-      "title": "Conectar {client} ao ClassroomIO",
+      "page_title": "Conecte um app ao {brand}",
+      "title": "Conectar {client} ao {brand}",
       "workspace": "Espaço de trabalho: {workspace}",
       "permissions_heading": "{client} poderá:",
       "stay_connected": "Manter conectado até você remover o acesso",

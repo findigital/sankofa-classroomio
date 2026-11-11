@@ -28,6 +28,7 @@
     newUserCallbackPathname?: string;
     handleSubmit?: () => void;
     children?: Snippet;
+    footer?: Snippet;
     getPasswordAuthAlternative?: Snippet;
   }
 
@@ -43,6 +44,7 @@
     newUserCallbackPathname,
     handleSubmit = () => {},
     children,
+    footer,
     getPasswordAuthAlternative
   }: Props = $props();
 
@@ -87,7 +89,9 @@
 </script>
 
 <div
-  class="auth-ui-background ui:bg-background relative flex min-h-screen w-full items-center justify-center overflow-hidden p-4"
+  class="auth-ui-background ui:bg-background relative flex min-h-screen w-full items-center justify-center overflow-hidden px-4 pt-4 {footer
+    ? 'pb-16'
+    : 'pb-4'}"
 >
   {#if showBlockFooter}
     <div class="absolute inset-0 z-0 hidden translate-x-[16%] md:block" style:--machine-face="var(--background)">
@@ -168,4 +172,9 @@
       {/if}
     </Card.Root>
   </div>
+  {#if footer}
+    <div class="absolute inset-x-0 bottom-4 z-20 flex justify-center">
+      {@render footer()}
+    </div>
+  {/if}
 </div>

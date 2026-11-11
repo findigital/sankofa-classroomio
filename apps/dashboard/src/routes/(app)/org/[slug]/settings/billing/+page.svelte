@@ -1,11 +1,12 @@
 <script>
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { BillingPage } from '$features/settings/pages';
   import { t } from '$lib/utils/functions/translations';
   import * as Page from '@cio/ui/base/page';
 </script>
 
 <svelte:head>
-  <title>Billing - ClassroomIO</title>
+  <title>Billing - {appBrandName()}</title>
 </svelte:head>
 
 <Page.Header>

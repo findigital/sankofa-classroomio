@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
@@ -192,7 +193,7 @@
 </script>
 
 <svelte:head>
-  <title>Home - ClassroomIO</title>
+  <title>Home - {appBrandName()}</title>
 </svelte:head>
 
 {#if creatingState === 'creating'}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { Button } from '@cio/ui/base/button';
   import * as Item from '@cio/ui/base/item';
   import * as Page from '@cio/ui/base/page';
@@ -41,7 +42,7 @@
 </script>
 
 <svelte:head>
-  <title>Setup - ClassroomIO</title>
+  <title>Setup - {appBrandName()}</title>
 </svelte:head>
 
 <Page.Root class="w-full md:max-w-4xl lg:mx-auto">

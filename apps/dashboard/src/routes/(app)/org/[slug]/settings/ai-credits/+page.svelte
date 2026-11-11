@@ -1,11 +1,12 @@
 <script>
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { AiCreditsPage } from '$features/settings/pages';
   import { t } from '$lib/utils/functions/translations';
   import * as Page from '@cio/ui/base/page';
 </script>
 
 <svelte:head>
-  <title>AI Credits - ClassroomIO</title>
+  <title>AI Credits - {appBrandName()}</title>
 </svelte:head>
 
 <Page.Header>

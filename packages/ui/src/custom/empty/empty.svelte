@@ -50,6 +50,10 @@
     variant?: EmptyVariant;
     layout?: 'block' | 'full-page';
     showLogo?: boolean;
+    logoName?: string;
+    logoHref?: string;
+    logoTagline?: string;
+    logoAlt?: string;
     animatedBackground?: boolean;
   }
 
@@ -65,6 +69,10 @@
     variant = 'default',
     layout = 'block',
     showLogo = false,
+    logoName = '',
+    logoHref = '/',
+    logoTagline = '',
+    logoAlt = '',
     animatedBackground = false,
     ...restProps
   }: Props & Omit<ComponentProps<typeof EmptyBase.Root>, 'class' | 'children'> = $props();
@@ -112,7 +120,7 @@
 {#if layout === 'full-page'}
   <div class={fullPageVariants({ hasMedia: Boolean(media), showLogo })}>
     {#if showLogo}
-      <SimpleLogoNav />
+      <SimpleLogoNav name={logoName} href={logoHref} tagline={logoTagline} {logoAlt} />
     {/if}
 
     {@render content()}

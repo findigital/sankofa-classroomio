@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
@@ -37,7 +38,7 @@
 </script>
 
 <svelte:head>
-  <title>Reset Password - ClassroomIO</title>
+  <title>Reset Password - {appBrandName()}</title>
 </svelte:head>
 
 <AuthUI

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { DashboardPage } from '$features/lms/pages';
   import { getGreeting } from '$lib/utils/functions/date';
   import { t } from '$lib/utils/functions/translations';
@@ -35,7 +36,7 @@
 </script>
 
 <svelte:head>
-  <title>Student Dashboard - ClassroomIO</title>
+  <title>Student Dashboard - {appBrandName()}</title>
 </svelte:head>
 
 <Page.Root class="mx-auto w-full max-w-4xl">

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { appBrandName } from '$lib/utils/functions/brand';
   import { CustomizeLmsPage } from '$features/settings/pages';
   import { t } from '$lib/utils/functions/translations';
   import * as Page from '@cio/ui/base/page';
@@ -22,7 +23,7 @@
 </script>
 
 <svelte:head>
-  <title>Customize LMS - ClassroomIO</title>
+  <title>Customize LMS - {appBrandName()}</title>
 </svelte:head>
 
 <CustomizeLmsPage bind:this={customizeLmsComponent} bind:hasUnsavedChanges />
