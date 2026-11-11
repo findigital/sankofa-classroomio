@@ -20,16 +20,7 @@
 
   const featured = $derived(courses[0]);
   const featuredTypeMeta = $derived(featured ? getCourseTypeLandingMeta(featured) : undefined);
-  const syllabusItems = $derived(
-    featured
-      ? [
-          { label: 'Foundations', duration: '42 min' },
-          { label: 'Core concepts', duration: '1h 12m' },
-          { label: 'Hands-on practice', duration: '58 min' },
-          { label: 'Capstone project', duration: '2h 30m' }
-        ]
-      : []
-  );
+  const syllabusItems = $derived(featured?.outline ?? []);
 </script>
 
 {@render navigation()}
@@ -150,22 +141,26 @@
                 {featured.description}
               </p>
 
-              <div class="ui:px-5 ui:pb-4">
-                {#each syllabusItems as item, idx (idx)}
-                  <div
-                    class="ui:flex ui:items-center ui:gap-2.5 ui:py-1.5 ui:text-[13px]"
-                    style={idx === 0 ? '' : 'border-top: 1px solid var(--landing-border-soft);'}
-                  >
-                    <span class="ui:text-[11px] ui:w-4 ui:tabular-nums ui:text-[var(--landing-fg-faint)]">
-                      {String(idx + 1).padStart(2, '0')}
-                    </span>
-                    <span class="ui:flex-1 ui:text-[var(--landing-fg)]">{item.label}</span>
-                    <span class="ui:text-[11.5px] ui:tabular-nums ui:text-[var(--landing-fg-muted)]"
-                      >{item.duration}</span
+              {#if syllabusItems.length > 0}
+                <div class="ui:px-5 ui:pb-4">
+                  {#each syllabusItems as item, idx (idx)}
+                    <div
+                      class="ui:flex ui:items-center ui:gap-2.5 ui:py-1.5 ui:text-[13px]"
+                      style={idx === 0 ? '' : 'border-top: 1px solid var(--landing-border-soft);'}
                     >
-                  </div>
-                {/each}
-              </div>
+                      <span class="ui:text-[11px] ui:w-4 ui:tabular-nums ui:text-[var(--landing-fg-faint)]">
+                        {String(idx + 1).padStart(2, '0')}
+                      </span>
+                      <span class="ui:flex-1 ui:text-[var(--landing-fg)]">{item.label}</span>
+                      {#if item.duration}
+                        <span class="ui:text-[11.5px] ui:tabular-nums ui:text-[var(--landing-fg-muted)]"
+                          >{item.duration}</span
+                        >
+                      {/if}
+                    </div>
+                  {/each}
+                </div>
+              {/if}
 
               <div
                 class="ui:flex ui:items-center ui:justify-between ui:px-5 ui:py-3 ui:bg-[var(--landing-bg)]"

@@ -24,6 +24,7 @@
   import AwardIcon from '@lucide/svelte/icons/award';
   import { currentOrgPath, isFreePlan } from '$lib/utils/store/org';
   import { IS_AI_ENABLED } from '$lib/utils/constants/ai';
+  import { HIDE_UPSTREAM_PROMOS } from '$lib/utils/constants/promos';
   import { openUpgradeModal } from '$lib/utils/store/upgrade-modal';
   import { AI_CHAT_MODEL_STORAGE_KEY } from '$features/ai-assistant/utils/constants';
   import type { TCourseType } from '@cio/db/types';
@@ -252,40 +253,44 @@
         onsubmit={handleCreate}
       />
 
-      <p class="ui:text-muted-foreground my-3 text-center text-sm font-medium">
-        {$t('course.creator.template.heading')}
-      </p>
-      <div class="grid gap-3 sm:grid-cols-3">
-        {#each COURSE_TEMPLATES as template (template.id)}
-          {@const display = DISPLAY_BY_ID[template.id]}
-          {@const isSelected = selectedTemplateId === template.id}
-          <button
-            type="button"
-            class="group ui:focus-visible:ring-ring/50 flex h-full min-h-[168px] w-full cursor-pointer flex-col items-start gap-3 rounded-2xl border p-5 text-left transition-colors focus-visible:ring-[3px] focus-visible:outline-none sm:p-6 {isSelected
-              ? 'ui:bg-primary/5 ui:border-primary ui:ring-primary/20 ring-2'
-              : 'ui:bg-card ui:border-border ui:hover:border-primary'}"
-            onclick={() => selectTemplate(template)}
-            aria-label={$t(display.titleKey)}
-            aria-pressed={isSelected}
-          >
-            <div class="ui:text-primary ui:bg-primary/10 flex size-10 shrink-0 items-center justify-center rounded-lg">
-              {#if display.iconName === 'GraduationCap'}
-                <GraduationCapIcon class="size-6" />
-              {:else if display.iconName === 'Compass'}
-                <CompassIcon class="size-6" />
-              {:else}
-                <AwardIcon class="size-6" />
-              {/if}
-            </div>
-            <span class="ui:text-foreground text-sm leading-tight font-semibold">
-              {$t(display.titleKey)}
-            </span>
-            <span class="ui:text-muted-foreground text-xs leading-snug">
-              {$t(display.descriptionKey)}
-            </span>
-          </button>
-        {/each}
-      </div>
+      {#if !HIDE_UPSTREAM_PROMOS}
+        <p class="ui:text-muted-foreground my-3 text-center text-sm font-medium">
+          {$t('course.creator.template.heading')}
+        </p>
+        <div class="grid gap-3 sm:grid-cols-3">
+          {#each COURSE_TEMPLATES as template (template.id)}
+            {@const display = DISPLAY_BY_ID[template.id]}
+            {@const isSelected = selectedTemplateId === template.id}
+            <button
+              type="button"
+              class="group ui:focus-visible:ring-ring/50 flex h-full min-h-[168px] w-full cursor-pointer flex-col items-start gap-3 rounded-2xl border p-5 text-left transition-colors focus-visible:ring-[3px] focus-visible:outline-none sm:p-6 {isSelected
+                ? 'ui:bg-primary/5 ui:border-primary ui:ring-primary/20 ring-2'
+                : 'ui:bg-card ui:border-border ui:hover:border-primary'}"
+              onclick={() => selectTemplate(template)}
+              aria-label={$t(display.titleKey)}
+              aria-pressed={isSelected}
+            >
+              <div
+                class="ui:text-primary ui:bg-primary/10 flex size-10 shrink-0 items-center justify-center rounded-lg"
+              >
+                {#if display.iconName === 'GraduationCap'}
+                  <GraduationCapIcon class="size-6" />
+                {:else if display.iconName === 'Compass'}
+                  <CompassIcon class="size-6" />
+                {:else}
+                  <AwardIcon class="size-6" />
+                {/if}
+              </div>
+              <span class="ui:text-foreground text-sm leading-tight font-semibold">
+                {$t(display.titleKey)}
+              </span>
+              <span class="ui:text-muted-foreground text-xs leading-snug">
+                {$t(display.descriptionKey)}
+              </span>
+            </button>
+          {/each}
+        </div>
+      {/if}
 
       <HomeTemplateSection />
     </div>

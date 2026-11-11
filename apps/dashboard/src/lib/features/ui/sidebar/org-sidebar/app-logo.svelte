@@ -1,16 +1,15 @@
 <script lang="ts">
   import * as Avatar from '@cio/ui/base/avatar';
   import * as Sidebar from '@cio/ui/base/sidebar';
-  import { currentOrg, currentOrgPlan } from '$lib/utils/store/org';
   import { Badge } from '@cio/ui/base/badge';
-  import { PLAN_NAMES, PLAN } from '@cio/utils/plans';
-  import { BRAND_ROOT_DOMAIN, TENANT_ROOT_DOMAIN } from '@cio/utils/constants';
+  import { PLAN, PLAN_NAMES } from '@cio/utils/plans';
+  import { appBrandName } from '$lib/utils/functions/brand';
+  import { shortenName } from '$lib/utils/functions/string';
+  import { currentOrg, currentOrgPath, currentOrgPlan } from '$lib/utils/store/org';
 
   const plan = $derived($currentOrgPlan?.planName || PLAN.BASIC);
-  const utmSource = $derived(
-    $currentOrg.customDomain ||
-      ($currentOrg.siteName ? `${$currentOrg.siteName}.${TENANT_ROOT_DOMAIN}` : BRAND_ROOT_DOMAIN)
-  );
+  const brandName = $derived($currentOrg.name || appBrandName());
+  const homeHref = $derived($currentOrgPath === '#' ? '/' : $currentOrgPath);
 </script>
 
 <Sidebar.Menu>
@@ -20,17 +19,13 @@
       class="ui:data-[state=open]:bg-sidebar-accent ui:data-[state=open]:text-sidebar-accent-foreground"
     >
       {#snippet child({ props })}
-        <a
-          href="https://{BRAND_ROOT_DOMAIN}?utm_source={utmSource}"
-          target="_blank"
-          rel="noopener noreferrer"
-          {...props}
-        >
-          <Avatar.Root class="flex size-6 items-center justify-center">
-            <Avatar.Image src="/logo-192.png" alt="ClassroomIO logo" />
+        <a href={homeHref} {...props}>
+          <Avatar.Root class="flex size-6 items-center justify-center rounded-md">
+            <Avatar.Image src={$currentOrg.avatarUrl} alt={brandName} />
+            <Avatar.Fallback class="rounded-md text-xs">{shortenName(brandName)}</Avatar.Fallback>
           </Avatar.Root>
 
-          <span class="truncate font-normal">ClassroomIO</span>
+          <span class="truncate font-normal">{brandName}</span>
           <Badge variant="outline" class="capitalize">
             {PLAN_NAMES[plan] || plan}
           </Badge>

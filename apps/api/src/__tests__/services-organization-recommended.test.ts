@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@cio/db/queries/course', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@cio/db/queries/course')>()),
-  getExploreCourses: vi.fn().mockResolvedValue({ data: [], total: 0 })
+  getExploreCourses: vi.fn().mockResolvedValue({ data: [], total: 0, allEnrolled: false })
 }));
 
 import { getExploreCourses } from '@cio/db/queries/course';

@@ -11,6 +11,10 @@ type OrganizationMembership = {
   siteName?: string | null;
 };
 
+function isStaffRole(roleId: number): boolean {
+  return roleId === ROLE.ADMIN || roleId === ROLE.TUTOR;
+}
+
 interface OrgLandingAuthActionOptions {
   isLoggedIn: boolean;
   isInitialized: boolean;
@@ -40,24 +44,18 @@ export function getOrgLandingAuthAction({
 
   const membership = organizations.find((organization) => organization.id === org.id);
   if (membership) {
-    const isSelfHostedManager =
-      PUBLIC_IS_SELFHOSTED === 'true' &&
-      !!membership.siteName &&
-      (membership.roleId === ROLE.ADMIN || membership.roleId === ROLE.TUTOR);
-    if (isSelfHostedManager) {
-      return { label: t.get('navigation.goto_dashboard'), href: `/org/${membership.siteName}` };
+    if (isStaffRole(membership.roleId) && membership.siteName) {
+      return { label: t.get('navigation.go_to_dashboard'), href: `/org/${membership.siteName}` };
     }
 
     return { label: t.get('landing.learner_menu.continue_learning'), href: STUDENT_HOME_ENTRY_PATH };
   }
 
   if (PUBLIC_IS_SELFHOSTED === 'true') {
-    const managedOrganization = organizations.find(
-      (organization) => organization.roleId === ROLE.ADMIN || organization.roleId === ROLE.TUTOR
-    );
+    const managedOrganization = organizations.find((organization) => isStaffRole(organization.roleId));
     if (managedOrganization?.siteName) {
       return {
-        label: t.get('navigation.goto_dashboard'),
+        label: t.get('navigation.go_to_dashboard'),
         href: `/org/${managedOrganization.siteName}`
       };
     }

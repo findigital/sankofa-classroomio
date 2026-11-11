@@ -31,6 +31,7 @@
   import { CoachMark } from '@cio/ui/custom/coach-mark';
   import { VideoGuideDialog } from '@cio/ui/custom/video-guide';
   import { LESSON_BLOCKS_COACH_MARK_KEY, VIDEO_GUIDES } from '$features/video-guide/utils/video-guide-utils';
+  import { HIDE_UPSTREAM_PROMOS } from '$lib/utils/constants/promos';
   import { isHtmlValueEmpty } from '$lib/utils/functions/toHtml';
   import { lessonVideoBus } from '$features/course/components/lesson/video/lesson-video-bus.svelte';
   import { TRANSCRIPT_PANEL_ID } from '$features/course/components/lesson/video/transcript-panel-definition';
@@ -424,7 +425,7 @@
         <RoleBasedSecurity allowedRoles={[1, 2]}>
           <div class="relative order-first md:order-none">
             <LessonModeToggle {mode} disabled={lessonApi.isSaving} onToggle={toggleMode} />
-            {#if mode === MODES.view}
+            {#if mode === MODES.view && !HIDE_UPSTREAM_PROMOS}
               <CoachMark
                 title={$t('video_guide.lesson_blocks.coach_title')}
                 description={$t('video_guide.lesson_blocks.coach_description')}
@@ -441,13 +442,15 @@
                 {/snippet}
               </CoachMark>
             {/if}
-            <VideoGuideDialog
-              bind:open={lessonBlocksVideoOpen}
-              videoId={VIDEO_GUIDES.lessonBlocks.videoId}
-              title={$t(VIDEO_GUIDES.lessonBlocks.titleKey)}
-              closeLabel={$t('video_guide.close')}
-              testId="lesson-blocks-video-dialog"
-            />
+            {#if !HIDE_UPSTREAM_PROMOS}
+              <VideoGuideDialog
+                bind:open={lessonBlocksVideoOpen}
+                videoId={VIDEO_GUIDES.lessonBlocks.videoId}
+                title={$t(VIDEO_GUIDES.lessonBlocks.titleKey)}
+                closeLabel={$t('video_guide.close')}
+                testId="lesson-blocks-video-dialog"
+              />
+            {/if}
           </div>
         </RoleBasedSecurity>
       </div>

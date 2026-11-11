@@ -540,7 +540,10 @@
   "explore": {
     "heading": "Udforsk vores kurser",
     "empty_heading": "Intet kursus tilgængeligt",
-    "empty_description": "Der er i øjeblikket ingen offentliggjorte kurser tilgængelige"
+    "empty_description": "Der er i øjeblikket ingen offentliggjorte kurser tilgængelige",
+    "all_enrolled_heading": "Du er tilmeldt alle tilgængelige kurser",
+    "all_enrolled_description": "Alle offentliggjorte kurser er allerede på din konto.",
+    "my_courses": "Mine kurser"
   },
   "exercises": {
     "heading": "Øvelser",
@@ -3146,7 +3149,7 @@
     },
     "creator": {
       "heading": "Hvilket kursus vil du lave?",
-      "placeholder": "Bed ClassroomIO om at oprette et kursus til dig...",
+      "placeholder": "Beskriv det kursus, du vil oprette...",
       "type": {
         "self_paced": "Selv tempo",
         "live_class": "Live klasse"
@@ -3568,7 +3571,8 @@
     "loading_state": "Tag dig til næste side, vent venligst.",
     "org_loading_state": "Tager dig til din organisation...",
     "add_organization": "+ Tilføj organisation",
-    "goto_dashboard": "Dashboard"
+    "goto_dashboard": "Dashboard",
+    "go_to_dashboard": "Gå til dashboard"
   },
   "add_org": {
     "create_org": "Opret organisation",

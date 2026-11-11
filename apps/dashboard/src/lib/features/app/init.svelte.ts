@@ -31,6 +31,7 @@ import { setSentryUser } from '$lib/utils/services/sentry';
 import { setTheme } from '$lib/utils/functions/theme';
 import { setupAnalyticsBasedOnLicense } from '$lib/utils/functions/appSetup';
 import shouldRedirectOnAuth from '$lib/utils/functions/routes/shouldRedirectOnAuth';
+import { postAuthDestination } from './post-auth-destination';
 import { ROLE } from '@cio/utils/constants';
 import { STUDENT_HOME_ENTRY_PATH } from '@cio/utils/lms';
 
@@ -347,15 +348,27 @@ class AppInitApi extends BaseApi {
       return;
     }
 
-    if (redirect) {
+    if (redirect && redirect.startsWith('/') && !redirect.startsWith('//')) {
       console.log('redirecting to', redirect);
       // goto redirect won't accept dynamic url so we need to use window.location.href
-      window.location.href = redirect;
+      window.location.replace(redirect);
       return;
     }
 
-    // This allows you to be on the landing page of an organization site and not be redirected
-    if (isPublicRoute(path) && (path !== '/' || isOrgSite)) {
+    const authDestination = postAuthDestination({
+      pathname: path,
+      isOrgSite,
+      orgId,
+      orgSiteName,
+      organizations: this.data.organizations
+    });
+    if (authDestination) {
+      window.location.replace(authDestination);
+      return;
+    }
+
+    const isAuthEntry = path === '/login' || path === '/signup';
+    if (isPublicRoute(path) && (path !== '/' || isOrgSite) && !isAuthEntry) {
       console.log('no redirect is needed');
       return;
     }

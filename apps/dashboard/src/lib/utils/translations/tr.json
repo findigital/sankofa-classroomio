@@ -2062,7 +2062,8 @@
     "redirecting": "Yönlendiriyor",
     "loading_state": "Sizi bir sonraki sayfaya götürüyor, lütfen bekleyin.",
     "org_loading_state": "Sizi kuruluşunuza götürüyor...",
-    "add_organization": "+ Organizasyon Ekle"
+    "add_organization": "+ Organizasyon Ekle",
+    "go_to_dashboard": "Panoya git"
   },
   "markdown_editor": {
     "write": "Write",
@@ -2410,7 +2411,7 @@
   "course": {
     "creator": {
       "heading": "Hangi kursu oluşturmak istiyorsunuz?",
-      "placeholder": "ClassroomIO'dan sizin için bir kurs oluşturmasını isteyin...",
+      "placeholder": "Oluşturmak istediğiniz kursu açıklayın...",
       "drafting": {
         "heading": "Kurs fikrinizin taslağını oluşturma",
         "subtext": "İsteminizi ders başlığına ve çalışma alanına dönüştürüyoruz.",
@@ -5293,7 +5294,10 @@
   "explore": {
     "heading": "Kurslarımızı keşfedin",
     "empty_heading": "Kurs mevcut değil",
-    "empty_description": "Şu anda yayınlanmış kurs mevcut değil"
+    "empty_description": "Şu anda yayınlanmış kurs mevcut değil",
+    "all_enrolled_heading": "Mevcut tüm kurslara kayıtlısınız",
+    "all_enrolled_description": "Yayımlanan her kurs zaten hesabınızda.",
+    "my_courses": "Kurslarım"
   },
   "snackbar": {
     "success": "Başarı",

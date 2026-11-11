@@ -540,7 +540,10 @@
   "explore": {
     "heading": "Explore nossos cursos",
     "empty_heading": "Nenhum curso disponível",
-    "empty_description": "Atualmente não há nenhum curso publicado disponível"
+    "empty_description": "Atualmente não há nenhum curso publicado disponível",
+    "all_enrolled_heading": "Você está inscrito em todos os cursos disponíveis",
+    "all_enrolled_description": "Todos os cursos publicados já estão na sua conta.",
+    "my_courses": "Meus cursos"
   },
   "exercises": {
     "heading": "Exercícios",
@@ -3146,7 +3149,7 @@
     },
     "creator": {
       "heading": "Qual curso você deseja criar?",
-      "placeholder": "Peça ao ClassroomIO para criar um curso para você...",
+      "placeholder": "Descreva o curso que você quer criar...",
       "type": {
         "self_paced": "Individualizado",
         "live_class": "Aula ao vivo"
@@ -3568,7 +3571,8 @@
     "loading_state": "Levando você para a próxima página, aguarde.",
     "org_loading_state": "Levando você para sua organização...",
     "add_organization": "+ Adicionar organização",
-    "goto_dashboard": "Painel"
+    "goto_dashboard": "Painel",
+    "go_to_dashboard": "Ir para o painel"
   },
   "add_org": {
     "create_org": "Criar organização",

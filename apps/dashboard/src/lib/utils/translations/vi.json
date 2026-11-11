@@ -540,7 +540,10 @@
   "explore": {
     "heading": "Khám phá các khóa học của chúng tôi",
     "empty_heading": "Không có khóa học nào",
-    "empty_description": "Hiện tại chưa có khóa học nào được xuất bản"
+    "empty_description": "Hiện tại chưa có khóa học nào được xuất bản",
+    "all_enrolled_heading": "Bạn đã ghi danh mọi khóa học hiện có",
+    "all_enrolled_description": "Mọi khóa học đã xuất bản đều có trong tài khoản của bạn.",
+    "my_courses": "Khóa học của tôi"
   },
   "exercises": {
     "heading": "Bài tập",
@@ -3146,7 +3149,7 @@
     },
     "creator": {
       "heading": "Bạn muốn tạo khóa học nào?",
-      "placeholder": "Hãy yêu cầu ClassroomIO tạo một khóa học cho bạn...",
+      "placeholder": "Mô tả khóa học bạn muốn tạo...",
       "type": {
         "self_paced": "tự nhịp độ",
         "live_class": "Lớp học trực tiếp"
@@ -3568,7 +3571,8 @@
     "loading_state": "Đang đưa bạn đến trang tiếp theo, vui lòng đợi.",
     "org_loading_state": "Đưa bạn đến tổ chức của bạn...",
     "add_organization": "+ Thêm tổ chức",
-    "goto_dashboard": "Bảng điều khiển"
+    "goto_dashboard": "Bảng điều khiển",
+    "go_to_dashboard": "Đi tới bảng điều khiển"
   },
   "add_org": {
     "create_org": "Tạo tổ chức",

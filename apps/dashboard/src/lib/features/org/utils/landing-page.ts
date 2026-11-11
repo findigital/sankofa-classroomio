@@ -709,6 +709,18 @@ export function mapPublicCoursesToLandingPageCourses(courses: OrgPublicCourses):
     const duration = typeof courseRecord.duration === 'string' ? courseRecord.duration : undefined;
     const level = typeof courseRecord.level === 'string' ? courseRecord.level : undefined;
     const description = typeof courseRecord.description === 'string' ? courseRecord.description : '';
+    const outline = Array.isArray(courseRecord.outline)
+      ? courseRecord.outline.flatMap((item) => {
+          if (!isRecord(item) || typeof item.label !== 'string') return [];
+
+          const label = item.label.trim();
+          if (!label) return [];
+
+          const duration = typeof item.duration === 'string' ? item.duration.trim() : '';
+
+          return [duration ? { label, duration } : { label }];
+        })
+      : [];
     const type = typeof courseRecord.type === 'string' ? courseRecord.type : undefined;
     const typeLabel =
       type && ['SELF_PACED', 'LIVE_CLASS', 'COMPLIANCE', 'PUBLIC'].includes(type)
@@ -754,7 +766,8 @@ export function mapPublicCoursesToLandingPageCourses(courses: OrgPublicCourses):
       suppressPrice: memberOpen,
       price: memberOpen || !courseIsPaid ? undefined : price,
       duration,
-      level
+      level,
+      outline
     };
   });
 }
@@ -813,6 +826,85 @@ export function buildOrgLandingPageLabels(options?: { hidePrice?: boolean }): Or
   };
 }
 
+export function isAuthEntryHref(href: string | undefined): boolean {
+  if (!href) return false;
+
+  const path = href.split(/[?#]/)[0];
+
+  return path === '/login' || path === '/signup';
+}
+
+function replaceAuthEntry<T extends { label: string; href: string }>(
+  link: T,
+  signedIn: boolean,
+  replacement: { label: string; href: string } | null
+): T {
+  if (!signedIn || !isAuthEntryHref(link.href)) return link;
+  if (!replacement) return { ...link, label: '', href: '#' };
+
+  return { ...link, label: replacement.label, href: replacement.href };
+}
+
+export function applySignedInAuthLinks(
+  landing: OrgLandingPageJson,
+  options: { signedIn: boolean; replacement: { label: string; href: string } | null }
+): OrgLandingPageJson {
+  if (!options.signedIn) return landing;
+
+  const { replacement } = options;
+  const secondaryAction = landing.hero.secondaryAction
+    ? replaceAuthEntry(landing.hero.secondaryAction, true, replacement)
+    : undefined;
+
+  return {
+    ...landing,
+    navItems: landing.navItems.filter((item) => !isAuthEntryHref(item.href)),
+    hero: {
+      ...landing.hero,
+      primaryAction: replaceAuthEntry(landing.hero.primaryAction, true, replacement),
+      secondaryAction: secondaryAction && secondaryAction.label ? secondaryAction : undefined
+    },
+    footer: {
+      ...landing.footer,
+      columns: landing.footer.columns.map((column) => ({
+        ...column,
+        links: column.links
+          .map((link) => replaceAuthEntry(link, true, replacement))
+          .filter((link) => link.label.length > 0),
+        cta: column.cta ? replaceAuthEntry(column.cta, true, replacement) : undefined
+      })),
+      bottom: landing.footer.bottom
+        ? {
+            ...landing.footer.bottom,
+            links: landing.footer.bottom.links
+              .map((link) => replaceAuthEntry(link, true, replacement))
+              .filter((link) => link.label.length > 0)
+          }
+        : undefined
+    },
+    callout: landing.callout
+      ? { ...landing.callout, action: replaceAuthEntry(landing.callout.action, true, replacement) }
+      : undefined,
+    embed: landing.embed?.secondaryAction
+      ? {
+          ...landing.embed,
+          secondaryAction: replaceAuthEntry(landing.embed.secondaryAction, true, replacement)
+        }
+      : landing.embed,
+    links: landing.links
+      ? {
+          ...landing.links,
+          cards: landing.links.cards.flatMap((card) => {
+            if (!isAuthEntryHref(card.href)) return [card];
+            if (!replacement) return [];
+
+            return [{ ...card, href: replacement.href, title: replacement.label }];
+          })
+        }
+      : undefined
+  };
+}
+
 export function buildOrgLandingPageProps(
   org: AccountOrg | PublicOrg,
   landingpage: unknown,
@@ -823,22 +915,19 @@ export function buildOrgLandingPageProps(
 ): OrgLandingPageProps {
   const normalizedLandingPage = normalizeLandingPageSettings(landingpage);
   const catalog = resolveCatalogPresentation(org.settings as CatalogPresentationSettings | null | undefined);
-  const configuredPrimaryAction = normalizedLandingPage.hero.primaryAction;
-  const primaryAction =
-    configuredPrimaryAction.href === '/login' && authAction && !authAction.loading
-      ? { ...configuredPrimaryAction, href: authAction.href }
-      : configuredPrimaryAction;
+  const signedIn = Boolean(options?.learnerAccount) || Boolean(authAction && !isAuthEntryHref(authAction.href));
+  const replacement =
+    authAction && !authAction.loading && authAction.label && !isAuthEntryHref(authAction.href)
+      ? { label: authAction.label, href: authAction.href }
+      : null;
+  const landing = applySignedInAuthLinks(normalizedLandingPage, { signedIn, replacement });
 
   return {
     orgName: org.name,
     logoUrl: org.avatarUrl || undefined,
     authAction,
     learnerAccount: options?.learnerAccount,
-    ...normalizedLandingPage,
-    hero: {
-      ...normalizedLandingPage.hero,
-      primaryAction
-    },
+    ...landing,
     courses: mapPublicCoursesToLandingPageCourses(courses),
     hasMoreCourses,
     coursesLoaded: options?.coursesLoaded ?? true,

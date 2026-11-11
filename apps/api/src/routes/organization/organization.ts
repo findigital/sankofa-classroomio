@@ -672,7 +672,7 @@ export const organizationRouter = new Hono()
         const { limit, page = 1, sort, order } = c.req.valid('query');
 
         const orgId = c.req.header('cio-org-id')!;
-        const { data, total } = await getRecommendedCourses(orgId, user.id, limit, page, sort, order);
+        const { data, total, allEnrolled } = await getRecommendedCourses(orgId, user.id, limit, page, sort, order);
 
         const resolvedLimit = limit ?? total;
         const totalPages = resolvedLimit > 0 ? Math.ceil(total / resolvedLimit) : 1;
@@ -681,6 +681,7 @@ export const organizationRouter = new Hono()
           {
             success: true,
             data,
+            allEnrolled,
             pagination: { page, limit: resolvedLimit, total, totalPages }
           },
           200

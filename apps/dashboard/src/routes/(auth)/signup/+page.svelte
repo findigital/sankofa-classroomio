@@ -192,8 +192,9 @@
         return;
       }
 
-      const redirect = redirectUrl || '/';
-      window.location.href = redirect.startsWith('/') ? redirect : `/?redirect=${encodeURIComponent(redirect)}`;
+      if (redirectUrl && redirectUrl.startsWith('/') && !redirectUrl.startsWith('//')) {
+        window.location.replace(redirectUrl);
+      }
     } catch (error) {
       submitError =
         (error as { error_description?: string; message?: string })?.error_description ||

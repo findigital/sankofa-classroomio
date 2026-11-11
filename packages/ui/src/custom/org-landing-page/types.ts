@@ -59,6 +59,7 @@ export type CourseItem = {
   price?: string;
   duration?: string;
   level?: string;
+  outline?: Array<{ label: string; duration?: string }>;
 };
 
 export type LearningPathItem = {
