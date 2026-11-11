@@ -1,6 +1,7 @@
 import type { AccountOrg } from '$features/app/types';
 import { baseNavConfig as lmsNavConfig } from '$features/ui/navigation/lms-navigation';
 import { baseNavConfig as orgNavConfig } from '$features/ui/navigation/org-navigation';
+import { MESSAGING_ENABLED } from '$lib/utils/constants/messaging';
 import type { SearchResultItem } from './types';
 
 function resolveTitle(titleKey: string, translate: (key: string) => string) {
@@ -16,6 +17,10 @@ export function buildStaticCatalog(
 
   for (const navItem of orgNavConfig) {
     if (navItem.requiresAdmin && !isOrgAdmin) {
+      continue;
+    }
+
+    if (navItem.path === '/messages' && !MESSAGING_ENABLED) {
       continue;
     }
 

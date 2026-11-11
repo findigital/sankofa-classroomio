@@ -1,8 +1,10 @@
 <script lang="ts">
   import { browser } from '$app/environment';
   import { onDestroy } from 'svelte';
+  import type { Event } from 'stream-chat';
 
   import { Button } from '@cio/ui/base/button';
+  import { CheckboxField } from '@cio/ui/custom/checkbox-field';
   import * as Page from '@cio/ui/base/page';
   import * as Select from '@cio/ui/base/select';
   import { Switch } from '@cio/ui/base/switch';
@@ -10,9 +12,9 @@
   import { TextareaField } from '@cio/ui/custom/textarea-field';
   import { Skeleton } from '@cio/ui/base/skeleton';
   import { ROLE } from '@cio/utils/constants';
-  import type { StreamChat } from 'stream-chat';
 
   import { messagingApi } from '$features/messaging/api/messaging.svelte';
+  import { messagingPresence } from '$features/messaging/api/messaging-presence.svelte';
   import type { MessagingChannel, MessagingThreadMessage } from '$features/messaging/utils/types';
   import { MESSAGING_ENABLED } from '$lib/utils/constants/messaging';
   import { t } from '$lib/utils/functions/translations';
@@ -23,7 +25,9 @@
   let keywordPhrase = $state('');
   let keywordAction = $state<'flag' | 'block'>('flag');
   let selected = $state<MessagingChannel | null>(null);
-  let streamClient: StreamChat | null = null;
+  let staffLimited = $state(false);
+  let staffChecks = $state<Record<string, boolean>>({});
+  let stopLiveMessages: (() => void) | null = null;
 
   function channelKey(channel: MessagingChannel) {
     return `${channel.channelType}:${channel.channelId}`;
@@ -37,34 +41,59 @@
     messagingApi.messages = [...existing, message];
   }
 
+  function appendFromEvent(event: Event) {
+    const message = event.message;
+
+    if (!message?.id || !selected) return;
+    if (event.channel_type !== selected.channelType || event.channel_id !== selected.channelId) return;
+
+    const createdAt = message.created_at ? new Date(message.created_at).toISOString() : '';
+
+    appendLiveMessage({
+      id: message.id,
+      text: message.text ?? '',
+      userId: message.user?.id ?? '',
+      userName: message.user?.name ?? '',
+      createdAt
+    });
+  }
+
+  function applySafeguarding() {
+    const setting = messagingApi.safeguarding;
+
+    if (!setting) return;
+
+    staffLimited = setting.configured;
+
+    for (const profileId of Object.keys(staffChecks)) {
+      delete staffChecks[profileId];
+    }
+
+    for (const admin of setting.admins) {
+      staffChecks[admin.profileId] = setting.configured && setting.staffIds.includes(admin.profileId);
+    }
+  }
+
   async function connectStream() {
     const session = messagingApi.session;
+    const organizationId = $currentOrg.id;
 
-    if (!browser || !session) return;
+    if (!browser || !session || !organizationId) return;
 
-    const { StreamChat } = await import('stream-chat');
-    const client = StreamChat.getInstance(session.apiKey);
-    streamClient = client;
-    await client.connectUser({ id: session.userId, name: session.userName }, session.token);
-    await client.queryChannels(
-      { members: { $in: [session.userId] } },
-      { last_message_at: -1 },
-      { watch: true, state: true, limit: 30 }
-    );
-    client.on('message.new', (event) => {
-      const message = event.message;
+    await messagingPresence.connect(session, organizationId);
+    stopLiveMessages?.();
+    stopLiveMessages = messagingPresence.onMessage(appendFromEvent);
+  }
 
-      if (!message?.id || !selected) return;
-      if (event.channel_type !== selected.channelType || event.channel_id !== selected.channelId) return;
+  async function saveStaff() {
+    const staffIds = staffLimited
+      ? (messagingApi.safeguarding?.admins ?? [])
+          .filter((admin) => staffChecks[admin.profileId])
+          .map((admin) => admin.profileId)
+      : null;
+    const saved = await messagingApi.saveSafeguarding(staffIds);
 
-      appendLiveMessage({
-        id: message.id,
-        text: message.text ?? '',
-        userId: message.user?.id ?? '',
-        userName: message.user?.name ?? '',
-        createdAt: message.created_at ? new Date(message.created_at).toISOString() : ''
-      });
-    });
+    if (saved) applySafeguarding();
   }
 
   async function selectChannel(channel: MessagingChannel, asAdmin: boolean) {
@@ -115,11 +144,12 @@
       void messagingApi.loadKeywords();
       void messagingApi.loadCohorts();
       void messagingApi.loadActivity();
+      void messagingApi.loadSafeguarding().then(() => applySafeguarding());
     }
   });
 
   onDestroy(() => {
-    void streamClient?.disconnectUser();
+    stopLiveMessages?.();
   });
 </script>
 
@@ -352,6 +382,47 @@
                   </li>
                 {/each}
               </ul>
+            </section>
+
+            <section>
+              <h2 class="mb-2 text-sm font-semibold">{$t('messaging.safeguarding.heading')}</h2>
+              <p class="mb-2 text-sm">{$t('messaging.safeguarding.description')}</p>
+              <div class="mb-2 flex items-center gap-2 text-sm">
+                <Switch
+                  checked={staffLimited}
+                  data-testid="messaging-safeguarding-limit"
+                  onCheckedChange={(checked) => {
+                    staffLimited = checked;
+                  }}
+                />
+                <span>{$t('messaging.safeguarding.limit')}</span>
+              </div>
+              {#if staffLimited}
+                {#if (messagingApi.safeguarding?.admins.length ?? 0) === 0}
+                  <p class="text-sm">{$t('messaging.safeguarding.empty')}</p>
+                {:else}
+                  <ul class="space-y-1">
+                    {#each messagingApi.safeguarding?.admins ?? [] as admin (admin.profileId)}
+                      <li>
+                        <CheckboxField
+                          label={admin.name}
+                          bind:checked={staffChecks[admin.profileId]}
+                          testId="messaging-safeguarding-{admin.profileId}"
+                        />
+                      </li>
+                    {/each}
+                  </ul>
+                {/if}
+              {/if}
+              <Button
+                class="mt-2"
+                size="sm"
+                testId="messaging-safeguarding-save"
+                disabled={!messagingApi.safeguarding}
+                onclick={() => saveStaff()}
+              >
+                {$t('messaging.safeguarding.save')}
+              </Button>
             </section>
 
             <section>

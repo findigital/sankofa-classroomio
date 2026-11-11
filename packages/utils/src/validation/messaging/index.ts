@@ -71,3 +71,9 @@ export const ZCohortMessagingSetting = z.strictObject({
 });
 
 export type TCohortMessagingSetting = z.infer<typeof ZCohortMessagingSetting>;
+
+export const ZSafeguardingStaff = z.strictObject({
+  staffIds: z.array(z.uuid()).max(100).nullable()
+});
+
+export type TSafeguardingStaff = z.infer<typeof ZSafeguardingStaff>;

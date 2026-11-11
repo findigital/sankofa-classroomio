@@ -118,6 +118,98 @@ export async function listMessagingProfiles(
   }
 }
 
+function publishedCourseJoin() {
+  return and(
+    eq(schema.course.groupId, schema.group.id),
+    eq(schema.course.isPublished, true),
+    eq(schema.course.isTemplate, false)
+  );
+}
+
+/** Groups that have a published, non-template course. */
+export async function listPublishedMessagingGroupIds(
+  organizationId: string,
+  dbClient: DbOrTxClient = db
+): Promise<string[]> {
+  try {
+    const rows = await dbClient
+      .select({ groupId: schema.group.id })
+      .from(schema.group)
+      .innerJoin(schema.course, publishedCourseJoin())
+      .where(eq(schema.group.organizationId, organizationId));
+
+    return [...new Set(rows.map((row) => row.groupId))];
+  } catch (error) {
+    console.error('listPublishedMessagingGroupIds error:', error);
+    throw new Error('Failed to load published cohorts');
+  }
+}
+
+function safeguardingStaffIds(settings: unknown): string[] | null {
+  if (!settings || typeof settings !== 'object' || !('safeguardingStaffIds' in settings)) return null;
+
+  const value = settings.safeguardingStaffIds;
+
+  if (!Array.isArray(value)) return null;
+
+  return value.filter((id): id is string => typeof id === 'string');
+}
+
+/** `null` when the org has not chosen a safeguarding staff list. */
+export async function readSafeguardingStaffIds(
+  organizationId: string,
+  dbClient: DbOrTxClient = db
+): Promise<string[] | null> {
+  try {
+    const rows = await dbClient
+      .select({ settings: schema.organization.settings })
+      .from(schema.organization)
+      .where(eq(schema.organization.id, organizationId))
+      .limit(1);
+
+    return safeguardingStaffIds(rows[0]?.settings);
+  } catch (error) {
+    console.error('readSafeguardingStaffIds error:', error);
+    throw new Error('Failed to load safeguarding staff');
+  }
+}
+
+/** `null` clears the list so direct messages fall back to every non-minor admin. */
+export async function writeSafeguardingStaffIds(
+  organizationId: string,
+  staffIds: string[] | null,
+  dbClient: DbOrTxClient = db
+): Promise<void> {
+  try {
+    const rows = await dbClient
+      .select({ settings: schema.organization.settings })
+      .from(schema.organization)
+      .where(eq(schema.organization.id, organizationId))
+      .limit(1);
+    const organization = rows[0];
+
+    if (!organization) {
+      throw new Error('Organization not found');
+    }
+
+    const next = { ...(organization.settings ?? {}) };
+
+    if (staffIds === null) {
+      delete next.safeguardingStaffIds;
+    } else {
+      next.safeguardingStaffIds = staffIds;
+    }
+
+    await dbClient
+      .update(schema.organization)
+      .set({ settings: next })
+      .where(eq(schema.organization.id, organizationId));
+  } catch (error) {
+    console.error('writeSafeguardingStaffIds error:', error);
+    throw new Error('Failed to save safeguarding staff');
+  }
+}
+
 /** Active admins who can be placed in an adult–minor conversation. */
 export async function listMessagingAdmins(
   organizationId: string,
@@ -225,6 +317,7 @@ export async function listSharedMessagingCohorts(
       .from(mine)
       .innerJoin(theirs, eq(theirs.groupId, mine.groupId))
       .innerJoin(schema.group, eq(schema.group.id, mine.groupId))
+      .innerJoin(schema.course, publishedCourseJoin())
       .leftJoin(schema.messagingCohortSetting, eq(schema.messagingCohortSetting.groupId, schema.group.id))
       .where(
         and(
@@ -234,10 +327,20 @@ export async function listSharedMessagingCohorts(
         )
       );
 
-    return rows.map((row) => ({
-      groupId: row.groupId,
-      fellowDmEnabled: row.fellowDmEnabled ?? false
-    }));
+    const seen = new Set<string>();
+
+    return rows.flatMap((row) => {
+      if (seen.has(row.groupId)) return [];
+
+      seen.add(row.groupId);
+
+      return [
+        {
+          groupId: row.groupId,
+          fellowDmEnabled: row.fellowDmEnabled ?? false
+        }
+      ];
+    });
   } catch (error) {
     console.error('listSharedMessagingCohorts error:', error);
     throw new Error('Failed to load shared cohorts');
@@ -258,6 +361,7 @@ async function cohortRows(organizationId: string, profileId: string | null, dbCl
       fellowDmEnabled: schema.messagingCohortSetting.fellowDmEnabled
     })
     .from(schema.group)
+    .innerJoin(schema.course, publishedCourseJoin())
     .leftJoin(schema.messagingCohortSetting, eq(schema.messagingCohortSetting.groupId, schema.group.id));
 
   if (profileId) {

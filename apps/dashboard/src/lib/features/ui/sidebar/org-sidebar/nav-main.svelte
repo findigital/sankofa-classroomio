@@ -9,6 +9,7 @@
   import { HoverableItem, PremiumIcon } from '@cio/ui/custom/moving-icons';
   import { formatCompactCount } from '@cio/utils/functions';
   import { orgNavCountsApi } from './org-nav-counts.svelte';
+  import { messagingPresence } from '$features/messaging/api/messaging-presence.svelte';
 
   const groups = $derived(
     getOrgNavigationGroups(
@@ -104,6 +105,12 @@
                             {#if item.isNew}
                               <Sidebar.MenuBadge class="ui:text-primary ui:bg-primary/10">
                                 {$t('automation.tabs.new_badge')}
+                              </Sidebar.MenuBadge>
+                            {:else if item.path === '/messages' && messagingPresence.unreadCount > 0}
+                              <Sidebar.MenuBadge
+                                aria-label={$t('messaging.unread_badge', { count: messagingPresence.unreadCount })}
+                              >
+                                {formatCompactCount(messagingPresence.unreadCount)}
                               </Sidebar.MenuBadge>
                             {:else if item.upgrade}
                               <PremiumIcon {isHovered} size={16} class="ui:text-primary ml-auto" />

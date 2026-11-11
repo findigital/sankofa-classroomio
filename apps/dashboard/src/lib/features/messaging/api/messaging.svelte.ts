@@ -21,15 +21,19 @@ import type {
   MessagingDisclosureRequest,
   MessagingExportFile,
   MessagingKeyword,
+  MessagingKeywordsRequest,
   MessagingSession,
   MessagingSessionRequest,
   MessagingThreadMessage,
   MessagingThreadRequest,
   MuteMessagingUserRequest,
   OpenDirectMessageRequest,
+  SafeguardingStaff,
+  SafeguardingStaffRequest,
   SendMessagingMessageRequest,
   UnmuteMessagingUserRequest,
-  UpdateMessagingCohortRequest
+  UpdateMessagingCohortRequest,
+  UpdateSafeguardingStaffRequest
 } from '../utils/types';
 
 class MessagingApi extends BaseApiWithErrors {
@@ -41,8 +45,11 @@ class MessagingApi extends BaseApiWithErrors {
   keywords = $state<MessagingKeyword[] | null>(null);
   cohorts = $state<MessagingCohortSetting[] | null>(null);
   activity = $state<MessagingActivity | null>(null);
+  safeguarding = $state<SafeguardingStaff | null>(null);
 
-  async loadSession() {
+  async loadSession(options?: { notify?: boolean }) {
+    const notify = options?.notify !== false;
+
     return this.execute<MessagingSessionRequest>({
       requestFn: () => classroomio.messaging.session.$get(),
       logContext: 'opening messaging session',
@@ -50,7 +57,7 @@ class MessagingApi extends BaseApiWithErrors {
         this.session = response.data;
       },
       onError: () => {
-        snackbar.error('snackbar.messaging.load_failed');
+        if (notify) snackbar.error('snackbar.messaging.load_failed');
       }
     });
   }
@@ -352,6 +359,35 @@ class MessagingApi extends BaseApiWithErrors {
     if (saved) await this.loadCohorts();
 
     return saved;
+  }
+
+  async loadSafeguarding() {
+    return this.execute<SafeguardingStaffRequest>({
+      requestFn: () => classroomio.messaging['safeguarding-staff'].$get(),
+      logContext: 'loading safeguarding staff',
+      onSuccess: (response) => {
+        this.safeguarding = response.data;
+      },
+      onError: () => {
+        snackbar.error('snackbar.messaging.load_failed');
+      }
+    });
+  }
+
+  async saveSafeguarding(staffIds: string[] | null) {
+    const saved = await this.execute<UpdateSafeguardingStaffRequest>({
+      requestFn: () => classroomio.messaging['safeguarding-staff'].$put({ json: { staffIds } }),
+      logContext: 'saving safeguarding staff',
+      onSuccess: (response) => {
+        this.safeguarding = response.data;
+        snackbar.success('snackbar.messaging.saved');
+      },
+      onError: () => {
+        snackbar.error('snackbar.messaging.load_failed');
+      }
+    });
+
+    return saved?.data;
   }
 }
 

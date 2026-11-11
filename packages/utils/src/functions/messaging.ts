@@ -184,6 +184,38 @@ function uniqueSorted(ids: string[]): string[] {
   return [...new Set(ids)].sort();
 }
 
+const COHORT_CHANNEL_PURPOSES = new Set(['announcement', 'discussion']);
+
+/**
+ * Cohort channels are listed only when their course group is published.
+ * Direct messages are unchanged.
+ */
+export function isListedCohortChannel(
+  channel: { purpose: string; cohortId: string | null },
+  publishedGroupIds: ReadonlySet<string>
+): boolean {
+  if (!COHORT_CHANNEL_PURPOSES.has(channel.purpose)) return true;
+
+  return channel.cohortId !== null && publishedGroupIds.has(channel.cohortId);
+}
+
+/**
+ * Picks who is added to an adult–minor direct message.
+ * A missing list means every non-minor admin. An empty list adds nobody.
+ */
+export function selectSafeguardingStaff(input: {
+  configuredIds: string[] | null;
+  admins: MessagingParticipant[];
+}): MessagingParticipant[] {
+  const eligible = input.admins.filter((person) => person.roleId === ROLE.ADMIN && !person.isMinor);
+
+  if (input.configuredIds === null) return eligible;
+
+  const allowed = new Set(input.configuredIds);
+
+  return eligible.filter((person) => allowed.has(person.profileId));
+}
+
 /**
  * Decides whether two people may open a 1:1.
  * A minor and an adult are allowed only when a non-minor admin is added to the channel.

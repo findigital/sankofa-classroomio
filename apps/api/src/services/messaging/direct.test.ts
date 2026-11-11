@@ -10,7 +10,8 @@ const queries = vi.hoisted(() => ({
   listMessagingProfiles: vi.fn(),
   listMessagingAdmins: vi.fn(),
   listSharedMessagingCohorts: vi.fn(),
-  mentorPairAssigned: vi.fn()
+  mentorPairAssigned: vi.fn(),
+  readSafeguardingStaffIds: vi.fn()
 }));
 
 vi.mock('@cio/db/queries/messaging', () => queries);
@@ -52,6 +53,7 @@ describe('openDirectMessage', () => {
     process.env.MESSAGING_ENABLED = 'true';
     markMessagingSetup('ready');
     queries.listMessagingAdmins.mockResolvedValue([profile(STAFF_ID, ROLE.ADMIN, false)]);
+    queries.readSafeguardingStaffIds.mockResolvedValue(null);
     queries.listSharedMessagingCohorts.mockResolvedValue([]);
     queries.mentorPairAssigned.mockResolvedValue(false);
   });
@@ -110,5 +112,51 @@ describe('openDirectMessage', () => {
         memberIds: expect.arrayContaining([MENTOR_ID, MINOR_ID, STAFF_ID])
       })
     );
+  });
+
+  it('adds only the configured safeguarding staff, not every admin', async () => {
+    const otherStaffId = '55555555-5555-4555-8555-555555555555';
+    queries.listMessagingProfiles.mockResolvedValue([
+      profile(MENTOR_ID, ROLE.TUTOR, false),
+      profile(MINOR_ID, ROLE.STUDENT, true)
+    ]);
+    queries.listMessagingAdmins.mockResolvedValue([
+      profile(STAFF_ID, ROLE.ADMIN, false),
+      profile(otherStaffId, ROLE.ADMIN, false)
+    ]);
+    queries.readSafeguardingStaffIds.mockResolvedValue([STAFF_ID]);
+    queries.mentorPairAssigned.mockResolvedValue(true);
+    const stream = gateway();
+    vi.mocked(stream.ensureChannel).mockResolvedValue({
+      channelType: 'mentor_dm',
+      channelId: 'mdm',
+      name: 'mentor_dm',
+      purpose: 'mentor_dm',
+      cohortId: null,
+      memberCount: 3,
+      lastMessageAt: null
+    });
+
+    await openDirectMessage(ORG_ID, MENTOR_ID, MINOR_ID, stream);
+
+    const memberIds = vi.mocked(stream.ensureChannel).mock.calls[0]?.[0].memberIds ?? [];
+
+    expect(memberIds).toEqual(expect.arrayContaining([MENTOR_ID, MINOR_ID, STAFF_ID]));
+    expect(memberIds).not.toContain(otherStaffId);
+  });
+
+  it('denies a minor direct message when the safeguarding list is set and empty', async () => {
+    queries.listMessagingProfiles.mockResolvedValue([
+      profile(MENTOR_ID, ROLE.TUTOR, false),
+      profile(MINOR_ID, ROLE.STUDENT, true)
+    ]);
+    queries.readSafeguardingStaffIds.mockResolvedValue([]);
+    queries.mentorPairAssigned.mockResolvedValue(true);
+    const stream = gateway();
+
+    await expect(openDirectMessage(ORG_ID, MENTOR_ID, MINOR_ID, stream)).rejects.toMatchObject({
+      code: ErrorCodes.MESSAGING_MINOR_ADULT_REQUIRES_STAFF
+    });
+    expect(stream.ensureChannel).not.toHaveBeenCalled();
   });
 });

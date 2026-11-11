@@ -11,6 +11,7 @@ import {
 
 import type { AccountOrg } from '$features/app/types';
 import type { Component } from 'svelte';
+import MessageSquareIcon from '@lucide/svelte/icons/message-square';
 import {
   isLmsDestinationAvailable,
   LMS_DESTINATIONS,
@@ -18,6 +19,7 @@ import {
   type LmsDestinationKey
 } from '@cio/utils/lms';
 import { isActive } from '$lib/utils/functions/app';
+import { MESSAGING_ENABLED } from '$lib/utils/constants/messaging';
 import { PUBLIC_IS_SELFHOSTED } from '$env/static/public';
 
 export interface NavItem {
@@ -147,12 +149,31 @@ export function toLmsAvailabilityContext(currentOrg: AccountOrg | null): LmsAvai
 }
 
 // Base navigation configuration structure
-export const baseNavConfig: NavItemConfig[] = LMS_DESTINATIONS.map((destination) => ({
-  titleKey: destination.titleKey,
-  path: destination.path === '/lms' ? '' : destination.path.slice('/lms'.length),
-  ...LMS_NAV_UI_META[destination.key],
-  show: (currentOrg: AccountOrg | null) => isLmsDestinationAvailable(destination, toLmsAvailabilityContext(currentOrg))
-}));
+const messagesNavConfig: NavItemConfig = {
+  titleKey: 'lms_navigation.messages',
+  path: '/messages',
+  icon: MessageSquareIcon,
+  matchPattern: '^/lms/messages(/.*)?$',
+  show: () => MESSAGING_ENABLED
+};
+
+function insertMessagesNav(items: NavItemConfig[]): NavItemConfig[] {
+  const settingsIndex = items.findIndex((item) => item.path === '/settings');
+
+  if (settingsIndex === -1) return [...items, messagesNavConfig];
+
+  return [...items.slice(0, settingsIndex), messagesNavConfig, ...items.slice(settingsIndex)];
+}
+
+export const baseNavConfig: NavItemConfig[] = insertMessagesNav(
+  LMS_DESTINATIONS.map((destination) => ({
+    titleKey: destination.titleKey,
+    path: destination.path === '/lms' ? '' : destination.path.slice('/lms'.length),
+    ...LMS_NAV_UI_META[destination.key],
+    show: (currentOrg: AccountOrg | null) =>
+      isLmsDestinationAvailable(destination, toLmsAvailabilityContext(currentOrg))
+  }))
+);
 
 /**
  * Get LMS navigation items based on organization context

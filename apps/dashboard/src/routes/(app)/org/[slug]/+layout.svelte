@@ -12,6 +12,7 @@
   import { PUBLIC_IS_SELFHOSTED } from '$env/static/public';
 
   import { OrgSidebar } from '$features/ui/sidebar/org-sidebar';
+  import MessagingPresence from '$features/messaging/components/messaging-presence.svelte';
   import SettingsSidebar from '$features/ui/sidebar/settings-sidebar.svelte';
   import { AddOrgModal } from '$features/org';
 
@@ -68,6 +69,7 @@
     ? `--app-banner-height: ${paymentBannerHeight}px; padding-top: ${paymentBannerHeight}px;`
     : ''}
 >
+  <MessagingPresence />
   {#if isSettingsRoute}
     <SettingsSidebar />
   {:else}

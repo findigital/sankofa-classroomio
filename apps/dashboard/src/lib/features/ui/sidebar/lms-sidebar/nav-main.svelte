@@ -7,9 +7,12 @@
   import { page } from '$app/state';
   import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
   import { getLmsNavigationItems } from '$features/ui/navigation/lms-navigation';
+  import { messagingPresence } from '$features/messaging/api/messaging-presence.svelte';
   import { HoverableItem } from '@cio/ui/custom/moving-icons';
+  import { formatCompactCount } from '@cio/utils/functions';
 
   const items = $derived(getLmsNavigationItems($currentOrg, $t, page.url.pathname));
+  const unreadCount = $derived(messagingPresence.unreadCount);
 
   const pathWithQuery = $derived(page.url.pathname + page.url.search);
 </script>
@@ -35,6 +38,11 @@
                             <span>{item.title}</span>
                           {:else}
                             <span>{item.title}</span>
+                          {/if}
+                          {#if item.path === '/messages' && unreadCount > 0}
+                            <Sidebar.MenuBadge aria-label={$t('messaging.unread_badge', { count: unreadCount })}>
+                              {formatCompactCount(unreadCount)}
+                            </Sidebar.MenuBadge>
                           {/if}
                           {#if item.items}
                             <ChevronRightIcon

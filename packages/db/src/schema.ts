@@ -2983,6 +2983,7 @@ export const organization = pgTable(
         enrollmentWelcome?: boolean;
         courseCompletion?: boolean;
       };
+      safeguardingStaffIds?: string[];
     }>(),
     landingpage: jsonb().default({}).$type<{
       header?: {

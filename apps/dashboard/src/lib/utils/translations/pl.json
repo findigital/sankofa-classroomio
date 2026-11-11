@@ -597,6 +597,7 @@
     "certificates": "Certyfikaty",
     "exercise": "Ćwicz",
     "community": "Społeczność",
+    "messages": "Messages",
     "explore": "Eksploruj",
     "help": "Pomoc",
     "settings": "Ustawienia",
@@ -6864,6 +6865,14 @@
     "fellow_dm": "Allow fellows in this cohort to message each other",
     "activity": "Recent activity",
     "activity_empty": "No messaging activity yet.",
-    "disabled": "Messaging is turned off."
+    "disabled": "Messaging is turned off.",
+    "unread_badge": "{count} unread",
+    "safeguarding": {
+      "heading": "Safeguarding staff",
+      "description": "When a direct message includes someone under 18 and an adult, these administrators are added. Leave this off to add every administrator.",
+      "limit": "Choose who is added",
+      "save": "Save staff",
+      "empty": "No administrators can be added, so these conversations stay closed."
+    }
   }
 }

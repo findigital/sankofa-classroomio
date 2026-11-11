@@ -144,7 +144,11 @@ Messaging stays dark until both flags are exactly `true`: `MESSAGING_ENABLED` on
 and `PUBLIC_MESSAGING_ENABLED` on the dashboard. The API also needs `STREAM_API_KEY` and
 `STREAM_API_SECRET` (server only). `PUBLIC_SERVER_URL` is the base for the Stream
 `before_message_send` webhook. Unread email digests are not sent; the API keeps a deferred
-hook until SMTP is configured and delivery is implemented.
+hook until SMTP is configured and delivery is implemented. Fellows open Messages at `/lms/messages`.
+Tutors and admins open it from the organization sidebar. Cohort channels are created only for
+published courses. An adult–minor direct message adds the organization's safeguarding staff
+list (`organization.settings.safeguardingStaffIds`); when that list is unset, every non-minor
+administrator is added, and the conversation is denied when no eligible administrator remains.
 
 ---
 

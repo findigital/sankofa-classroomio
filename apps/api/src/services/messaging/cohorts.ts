@@ -9,7 +9,7 @@ import {
 } from '@cio/db/queries/messaging';
 import { ROLE } from '@cio/utils/constants';
 import { AppError, ErrorCodes } from '@api/utils/errors';
-import { cohortChannelId } from '@cio/utils/functions/messaging';
+import { cohortChannelId, isListedCohortChannel } from '@cio/utils/functions/messaging';
 
 import { assertMessagingAvailable } from './availability';
 import { type MessagingChannelSummary, type StreamGateway, type StreamPerson } from './gateway';
@@ -87,7 +87,10 @@ export async function syncCohortChannels(
     });
   }
 
-  return gateway.queryMemberChannels(profileId, organizationId);
+  const publishedGroupIds = new Set(rosters.map((cohort) => cohort.groupId));
+  const channels = await gateway.queryMemberChannels(profileId, organizationId);
+
+  return channels.filter((channel) => isListedCohortChannel(channel, publishedGroupIds));
 }
 
 export async function listDirectCandidates(
