@@ -1717,7 +1717,7 @@
         },
         "submission_status": {
           "submitted": "Indsendt",
-          "in_progress": "Igangværende",
+          "in_progress": "Afventer gennemgang",
           "graded": "Reviewed"
         },
         "workflow": {

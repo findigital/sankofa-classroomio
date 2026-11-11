@@ -7,6 +7,7 @@
   import { submissions } from './store';
   import { getQuestionsForSection, questionnaire } from '../store';
   import { t } from '$lib/utils/functions/translations';
+  import { profileDisplayName } from '$lib/utils/functions/profile-display-name';
   import type { Question } from '$features/course/types';
   import type { ExerciseSubmissions } from './types';
   import type { AnswerData, ExerciseQuestionLabels, ExerciseSubmissionModel } from '@cio/question-types';
@@ -38,7 +39,7 @@
   function toSubmissionModel(submission: ExerciseSubmissions): ExerciseSubmissionModel {
     const profileId = submission.groupmember?.profile.id ?? '';
     const submissionId = submission.id ?? '';
-    const studentName = submission.groupmember?.profile.fullname;
+    const studentName = profileDisplayName(submission.groupmember?.profile);
     const studentAvatarUrl = submission.groupmember?.profile.avatarUrl;
     const studentHref = profileId ? studentReviewHref(profileId, submissionId) : undefined;
     const answers = submission.answers.map((answer) => ({

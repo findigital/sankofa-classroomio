@@ -1,9 +1,11 @@
 <script lang="ts">
   import { page } from '$app/state';
   import { PublicCourse, injectHeadingIds } from '@cio/ui';
+  import { legacyLessonNoteToRender } from '@cio/utils/functions';
   import BlockReader from '$features/block/components/block-reader.svelte';
   import type { BlockVideoPlayerProps, BlockViewHost, BlockViewModel } from '$features/block/utils/types';
   import PublicBlockVideoPlayer from '$features/course/components/public/public-block-video-player.svelte';
+  import LegacyLessonNote from '$features/course/components/lesson/legacy-lesson-note.svelte';
   import { toPublicExerciseView, toPublicLessonView } from '$features/course/utils/public-course-mappers';
   import { snackbar } from '$features/ui/snackbar/store';
   import {
@@ -70,6 +72,7 @@
         }) as BlockViewModel
     );
   });
+  const legacyNote = $derived(lessonView ? legacyLessonNoteToRender(lessonView.body, lessonBlocks) : '');
   const blockHost: BlockViewHost = { videoPlayer: publicVideoPlayer };
   const exerciseView = $derived<PublicExerciseViewData | null>(
     data.item.kind === 'exercise' ? toPublicExerciseView(data.item) : null
@@ -164,13 +167,16 @@
       outlineLabel={$t('public_course.outline.label')}
     >
       {#snippet content()}
-        <BlockReader
-          blocks={lessonBlocks}
-          host={blockHost}
-          emptyTitle={$t('course.navItem.lessons.materials.blocks.empty_learner_title')}
-          emptyDescription={$t('course.navItem.lessons.materials.blocks.empty_learner_description')}
-          showRail={false}
-        />
+        <LegacyLessonNote html={legacyNote} />
+        {#if lessonBlocks.length > 0 || !legacyNote}
+          <BlockReader
+            blocks={lessonBlocks}
+            host={blockHost}
+            emptyTitle={$t('course.navItem.lessons.materials.blocks.empty_learner_title')}
+            emptyDescription={$t('course.navItem.lessons.materials.blocks.empty_learner_description')}
+            showRail={false}
+          />
+        {/if}
       {/snippet}
       {#snippet titleActions()}
         <div class="ui:flex ui:shrink-0 ui:items-center ui:gap-2">

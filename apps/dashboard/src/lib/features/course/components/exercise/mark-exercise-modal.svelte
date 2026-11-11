@@ -1,5 +1,6 @@
 <script lang="ts">
   import { untrack } from 'svelte';
+  import { browser } from '$app/environment';
   import { Badge } from '@cio/ui/base/badge';
   import * as Select from '@cio/ui/base/select';
   import * as DropdownMenu from '@cio/ui/base/dropdown-menu';
@@ -7,6 +8,8 @@
 
   import { STATUS } from './constants';
   import { t } from '$lib/utils/functions/translations';
+  import { profileDisplayName } from '$lib/utils/functions/profile-display-name';
+  import { formatSubmittedDate } from '$features/course/utils/submissions-utils';
   import type { SubmissionIdData } from '$features/course/utils/types';
   import type { AnswerData } from '@cio/question-types';
 
@@ -61,6 +64,12 @@
   let isDeleting = $state(false);
 
   const maxPoints = $derived(getMaxPoints(data.questions));
+  const submittedLabel = $derived.by(() => {
+    if (!browser) return '';
+
+    const createdAt = 'createdAt' in data ? data.createdAt : null;
+    return formatSubmittedDate(typeof createdAt === 'string' ? createdAt : null);
+  });
   const sortedQuestions = $derived(
     Array.isArray(data.questions)
       ? [...data.questions]
@@ -337,11 +346,19 @@
                   class="h-5 w-5"
                 />
                 <p class="ml-2 line-clamp-1 text-sm font-semibold dark:text-white">
-                  {data.student.fullname}
+                  {profileDisplayName(data.student)}
                 </p>
               </div>
             {/if}
           </div>
+          {#if submittedLabel}
+            <div class="flex items-center space-x-4 px-3 py-2 text-sm">
+              <p class="text-sm font-semibold text-gray-500 dark:text-white">
+                {$t('course.navItem.submissions.submission_status.submitted')}:
+              </p>
+              <p class="text-sm dark:text-white">{submittedLabel}</p>
+            </div>
+          {/if}
           <!-- <div class="flex items-center space-x-4 text-sm px-3 py-2">
         <p class="dark:text-white text-sm text-gray-500 font-semibold">Assesment Type:</p>
         <Tag

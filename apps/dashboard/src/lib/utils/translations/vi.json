@@ -1717,7 +1717,7 @@
         },
         "submission_status": {
           "submitted": "Đã gửi",
-          "in_progress": "Đang tiến hành",
+          "in_progress": "Chờ duyệt",
           "graded": "Reviewed"
         },
         "workflow": {

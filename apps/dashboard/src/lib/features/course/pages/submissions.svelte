@@ -19,6 +19,8 @@
     type SubmissionFilterOption
   } from '$features/course/utils/submission-board-filters';
   import { t } from '$lib/utils/functions/translations';
+  import { profileDisplayName } from '$lib/utils/functions/profile-display-name';
+  import { formatSubmittedDate } from '$features/course/utils/submissions-utils';
 
   import { Chip } from '@cio/ui/custom/chip';
   import { UserAvatar } from '@cio/ui/custom/user-avatar';
@@ -126,11 +128,19 @@
   }
 
   function studentDisplayName(student: SubmissionItem['student']): string {
-    if (!student) return '';
+    return profileDisplayName(student);
+  }
 
-    const fullname = typeof student.fullname === 'string' ? student.fullname.trim() : '';
-    const username = typeof student.username === 'string' ? student.username.trim() : '';
-    return fullname || username;
+  function columnTitle(id: number, apiTitle: string): string {
+    if (id === STATUS.IN_PROGRESS) return $t('course.navItem.submissions.submission_status.in_progress');
+
+    return apiTitle;
+  }
+
+  function submittedLabel(item: SubmissionItem): string {
+    if (!browser) return '';
+
+    return formatSubmittedDate(item.createdAt || item.submittedAt);
   }
 
   function matchesBoardItem(item: SubmissionItem): boolean {
@@ -430,7 +440,7 @@
               </p>
             {/if}
             <p class="text-xs text-gray-500 dark:text-white">
-              {item.submittedAt}
+              {submittedLabel(item)}
             </p>
           </div>
         {/each}

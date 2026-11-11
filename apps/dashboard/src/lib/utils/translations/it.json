@@ -3819,7 +3819,7 @@
         },
         "submission_status": {
           "submitted": "Inviato",
-          "in_progress": "In corso",
+          "in_progress": "In attesa di revisione",
           "graded": "Reviewed"
         },
         "workflow": {

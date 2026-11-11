@@ -7,7 +7,7 @@ import { pickLessonLanguageBody } from './lesson-language-body';
 import { listLessonIdsWithBlockType } from '@db/queries/block/block';
 import { listBlockLocales } from '@db/queries/block/locale';
 import { listLessonBlockRows } from '@db/queries/block/placement';
-import { resolveCourseBannerImage } from '@cio/utils/functions';
+import { preferStoredLessonNote, resolveCourseBannerImage } from '@cio/utils/functions';
 import {
   blockHasLocalizedContent,
   toPublicBlockData,
@@ -365,12 +365,14 @@ function publicVideoOf(block: PublicLessonBlock): PublicLessonVideo | null {
 /**
  * Joins the HTML of the lesson's localized blocks (notes) in display order.
  */
-export function publicLessonBody(blocks: PublicLessonBlock[]): string {
-  return blocks
+export function publicLessonBody(blocks: PublicLessonBlock[], legacyNote?: string | null): string {
+  const fromBlocks = blocks
     .filter((block) => blockHasLocalizedContent(block.type))
     .map((block) => block.content)
     .filter((content) => content.length > 0)
     .join('\n');
+
+  return preferStoredLessonNote(fromBlocks, legacyNote) ?? '';
 }
 
 export interface PublicLessonContent {
@@ -467,6 +469,7 @@ export async function getPublicCourseItem(
         id: schema.lesson.id,
         slug: schema.lesson.slug,
         title: schema.lesson.title,
+        note: schema.lesson.note,
         isUnlocked: schema.lesson.isUnlocked,
         sectionId: schema.lesson.sectionId
       })
@@ -485,7 +488,7 @@ export async function getPublicCourseItem(
 
       const isLocked = !lessonRow.isUnlocked;
       const blocks = isLocked ? [] : await getPublicLessonBlocks(lessonRow.id);
-      const body = publicLessonBody(blocks);
+      const body = isLocked ? '' : publicLessonBody(blocks, lessonRow.note);
       const firstVideo = blocks.map(publicVideoOf).find((video) => video !== null) ?? null;
 
       return {
@@ -598,6 +601,7 @@ export async function getPublicLessonMarkdownSource(
       .select({
         id: schema.lesson.id,
         title: schema.lesson.title,
+        note: schema.lesson.note,
         isUnlocked: schema.lesson.isUnlocked
       })
       .from(schema.lesson)
@@ -607,7 +611,7 @@ export async function getPublicLessonMarkdownSource(
     if (!lessonRow) return null;
 
     const isUnlocked = lessonRow.isUnlocked ?? false;
-    const body = isUnlocked ? publicLessonBody(await getPublicLessonBlocks(lessonRow.id)) : '';
+    const body = isUnlocked ? publicLessonBody(await getPublicLessonBlocks(lessonRow.id), lessonRow.note) : '';
 
     return {
       courseTitle: courseRow.title,

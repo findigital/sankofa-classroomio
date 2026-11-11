@@ -1717,7 +1717,7 @@
         },
         "submission_status": {
           "submitted": "Przesłane",
-          "in_progress": "W toku",
+          "in_progress": "Oczekuje na recenzję",
           "graded": "Reviewed"
         },
         "workflow": {
