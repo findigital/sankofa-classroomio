@@ -138,7 +138,7 @@ class MessagingApi extends BaseApiWithErrors {
     });
   }
 
-  async send(channelType: string, channelId: string, text: string) {
+  async send(channelType: string, channelId: string, text: string, options?: { quiet?: boolean }) {
     const parsed = ZSendMessagingMessage.safeParse({ channelType, channelId, text });
 
     if (!parsed.success) {
@@ -150,7 +150,7 @@ class MessagingApi extends BaseApiWithErrors {
       requestFn: () => classroomio.messaging.messages.$post({ json: parsed.data }),
       logContext: 'sending message',
       onSuccess: () => {
-        snackbar.success('snackbar.messaging.sent');
+        if (!options?.quiet) snackbar.success('snackbar.messaging.sent');
       },
       onError: (result) => {
         if (typeof result === 'object' && result && 'code' in result && result.code === 'MESSAGING_MESSAGE_BLOCKED') {
@@ -162,7 +162,7 @@ class MessagingApi extends BaseApiWithErrors {
       }
     });
 
-    if (sent) await this.loadThread(channelType, channelId);
+    if (sent && !options?.quiet) await this.loadThread(channelType, channelId);
 
     return sent;
   }

@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
+import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -12,7 +13,8 @@ export default defineConfig({
       dynamicCompileOptions() {
         return { generate: 'client', css: 'injected' };
       }
-    })
+    }),
+    react({ include: /\.[jt]sx$/ })
   ],
   resolve: {
     alias: [
@@ -45,6 +47,6 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: ['src/**/*.test.ts']
+    include: ['src/**/*.test.ts', 'src/**/*.test.tsx']
   }
 });

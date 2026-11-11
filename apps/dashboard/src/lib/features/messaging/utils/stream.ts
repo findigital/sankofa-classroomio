@@ -4,6 +4,7 @@ declare module 'stream-chat' {
     purpose?: string;
     cohort_id?: string;
     staff_visible?: boolean;
+    name?: string;
   }
 }
 
