@@ -40,7 +40,7 @@ export async function sendMessagingMessage(
   organizationId: string,
   profileId: string,
   roleId: number,
-  input: { channelType: string; channelId: string; text: string },
+  input: { channelType: string; channelId: string; text: string; id?: string; parentId?: string },
   gateway: StreamGateway
 ): Promise<{ id: string }> {
   assertMessagingAvailable();
@@ -71,7 +71,9 @@ export async function sendMessagingMessage(
     channelType: input.channelType,
     channelId: input.channelId,
     userId: profileId,
-    text: input.text
+    text: input.text,
+    ...(input.id ? { id: input.id } : {}),
+    ...(input.parentId ? { parentId: input.parentId } : {})
   });
 
   if (verdict.action === 'flag') {

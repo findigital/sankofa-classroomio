@@ -71,15 +71,19 @@ vi.mock('stream-chat-react', () => ({
     return <PreviewComponent channel={channel} />;
   },
   ChannelPreviewMessenger: ({
-    channel
+    channel,
+    Avatar
   }: {
     channel?: { data?: { name?: string }; state?: { unreadCount?: number } };
+    Avatar?: React.ComponentType<{ name?: string; image?: string }>;
   }) => (
     <button type="button">
+      {Avatar ? <Avatar name={channel?.data?.name} /> : null}
       {channel?.data?.name}
       {channel?.state?.unreadCount ? <span>{channel.state.unreadCount}</span> : null}
     </button>
   ),
+  ThreadHeader: () => <div>Thread</div>,
   Channel: ({
     children,
     doSendMessageRequest
@@ -94,18 +98,21 @@ vi.mock('stream-chat-react', () => ({
   Window: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
   ChannelHeader: () => <h2>Conversation</h2>,
   MessageList: ({
-    customMessageActions
+    customMessageActions,
+    messageActions
   }: {
     customMessageActions?: Record<
       string,
       (message: { id: string; text: string; user: { id: string; name: string } }) => void
     >;
+    messageActions?: string[];
   }) => {
     const message = { id: 'm1', text: 'Hello from the thread', user: { id: 'other', name: 'Ada' } };
     const actions = customMessageActions ?? {};
 
     return (
       <div>
+        <div data-testid="message-actions">{(messageActions ?? []).join(',')}</div>
         <div className="str-chat__message str-chat__message--me">Mine</div>
         <div className="str-chat__message str-chat__message--other">
           <span className="str-chat__avatar">A</span>
@@ -172,7 +179,8 @@ function props(overrides: Partial<InboxViewProps> = {}): InboxViewProps {
       open: 'Open',
       export: 'Export',
       exportCsv: 'Export CSV',
-      empty: 'No conversations yet'
+      empty: 'No conversations yet',
+      select: 'Choose a conversation'
     },
     onSend: vi.fn().mockResolvedValue('msg-1'),
     onFlag: vi.fn(),
@@ -196,14 +204,25 @@ describe('Stream inbox', () => {
     const thread = screen.getByTestId('messaging-thread');
 
     expect(list.textContent).toContain('Bea Fellow');
+    expect(list.textContent).toContain('BF');
     expect(list.textContent).toContain('2');
-    expect(thread.textContent).not.toContain('Bea Fellow');
+    expect(thread.textContent).toContain('Choose a conversation');
+    expect(thread.textContent).not.toContain('Hello from the thread');
+    expect(screen.getByTestId('messaging-stream').querySelector('.str-chat')?.getAttribute('style')).toContain(
+      '#be1241'
+    );
+    expect(harness.client.queryChannels).toHaveBeenCalledWith(
+      expect.objectContaining({ cid: { $in: ['mentor_dm:mdm'] } }),
+      { last_message_at: -1 },
+      expect.objectContaining({ limit: 30 })
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /Bea Fellow/ }));
+
     expect(thread.textContent).toContain('Hello from the thread');
     expect(thread.querySelector('.str-chat__message--me')).toBeTruthy();
     expect(thread.querySelector('.str-chat__message--other')).toBeTruthy();
-    expect(thread.querySelector('.str-chat__avatar')).toBeTruthy();
-    expect(screen.getByTestId('messaging-stream').getAttribute('style')).toContain('#be1241');
-    expect(harness.client.queryChannels).toHaveBeenCalled();
+    expect(screen.getByTestId('message-actions').textContent).toBe('react,reply');
   });
 
   it('sends through the app API and flags or mutes from the message actions', async () => {
@@ -219,13 +238,15 @@ describe('Stream inbox', () => {
     expect(onFlag).toHaveBeenCalledWith('mentor_dm', 'mdm', 'm1');
     expect(onMute).toHaveBeenCalledWith('other');
 
+    const clientMessageId = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
+    const parentId = '6ba7b811-9dad-11d1-80b4-00c04fd430c8';
     const sent = await harness.channelProps.current.doSendMessageRequest?.(
       { type: 'mentor_dm', id: 'mdm' },
-      { text: 'Hi', user: { id: 'me', name: 'Ada Mentor' } }
+      { id: clientMessageId, parent_id: parentId, text: 'Hi', user: { id: 'me', name: 'Ada Mentor' } }
     );
 
-    expect(onSend).toHaveBeenCalledWith('mentor_dm', 'mdm', 'Hi');
-    expect(sent).toMatchObject({ message: { id: 'msg-1', text: 'Hi' } });
+    expect(onSend).toHaveBeenCalledWith('mentor_dm', 'mdm', 'Hi', { id: clientMessageId, parentId });
+    expect(sent).toMatchObject({ message: { id: 'msg-1', parent_id: parentId, text: 'Hi' } });
   });
 
   it('uses the channel list as its own screen on a narrow viewport and returns from the thread', async () => {

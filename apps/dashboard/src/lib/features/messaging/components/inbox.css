@@ -1,14 +1,52 @@
 .messaging-inbox {
+  --messaging-brand: #1d4ee2;
   display: flex;
   flex: 1;
   flex-direction: column;
   height: 100%;
   min-height: 0;
+  font-family: Geist, sans-serif;
 }
 
-.messaging-inbox > .str-chat {
+.messaging-inbox .str-chat,
+.messaging-inbox .str-chat.str-chat__theme-light {
+  --str-chat__font-family: Geist, sans-serif;
+  --str-chat__primary-color: var(--messaging-brand);
+  --str-chat__active-primary-color: var(--messaging-brand);
+  --str-chat__primary-color-low-emphasis: var(--messaging-brand);
+  --str-chat__on-primary-color: #ffffff;
+  --str-chat__own-message-bubble-background-color: var(--messaging-brand);
+  --str-chat__own-message-bubble-color: #ffffff;
+  --str-chat__avatar-background-color: var(--messaging-brand);
+  --str-chat__avatar-color: #ffffff;
+  --str-chat__message-link-color: var(--messaging-brand);
+  --str-chat__message-send-color: #ffffff;
+  --str-chat__message-send-background-color: var(--messaging-brand);
+  --str-chat__unread-badge-color: var(--messaging-brand);
+  --str-chat__channel-preview-unread-badge-background-color: var(--messaging-brand);
+  --str-chat__channel-preview-unread-badge-color: #ffffff;
+  --str-chat__channel-preview-active-background-color: color-mix(in srgb, var(--messaging-brand) 16%, #ffffff);
+  --str-chat__channel-list-background-color: #f4f6f8;
+  --str-chat__channel-preview-background-color: #f4f6f8;
+  --str-chat__message-list-background-color: #ffffff;
+  --str-chat__message-bubble-background-color: #eef2f6;
+  --str-chat__channel-background-color: #ffffff;
   height: 100%;
   min-height: 0;
+  font-family: Geist, sans-serif;
+}
+
+.messaging-inbox .str-chat__message--me .str-chat__message-bubble a {
+  color: #ffffff;
+}
+
+.messaging-inbox .str-chat__channel-preview__action-button--archive,
+.messaging-inbox .str-chat__channel-preview__action-button--pin {
+  display: none;
+}
+
+.messaging-inbox .str-chat__unread-messages-separator-wrapper:has(+ .str-chat__li .str-chat__message--me) {
+  display: none;
 }
 
 .messaging-inbox__panes {
@@ -49,6 +87,18 @@
 .messaging-inbox__thread .str-chat__window {
   height: 100%;
   min-height: 0;
+}
+
+.messaging-inbox .str-chat__thread {
+  flex: 0 0 24rem;
+  width: 24rem;
+  max-width: 40%;
+  background: #ffffff;
+  border-left: 1px solid #e4e7ec;
+}
+
+.messaging-inbox__thread[data-compose='false'] .str-chat__thread .str-chat__message-input {
+  display: none;
 }
 
 .messaging-inbox__header {
@@ -109,9 +159,34 @@
   font-size: 0.875rem;
 }
 
-.messaging-inbox__empty {
+.messaging-inbox__empty,
+.messaging-inbox__prompt {
   margin: 0.75rem;
   font-size: 0.875rem;
+}
+
+.messaging-inbox__prompt {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  color: #667085;
+}
+
+.messaging-inbox__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: 0 0 2.5rem;
+  border-radius: 9999px;
+  background: var(--messaging-brand);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  object-fit: cover;
 }
 
 @media (max-width: 767px) {
@@ -120,5 +195,23 @@
     width: 100%;
     min-width: 0;
     height: 100%;
+  }
+
+  .messaging-inbox .str-chat__channel {
+    position: relative;
+  }
+
+  .messaging-inbox .str-chat__thread {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    flex: none;
+    width: 100%;
+    max-width: none;
+    border-left: 0;
+  }
+
+  .messaging-inbox .str-chat__close-thread-button {
+    display: none;
   }
 }

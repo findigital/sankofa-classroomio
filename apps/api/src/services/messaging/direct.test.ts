@@ -41,6 +41,7 @@ function gateway(): StreamGateway {
     inspectChannel: vi.fn(),
     readMessages: vi.fn(),
     sendMessage: vi.fn(),
+    removeChannelMember: vi.fn(),
     muteUser: vi.fn(),
     unmuteUser: vi.fn(),
     verifyWebhook: vi.fn()
