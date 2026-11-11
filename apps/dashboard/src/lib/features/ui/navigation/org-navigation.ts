@@ -16,9 +16,11 @@ import WidgetsIcon from '@cio/ui/custom/moving-icons/widgets.svelte';
 
 import type { AccountOrg } from '$features/app/types';
 import BotIcon from '@lucide/svelte/icons/bot';
+import MessageSquareIcon from '@lucide/svelte/icons/message-square';
 import type { Component } from 'svelte';
 import { isActive } from '$lib/utils/functions/app';
 import { IS_AI_ENABLED } from '$lib/utils/constants/ai';
+import { MESSAGING_ENABLED } from '$lib/utils/constants/messaging';
 import { ROLE } from '@cio/utils/constants';
 import type { PlanLimitResource } from '@cio/utils/plans';
 import type { OrgNavCountKey, OrgNavCounts } from '$features/ui/sidebar/org-sidebar/org-nav-counts.svelte';
@@ -204,6 +206,13 @@ export const baseNavConfig: NavItemConfig[] = [
   },
   {
     group: 'people',
+    titleKey: 'org_navigation.messages',
+    path: '/messages',
+    icon: MessageSquareIcon,
+    matchPattern: '^/org/[^/]+/messages(/.*)?$'
+  },
+  {
+    group: 'people',
     titleKey: 'org_navigation.community',
     path: '/community',
     icon: CommunityIcon,
@@ -299,9 +308,13 @@ function isHomePath(path: string): boolean {
 /**
  * Nav config with the Home item and AI-related settings tabs removed when AI is turned off.
  */
-const resolvedNavConfig = IS_AI_ENABLED
+const featureNavConfig = MESSAGING_ENABLED
   ? baseNavConfig
-  : baseNavConfig
+  : baseNavConfig.filter((config) => config.path !== '/messages');
+
+const resolvedNavConfig = IS_AI_ENABLED
+  ? featureNavConfig
+  : featureNavConfig
       .filter((config) => !isHomePath(config.path))
       .map((config) => ({
         ...config,

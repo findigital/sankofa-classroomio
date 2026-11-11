@@ -23,5 +23,6 @@ export * from './tag';
 export * from './cohort';
 export * from './widget';
 export * from './jobs';
+export * from './messaging';
 export * from './invite-link';
 export * from './webhook';

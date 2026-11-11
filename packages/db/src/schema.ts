@@ -1902,6 +1902,190 @@ export const mentorAssignment = pgTable(
   ]
 );
 
+export const messagingCohortSetting = pgTable(
+  'messaging_cohort_setting',
+  {
+    groupId: uuid('group_id').primaryKey().notNull(),
+    organizationId: uuid('organization_id').notNull(),
+    fellowDmEnabled: boolean('fellow_dm_enabled').default(false).notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+      .default(sql`timezone('utc'::text, now())`)
+      .notNull(),
+    updatedBy: uuid('updated_by')
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.groupId],
+      foreignColumns: [group.id],
+      name: 'messaging_cohort_setting_group_id_fkey'
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.organizationId],
+      foreignColumns: [organization.id],
+      name: 'messaging_cohort_setting_organization_id_fkey'
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.updatedBy],
+      foreignColumns: [profile.id],
+      name: 'messaging_cohort_setting_updated_by_fkey'
+    }).onDelete('set null')
+  ]
+);
+
+export const messagingKeyword = pgTable(
+  'messaging_keyword',
+  {
+    id: uuid()
+      .default(sql`gen_random_uuid()`)
+      .primaryKey()
+      .notNull(),
+    organizationId: uuid('organization_id').notNull(),
+    phrase: text().notNull(),
+    action: text().notNull(),
+    createdBy: uuid('created_by'),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .default(sql`timezone('utc'::text, now())`)
+      .notNull()
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.organizationId],
+      foreignColumns: [organization.id],
+      name: 'messaging_keyword_organization_id_fkey'
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.createdBy],
+      foreignColumns: [profile.id],
+      name: 'messaging_keyword_created_by_fkey'
+    }).onDelete('set null'),
+    uniqueIndex('messaging_keyword_org_phrase_idx').on(table.organizationId, sql`lower(${table.phrase})`),
+    check('messaging_keyword_action_check', sql`${table.action} in ('flag', 'block')`)
+  ]
+);
+
+export const messagingAudit = pgTable(
+  'messaging_audit',
+  {
+    id: uuid()
+      .default(sql`gen_random_uuid()`)
+      .primaryKey()
+      .notNull(),
+    organizationId: uuid('organization_id').notNull(),
+    actorProfileId: uuid('actor_profile_id'),
+    action: text().notNull(),
+    channelType: text('channel_type'),
+    channelId: text('channel_id'),
+    metadata: jsonb().default({}).notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .default(sql`timezone('utc'::text, now())`)
+      .notNull()
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.organizationId],
+      foreignColumns: [organization.id],
+      name: 'messaging_audit_organization_id_fkey'
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.actorProfileId],
+      foreignColumns: [profile.id],
+      name: 'messaging_audit_actor_profile_id_fkey'
+    }).onDelete('set null'),
+    check(
+      'messaging_audit_action_check',
+      sql`${table.action} in ('read', 'export', 'disclosure', 'keyword_upsert', 'keyword_delete')`
+    ),
+    index('idx_messaging_audit_org_created').on(table.organizationId, table.createdAt)
+  ]
+);
+
+export const messagingDisclosure = pgTable(
+  'messaging_disclosure',
+  {
+    organizationId: uuid('organization_id').notNull(),
+    profileId: uuid('profile_id').notNull(),
+    acceptedAt: timestamp('accepted_at', { withTimezone: true, mode: 'string' })
+      .default(sql`timezone('utc'::text, now())`)
+      .notNull()
+  },
+  (table) => [
+    primaryKey({ columns: [table.organizationId, table.profileId] }),
+    foreignKey({
+      columns: [table.organizationId],
+      foreignColumns: [organization.id],
+      name: 'messaging_disclosure_organization_id_fkey'
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.profileId],
+      foreignColumns: [profile.id],
+      name: 'messaging_disclosure_profile_id_fkey'
+    }).onDelete('cascade')
+  ]
+);
+
+export const messagingMute = pgTable(
+  'messaging_mute',
+  {
+    organizationId: uuid('organization_id').notNull(),
+    muterProfileId: uuid('muter_profile_id').notNull(),
+    mutedProfileId: uuid('muted_profile_id').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .default(sql`timezone('utc'::text, now())`)
+      .notNull()
+  },
+  (table) => [
+    primaryKey({ columns: [table.organizationId, table.muterProfileId, table.mutedProfileId] }),
+    foreignKey({
+      columns: [table.organizationId],
+      foreignColumns: [organization.id],
+      name: 'messaging_mute_organization_id_fkey'
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.muterProfileId],
+      foreignColumns: [profile.id],
+      name: 'messaging_mute_muter_profile_id_fkey'
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.mutedProfileId],
+      foreignColumns: [profile.id],
+      name: 'messaging_mute_muted_profile_id_fkey'
+    }).onDelete('cascade'),
+    check('messaging_mute_distinct_profiles', sql`${table.muterProfileId} <> ${table.mutedProfileId}`)
+  ]
+);
+
+export const messagingFlag = pgTable(
+  'messaging_flag',
+  {
+    id: uuid()
+      .default(sql`gen_random_uuid()`)
+      .primaryKey()
+      .notNull(),
+    organizationId: uuid('organization_id').notNull(),
+    channelType: text('channel_type').notNull(),
+    channelId: text('channel_id').notNull(),
+    messageId: text('message_id').notNull(),
+    reporterProfileId: uuid('reporter_profile_id'),
+    reason: text(),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .default(sql`timezone('utc'::text, now())`)
+      .notNull()
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.organizationId],
+      foreignColumns: [organization.id],
+      name: 'messaging_flag_organization_id_fkey'
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.reporterProfileId],
+      foreignColumns: [profile.id],
+      name: 'messaging_flag_reporter_profile_id_fkey'
+    }).onDelete('set null'),
+    index('idx_messaging_flag_org_channel').on(table.organizationId, table.channelType, table.channelId)
+  ]
+);
+
 export const lessonVideoProgress = pgTable(
   'lesson_video_progress',
   {

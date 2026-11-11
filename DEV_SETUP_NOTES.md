@@ -139,6 +139,13 @@ for which emails each process sends.
 paid. For local dev a free sandbox (e.g. Mailtrap) or a provider's free tier is
 enough — developing costs nothing.
 
+### Fellow messaging (optional)
+Messaging stays dark until both flags are exactly `true`: `MESSAGING_ENABLED` on the API
+and `PUBLIC_MESSAGING_ENABLED` on the dashboard. The API also needs `STREAM_API_KEY` and
+`STREAM_API_SECRET` (server only). `PUBLIC_SERVER_URL` is the base for the Stream
+`before_message_send` webhook. Unread email digests are not sent; the API keeps a deferred
+hook until SMTP is configured and delivery is implemented.
+
 ---
 
 ## 3. Ports

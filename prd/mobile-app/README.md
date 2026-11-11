@@ -101,7 +101,7 @@ These were locked from the mobile brainstorm that preceded this PRD. Items marke
 - **Any purchase flow** (see Decision 9) — no course checkout, plan upgrade, or AI token packs.
 - **Offline exercises, quizzes, and submissions** (v2) — offline is read-only content plus queued completion.
 - Live-class video conferencing inside the app (join links open the existing external provider).
-- Direct messaging between users (ClassroomIO has no DM system today; community Q&A covers discussion).
+- Direct messaging in the native mobile app (v1). Fellow and organization messaging on the web is optional and stays off unless the Stream flags are turned on. Community Q&A is separate.
 - SCORM playback (`prd/scorm-support` is todo; not shipped on web either).
 - Per-customer white-label App Store listings (enterprise follow-up, Decision 13).
 - Tablet-optimized layouts, watch apps, widgets, offline video for public/unenrolled catalog courses.

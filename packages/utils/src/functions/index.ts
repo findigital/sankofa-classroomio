@@ -19,3 +19,4 @@ export * from './course-banner-image';
 export * from './whisper-language';
 export * from './live-session';
 export * from './fellow-pace';
+export * from './messaging';

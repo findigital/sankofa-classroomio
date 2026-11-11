@@ -129,6 +129,10 @@ const envSchema = z.object({
   SUPADATA_API_KEY: z.string().optional(),
   /** YouTube caption provider identifier (default 'supadata'). */
   YOUTUBE_CAPTION_PROVIDER: z.string().optional(),
+  /** Exactly `true` enables fellow messaging. Any other value keeps it off. */
+  MESSAGING_ENABLED: z.string().optional(),
+  STREAM_API_KEY: z.string().optional(),
+  STREAM_API_SECRET: z.string().optional(),
   /** Days without activity before a fellow is flagged gone quiet on the staff pace view. */
   FELLOW_QUIET_DAYS: z
     .string()

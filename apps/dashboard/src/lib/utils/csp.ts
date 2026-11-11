@@ -13,7 +13,9 @@ export function parseCspDomains(value: string | undefined): string[] {
         domain === "'self'" ||
         domain === 'self' ||
         domain.startsWith('http://') ||
-        domain.startsWith('https://')
+        domain.startsWith('https://') ||
+        domain.startsWith('ws://') ||
+        domain.startsWith('wss://')
       ) {
         return domain === 'self' ? "'self'" : domain;
       }
@@ -36,7 +38,16 @@ function buildCspExtensions(): Record<string, string[]> {
   const frameAncestorsExtra = or('CSP_FRAME_ANCESTORS_DOMAINS');
 
   const serverUrl = process.env.PUBLIC_SERVER_URL;
-  const connectSrc = serverUrl ? [...connectSrcBase, serverUrl] : connectSrcBase;
+  const connectSrc = serverUrl ? [...connectSrcBase, serverUrl] : [...connectSrcBase];
+
+  if (process.env.PUBLIC_MESSAGING_ENABLED === 'true') {
+    connectSrc.push(
+      'https://chat.stream-io-api.com',
+      'wss://chat.stream-io-api.com',
+      'https://*.stream-io-api.com',
+      'wss://*.stream-io-api.com'
+    );
+  }
 
   const extensions: Record<string, string[]> = {};
   if (scriptSrc.length) extensions['script-src'] = scriptSrc;

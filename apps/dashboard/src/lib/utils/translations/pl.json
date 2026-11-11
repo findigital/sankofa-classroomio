@@ -538,6 +538,18 @@
       "save_failed": "Could not save.",
       "saved": "Safeguarding record saved.",
       "mentors_saved": "Mentor assignments saved."
+    },
+    "messaging": {
+      "load_failed": "Could not load messages.",
+      "send_failed": "Could not send that message.",
+      "sent": "Message sent.",
+      "blocked": "That message was blocked.",
+      "flagged": "Message flagged.",
+      "muted": "Person muted.",
+      "exported": "Transcript ready.",
+      "keyword_saved": "Keyword saved.",
+      "saved": "Saved.",
+      "accepted": "Notice accepted."
     }
   },
   "explore": {
@@ -3670,7 +3682,8 @@
     "create": "Utwórz",
     "distribute": "Rozpowszechniaj",
     "tools": "Narzędzia",
-    "pace": "Fellow pace"
+    "pace": "Fellow pace",
+    "messages": "Messages"
   },
   "media_manager": {
     "page_title": "Menedżer mediów - ClassroomIO",
@@ -6732,5 +6745,37 @@
         "notes": "Notes"
       }
     }
+  },
+  "messaging": {
+    "page_title": "Messages",
+    "heading": "Messages",
+    "subtitle": "Cohort announcements, discussion, and direct messages.",
+    "notice": {
+      "body": "Organization administrators can read messages in this organization, including direct messages.",
+      "accept": "I understand"
+    },
+    "channels": "Your conversations",
+    "all_channels": "All conversations",
+    "empty": "No conversations yet.",
+    "select": "Choose a conversation.",
+    "compose": "Write a message",
+    "send": "Send",
+    "flag": "Flag",
+    "mute": "Mute",
+    "export": "Export",
+    "export_csv": "CSV",
+    "directory": "Direct message",
+    "open": "Open",
+    "keywords": "Keyword list",
+    "keyword_phrase": "Phrase",
+    "keyword_add": "Add keyword",
+    "keyword_flag": "Flag",
+    "keyword_block": "Block",
+    "keyword_remove": "Remove",
+    "cohorts": "Fellow direct messages",
+    "fellow_dm": "Allow fellows in this cohort to message each other",
+    "activity": "Recent activity",
+    "activity_empty": "No messaging activity yet.",
+    "disabled": "Messaging is turned off."
   }
 }
