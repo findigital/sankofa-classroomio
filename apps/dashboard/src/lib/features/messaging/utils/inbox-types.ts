@@ -22,6 +22,9 @@ export type InboxLabels = {
   exportCsv: string;
   empty: string;
   select: string;
+  online: string;
+  offline: string;
+  supervised: string;
 };
 
 export type InboxViewProps = {

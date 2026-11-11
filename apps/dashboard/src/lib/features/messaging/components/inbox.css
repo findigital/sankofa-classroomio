@@ -32,9 +32,10 @@
 
 .messaging-inbox__list {
   display: flex;
+  flex: 0 0 18.75rem;
   flex-direction: column;
-  width: 20rem;
-  min-width: 20rem;
+  width: 18.75rem;
+  min-width: 18.75rem;
   min-height: 0;
   background: var(--sidebar);
   border-right: 1px solid var(--sidebar-border);
@@ -65,12 +66,38 @@
   min-height: 0;
 }
 
+.messaging-inbox__thread .str-chat__channel {
+  position: relative;
+  container-type: inline-size;
+  container-name: messaging-channel;
+}
+
+.messaging-inbox__thread .str-chat__main-panel {
+  flex: 1 1 26.25rem;
+  min-width: 26.25rem;
+}
+
 .messaging-inbox .str-chat__thread {
-  flex: 0 0 24rem;
-  width: 24rem;
-  max-width: 40%;
+  flex: 0 0 22.5rem;
+  width: 22.5rem;
+  max-width: none;
   background: var(--card);
   border-left: 1px solid var(--border);
+}
+
+@container messaging-channel (max-width: 48.75rem) {
+  .messaging-inbox__thread .str-chat__main-panel {
+    min-width: 0;
+  }
+
+  .messaging-inbox .str-chat__thread {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    flex: none;
+    width: 100%;
+    max-width: none;
+  }
 }
 
 .messaging-inbox__thread[data-compose='false'] .str-chat__thread .str-chat__message-input {
@@ -87,8 +114,36 @@
 }
 
 .messaging-inbox__header .str-chat__channel-header {
+  display: flex;
   flex: 1;
+  align-items: center;
+  gap: 0.5rem;
   min-width: 0;
+}
+
+.messaging-inbox .str-chat__channel-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.messaging-inbox__header-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.messaging-inbox__supervised {
+  flex: none;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  padding: 0.05rem 0.45rem;
+  color: var(--muted-foreground);
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 600;
+  line-height: 1.25rem;
 }
 
 .messaging-inbox__back,
@@ -211,6 +266,10 @@
     width: 100%;
     margin: 0;
     border-radius: 0;
+  }
+
+  .messaging-inbox__thread .str-chat__main-panel {
+    min-width: 0;
   }
 
   .messaging-inbox .str-chat__channel {

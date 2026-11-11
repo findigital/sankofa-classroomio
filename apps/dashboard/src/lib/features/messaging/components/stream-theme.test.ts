@@ -50,22 +50,29 @@ describe('Stream inbox theme', () => {
     expect(theme).toContain('opacity: 0.5');
     expect(theme).not.toMatch(/#005fff|#1d4ee2|rgba\(0,\s*95,\s*255|rgba\(51,\s*126,\s*255/i);
 
-    for (let hue = 0; hue < 8; hue += 1) {
+    for (let hue = 0; hue < 16; hue += 1) {
       expect(theme).toContain(`--messaging-sender-${hue}:`);
       expect(theme).toContain(`--messaging-sender-${hue}-label:`);
     }
 
     expect(theme).toContain('oklch(from var(--primary) 0.42 c h)');
     expect(theme).toContain('oklch(from var(--primary) 0.38 c h)');
+    expect(theme).toContain('oklch(from var(--primary) 0.42 c calc(h + 337.5))');
     expect(theme).toContain('.dark .messaging-inbox');
     expect(theme).toContain('oklch(from var(--primary) 0.78 c h)');
-    expect(theme).toContain('color-mix(in oklch, var(--messaging-sender-fill, transparent) 8%, var(--muted))');
-    expect(theme).toContain('color-mix(in oklch, var(--messaging-sender-fill, transparent) 12%, var(--secondary))');
+    expect(theme).toContain('color-mix(in oklch, oklch(0.52 0.04 250) 16%, var(--card))');
+    expect(theme).toContain('color-mix(in oklch, oklch(0.86 0.03 250) 14%, var(--card))');
     expect(theme).toContain('.str-chat__message--me .str-chat__message-bubble');
     expect(theme).toContain('background-color: var(--primary)');
-    expect(theme).toContain('border-color: transparent transparent transparent var(--primary)');
+    expect(theme).toContain('width: 20px');
+    expect(theme).toContain('border-bottom-left-radius: 16px 14px');
     expect(theme).toContain('.str-chat__li--bottom .str-chat__message--other .str-chat__message-bubble::after');
-    expect(theme).toContain('.str-chat__li--single .str-chat__message--me .str-chat__message-bubble::after');
+    expect(theme).toContain('.str-chat__li--single .str-chat__message--me .str-chat__message-bubble::before');
+    expect(theme).toContain('.str-chat__date-separator-line');
+    expect(layout).toContain('min-width: 26.25rem');
+    expect(layout).toContain('width: 22.5rem');
+    expect(layout).toContain('width: 18.75rem');
+    expect(layout).toContain('@container messaging-channel (max-width: 48.75rem)');
     expect(theme).toContain('margin-block-end: 0.125rem');
     expect(theme).toContain("data-channel-kind='direct'");
     expect(theme).toContain('.str-chat__channel-preview-messenger--unread .str-chat__channel-preview-messenger--name');

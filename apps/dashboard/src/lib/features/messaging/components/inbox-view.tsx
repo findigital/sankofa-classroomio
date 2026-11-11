@@ -1,4 +1,13 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties
+} from 'react';
 import { createRoot } from 'react-dom/client';
 import { StreamChat, type Channel, type ChannelFilters, type LocalMessage } from 'stream-chat';
 import {
@@ -7,6 +16,7 @@ import {
   ChannelList,
   ChannelPreviewMessenger,
   Chat,
+  DateSeparator,
   MessageInput,
   MessageList,
   MessageSimple,
@@ -14,8 +24,10 @@ import {
   ThreadHeader as StreamThreadHeader,
   Window,
   useChatContext,
+  useChannelStateContext,
+  useMessageContext,
   type ChannelPreviewUIComponentProps,
-  type MessageUIComponentProps,
+  type DateSeparatorProps,
   type ThreadHeaderProps
 } from 'stream-chat-react';
 import 'stream-chat-react/dist/css/v2/index.css';
@@ -23,7 +35,13 @@ import 'stream-chat-react/dist/css/v2/index.css';
 import './stream-theme.css';
 import './inbox.css';
 
-import { channelColorKey, senderColorIndex, senderColorVariable } from '../utils/avatar-color';
+import {
+  channelColorKey,
+  senderColorIndex,
+  senderFillVariable,
+  senderIndexForMember,
+  type ChannelColorMember
+} from '../utils/avatar-color';
 import type { InboxViewProps } from '../utils/inbox-types';
 
 export type { InboxViewProps } from '../utils/inbox-types';
@@ -64,27 +82,55 @@ function channelKey(channel: { type?: string; id?: string }) {
   return `${channel.type ?? ''}:${channel.id ?? ''}`;
 }
 
-function channelMemberIds(channel: Channel) {
-  const members = channel.state?.members ?? {};
-  const ids: string[] = [];
+type InboxMember = ChannelColorMember & { online: boolean };
+
+function channelMembers(channel: Channel | null | undefined) {
+  const members = channel?.state?.members ?? {};
+  const people: InboxMember[] = [];
 
   for (const member of Object.values(members)) {
     const id = member.user?.id;
 
-    if (id) ids.push(id);
+    if (!id) continue;
+
+    people.push({ id, name: member.user?.name ?? null, online: Boolean(member.user?.online) });
   }
 
-  return ids;
+  return people;
 }
 
-function SenderMessage(props: MessageUIComponentProps) {
-  const index = senderColorIndex(props.message.user?.id || 'unknown');
+function senderStyle(index: number): CSSProperties {
+  return {
+    display: 'contents',
+    '--messaging-sender-fill': senderFillVariable(index),
+    '--messaging-sender-label': `var(--messaging-sender-${index}-label)`,
+    '--str-chat__avatar-background-color': senderFillVariable(index),
+    '--str-chat__avatar-color': 'var(--primary-foreground)'
+  } as CSSProperties;
+}
+
+// stream-chat-react renders this with groupedByUser only; the message lives on useMessageContext.
+export function SenderMessage(props: { groupedByUser?: boolean }) {
+  const { message } = useMessageContext('SenderMessage');
+  const { channel } = useChannelStateContext('SenderMessage');
+  const members = channelMembers(channel);
+  const userId = message?.user?.id || '';
+  const index = userId
+    ? senderIndexForMember(
+        userId,
+        members.map((member) => member.id)
+      )
+    : 0;
 
   return (
-    <div className={`messaging-sender messaging-sender-${index}`} style={{ display: 'contents' }}>
+    <div className="messaging-sender" data-testid="messaging-sender-message" style={senderStyle(index)}>
       <MessageSimple {...props} />
     </div>
   );
+}
+
+function CenteredDateSeparator(props: DateSeparatorProps) {
+  return <DateSeparator {...props} position="center" />;
 }
 
 function channelInitials(name: string) {
@@ -205,7 +251,7 @@ function useNarrowViewport() {
   return narrow;
 }
 
-function CohortAvatar({ image, name, colorKey }: { image?: string; name?: string; colorKey: string }) {
+function CohortAvatar({ image, name, hueIndex }: { image?: string | null; name?: string; hueIndex: number }) {
   const safeImage = safeMarkImage(image);
 
   if (safeImage) {
@@ -217,11 +263,17 @@ function CohortAvatar({ image, name, colorKey }: { image?: string; name?: string
       className="messaging-inbox__mark"
       data-testid="messaging-channel-avatar"
       aria-hidden="true"
-      style={{ background: senderColorVariable(colorKey), color: 'var(--primary-foreground)' }}
+      style={{ background: senderFillVariable(hueIndex), color: 'var(--primary-foreground)' }}
     >
       {channelInitials(name ?? '')}
     </span>
   );
+}
+
+function markHue(colorKey: string, memberIds: string[], direct: boolean) {
+  if (!direct) return senderColorIndex(colorKey);
+
+  return senderIndexForMember(colorKey, memberIds);
 }
 
 function NamedPreview(props: ChannelPreviewUIComponentProps) {
@@ -236,22 +288,84 @@ function NamedPreview(props: ChannelPreviewUIComponentProps) {
   const image = preview?.images.get(key) || channelImage(props.channel);
   const cohortId = preview?.cohortIds.get(key) || (props.channel.data as { cohort_id?: string } | undefined)?.cohort_id;
   const purpose = preview?.purposes.get(key) || (props.channel.data as { purpose?: string } | undefined)?.purpose;
+  const members = channelMembers(props.channel);
+  const direct = purpose === 'fellow_dm' || purpose === 'mentor_dm';
   const colorKey = channelColorKey({
     purpose,
     cohortId,
-    memberIds: channelMemberIds(props.channel),
+    members,
     selfId: props.channel.getClient()?.userID,
+    displayName: title,
     fallback: key
   });
+  const hueIndex = markHue(
+    colorKey,
+    members.map((member) => member.id),
+    direct
+  );
 
   return (
     <div onClick={() => preview?.onOpen(props.channel)}>
       <ChannelPreviewMessenger
         {...props}
         Avatar={(avatar) => (
-          <CohortAvatar image={image || avatar.image} name={title || avatar.name} colorKey={colorKey} />
+          <CohortAvatar image={image || avatar.image} name={title || avatar.name} hueIndex={hueIndex} />
         )}
       />
+    </div>
+  );
+}
+
+function ConversationHeader(props: {
+  channel: Channel | null;
+  listed?: { name: string; purpose: string; cohortId: string | null; image: string | null };
+  labels: InboxViewProps['labels'];
+}) {
+  const preview = useContext(InboxPreview);
+  const key = props.channel ? channelKey(props.channel) : '';
+  const purpose =
+    props.listed?.purpose ||
+    preview?.purposes.get(key) ||
+    (props.channel?.data as { purpose?: string } | undefined)?.purpose;
+  const title = props.listed?.name || preview?.names.get(key) || '';
+  const image = props.listed?.image || preview?.images.get(key);
+  const cohortId = props.listed?.cohortId || preview?.cohortIds.get(key);
+  const members = channelMembers(props.channel);
+  const direct = purpose === 'fellow_dm' || purpose === 'mentor_dm';
+  const colorKey = channelColorKey({
+    purpose,
+    cohortId,
+    members,
+    selfId: props.channel?.getClient()?.userID,
+    displayName: title,
+    fallback: key || 'channel'
+  });
+  const hueIndex = markHue(
+    colorKey,
+    members.map((member) => member.id),
+    direct
+  );
+  const mark = <CohortAvatar image={image} name={title} hueIndex={hueIndex} />;
+
+  if (!direct) {
+    return <ChannelHeader Avatar={() => mark} title={title || undefined} />;
+  }
+
+  const counterpart = members.find((member) => member.id === colorKey);
+  const selfId = props.channel?.getClient()?.userID;
+  const online = counterpart ? counterpart.online : members.some((member) => member.id !== selfId && member.online);
+  const supervised = members.length > 2;
+
+  return (
+    <div className="str-chat__channel-header" data-testid="messaging-dm-header">
+      {mark}
+      <div className="str-chat__channel-header-end">
+        <p className="str-chat__channel-header-title">
+          <span className="messaging-inbox__header-name">{title}</span>
+          {supervised ? <span className="messaging-inbox__supervised">{props.labels.supervised}</span> : null}
+        </p>
+        <p className="str-chat__channel-header-info">{online ? props.labels.online : props.labels.offline}</p>
+      </div>
     </div>
   );
 }
@@ -579,6 +693,7 @@ function InboxPanes(props: InboxViewProps) {
           >
             {activeKey ? (
               <StreamChannel
+                DateSeparator={CenteredDateSeparator}
                 Message={SenderMessage}
                 ThreadHeader={InboxThreadHeader}
                 doSendMessageRequest={sendThroughApi}
@@ -590,7 +705,11 @@ function InboxPanes(props: InboxViewProps) {
                         {props.labels.back}
                       </button>
                     ) : null}
-                    <ChannelHeader />
+                    <ConversationHeader
+                      channel={activeChannel ?? openedChannel.current}
+                      labels={props.labels}
+                      listed={listed}
+                    />
                     {props.roleIsAdmin && activeKey ? (
                       <div className="messaging-inbox__exports">
                         <button
