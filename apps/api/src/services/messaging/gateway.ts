@@ -267,7 +267,7 @@ export class StreamServerGateway implements StreamGateway {
     for (let page = 0; page < MESSAGE_PAGE_CAP; page += 1) {
       const response = await channel.query({
         watch: false,
-        state: false,
+        state: true,
         messages: {
           limit: MESSAGE_PAGE,
           ...(olderThan ? { id_lt: olderThan } : {})
