@@ -198,7 +198,10 @@
         export: $t('messaging.export'),
         exportCsv: $t('messaging.export_csv'),
         empty: $t('messaging.empty'),
-        select: $t('messaging.select')
+        select: $t('messaging.select'),
+        online: $t('messaging.online'),
+        offline: $t('messaging.offline'),
+        supervised: $t('messaging.supervised')
       },
       onSend: async (channelType, channelId, text, message) => {
         const sent = await messagingApi.send(channelType, channelId, text, {

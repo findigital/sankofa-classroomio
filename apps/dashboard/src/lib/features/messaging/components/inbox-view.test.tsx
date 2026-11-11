@@ -76,8 +76,9 @@ vi.mock('stream-chat-react', () => ({
       state: {
         unreadCount: 2,
         members: {
-          me: { user: { id: 'me' } },
-          ada: { user: { id: 'ada-fellow' } }
+          staff: { user: { id: 'staff-amara', name: 'Amara Admin' } },
+          me: { user: { id: 'me', name: 'Ada Mentor' } },
+          ada: { user: { id: 'ada-fellow', name: 'Bea Fellow', online: true } }
         }
       },
       getClient: () => harness.client,
@@ -167,7 +168,7 @@ vi.mock('stream-chat-react', () => ({
   }
 }));
 
-import { senderColorVariable } from '../utils/avatar-color';
+import { senderFillVariable, senderIndexForMember } from '../utils/avatar-color';
 import { InboxView, type InboxViewProps } from './inbox-view';
 
 function installMatchMedia(matches: boolean) {
@@ -218,7 +219,10 @@ function props(overrides: Partial<InboxViewProps> = {}): InboxViewProps {
       export: 'Export',
       exportCsv: 'Export CSV',
       empty: 'No conversations yet',
-      select: 'Choose a conversation'
+      select: 'Choose a conversation',
+      online: 'Online',
+      offline: 'Offline',
+      supervised: 'Supervised'
     },
     onSend: vi.fn().mockResolvedValue('msg-1'),
     onFlag: vi.fn(),
@@ -247,7 +251,7 @@ describe('Stream inbox', () => {
     expect(list.textContent).toContain('Bea Fellow');
     expect(list.textContent).toContain('BF');
     expect(list.querySelector('[data-testid="messaging-channel-avatar"]')?.getAttribute('style')).toContain(
-      senderColorVariable('ada-fellow')
+      senderFillVariable(senderIndexForMember('ada-fellow', ['staff-amara', 'me', 'ada-fellow']))
     );
     expect(harness.previewChannel?.data.own_capabilities).toEqual(
       expect.arrayContaining(['read-channel', 'send-reaction', 'send-reply'])
@@ -270,6 +274,17 @@ describe('Stream inbox', () => {
 
     expect(thread.textContent).toContain('Hello from the thread');
     expect(thread.getAttribute('data-channel-kind')).toBe('direct');
+    expect(screen.getByTestId('messaging-dm-header').textContent).toContain('Bea Fellow');
+    expect(screen.getByTestId('messaging-dm-header').textContent).toContain('Online');
+    expect(screen.getByTestId('messaging-dm-header').textContent).toContain('Supervised');
+    expect(screen.getByTestId('messaging-dm-header').textContent).not.toContain('members');
+    expect(screen.getByTestId('messaging-dm-header').textContent).not.toContain('Amara');
+    expect(
+      screen
+        .getByTestId('messaging-dm-header')
+        .querySelector('[data-testid="messaging-channel-avatar"]')
+        ?.getAttribute('style')
+    ).toContain(senderFillVariable(senderIndexForMember('ada-fellow', ['staff-amara', 'me', 'ada-fellow'])));
     expect(harness.messageListProps.current.maxTimeBetweenGroupedMessages).toBe(5 * 60 * 1000);
     expect(harness.threadListProps.current.maxTimeBetweenGroupedMessages).toBe(5 * 60 * 1000);
     expect(thread.querySelector('.str-chat__message--me')).toBeTruthy();
