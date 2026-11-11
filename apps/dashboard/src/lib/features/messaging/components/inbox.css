@@ -233,10 +233,17 @@
   flex: 0 0 2.5rem;
   border-radius: 9999px;
   background: var(--primary);
-  color: var(--primary-foreground);
+  color: #fff;
   font-size: var(--text-xs, 0.75rem);
   font-weight: 600;
   object-fit: cover;
+}
+
+.messaging-inbox__mark--course {
+  border-radius: calc(var(--radius) - 2px);
+  background: color-mix(in srgb, var(--messaging-course-fill) 16%, var(--card));
+  color: var(--messaging-course-ink);
+  border: 1px solid color-mix(in srgb, var(--messaging-course-fill) 28%, var(--border));
 }
 
 @media (max-width: 767px) {
@@ -292,7 +299,7 @@
     border-left: 0;
   }
 
-  .messaging-inbox .str-chat__close-thread-button {
+  .messaging-inbox .str-chat__thread-container .str-chat__thread-header .str-chat__close-thread-button {
     display: none;
   }
 
