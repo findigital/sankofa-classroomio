@@ -8,12 +8,20 @@
   import { SidebarFooterMenu } from '../footer';
   import SourceOffer from '$features/ui/source-offer.svelte';
   import SidebarSkeleton from '../sidebar-skeleton.svelte';
+  import AccountLoadNotice from '$features/app/account-load-notice.svelte';
+  import { appInitApi } from '$features/app/init.svelte';
 
   const isOrgLoaded = $derived($orgs.length > 0 && $profile.id);
 </script>
 
 {#if !isOrgLoaded}
-  <SidebarSkeleton />
+  {#if appInitApi.error}
+    <div class="ui:bg-sidebar flex h-[calc(100vh-48px)] w-64 flex-col border-r p-4">
+      <AccountLoadNotice />
+    </div>
+  {:else}
+    <SidebarSkeleton />
+  {/if}
 {:else}
   <Sidebar.Root collapsible="icon">
     <Sidebar.Header>

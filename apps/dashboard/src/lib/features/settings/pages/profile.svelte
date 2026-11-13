@@ -10,6 +10,7 @@
   import { Button } from '@cio/ui/base/button';
   import { UploadImage, UnsavedChanges } from '$features/ui';
   import * as Field from '@cio/ui/base/field';
+  import AccountLoadNotice from '$features/app/account-load-notice.svelte';
 
   interface Props {
     hasUnsavedChanges?: boolean;
@@ -31,6 +32,8 @@
   let emailChangeInitiated = $state(false);
 
   export async function handleUpdate() {
+    if (!$profile.id) return;
+
     await profileApi.submit(
       {
         fullname,
@@ -90,6 +93,11 @@
   });
 
   $effect(() => {
+    if (!$profile.id) {
+      hasUnsavedChanges = false;
+      return;
+    }
+
     hasUnsavedChanges =
       fullname !== savedFullname || username !== savedUsername || avatar !== undefined || hasLangChanged;
   });
@@ -108,101 +116,105 @@
   }
 </script>
 
-<UnsavedChanges bind:hasUnsavedChanges />
+{#if !$profile.id}
+  <AccountLoadNotice class="px-2" />
+{:else}
+  <UnsavedChanges bind:hasUnsavedChanges />
 
-<Field.Group class="w-full max-w-md! px-2">
-  <Field.Set>
-    <Field.Legend>{$t('settings.profile.profile_picture.heading')}</Field.Legend>
-    <Field.Field>
-      <UploadImage
-        bind:avatar
-        src={$profile.avatarUrl}
-        widthHeight="w-16 h-16 lg:w-24 lg:h-24"
-        isDisabled={profileApi.isLoading}
-      />
-    </Field.Field>
-  </Field.Set>
-
-  <Field.Separator />
-
-  <Field.Set>
-    <Field.Legend>{$t('settings.profile.personal_information.heading')}</Field.Legend>
-
-    {#if isVerificationSent}
-      <div class="flex items-center gap-2 rounded-md border border-gray-200 p-2 text-green-500">
-        <CircleCheckBig class="size-8" />
-        <p class="text-sm">{$t('settings.profile.personal_information.email_change_verification_sent')}</p>
-      </div>
-    {/if}
-
-    <Field.Group>
+  <Field.Group class="w-full max-w-md! px-2">
+    <Field.Set>
+      <Field.Legend>{$t('settings.profile.profile_picture.heading')}</Field.Legend>
       <Field.Field>
-        <Field.Label>{$t('settings.profile.personal_information.full_name')}</Field.Label>
-        <Input bind:value={fullname} class="" />
-        {#if profileApi.errors.fullname}
-          <Field.Error>{$t(profileApi.errors.fullname)}</Field.Error>
-        {/if}
-      </Field.Field>
-      <Field.Field>
-        <Field.Label>{$t('settings.profile.personal_information.username')}</Field.Label>
-        <Input bind:value={username} />
-        {#if profileApi.errors.username}
-          <Field.Error>{$t(profileApi.errors.username)}</Field.Error>
-        {/if}
-      </Field.Field>
-      <Field.Field>
-        <Field.Label>{$t('settings.profile.personal_information.email')}</Field.Label>
-        <Input
-          bind:value={email}
-          class="w-full"
-          type="email"
-          disabled={profileApi.isLoading}
-          oninput={() => {
-            if (email !== $profile.email) {
-              isChangingEmail = true;
-              emailChangeInitiated = false;
-            }
-          }}
+        <UploadImage
+          bind:avatar
+          src={$profile.avatarUrl}
+          widthHeight="w-16 h-16 lg:w-24 lg:h-24"
+          isDisabled={profileApi.isLoading}
         />
-        {#if profileApi.errors.newEmail}
-          <Field.Error>{$t(profileApi.errors.newEmail)}</Field.Error>
-        {/if}
-        {#if isChangingEmail && email !== $profile.email}
-          <div class="mt-2 flex gap-2">
-            <Button
-              variant="default"
-              class="text-sm"
-              loading={profileApi.isLoading}
-              disabled={profileApi.isLoading}
-              onclick={handleEmailChange}
-            >
-              {$t('settings.profile.personal_information.confirm')}
-            </Button>
-            <Button
-              variant="ghost"
-              class="ui:text-primary text-sm"
-              disabled={profileApi.isLoading}
-              onclick={() => {
-                email = $profile.email || '';
-                isChangingEmail = false;
+      </Field.Field>
+    </Field.Set>
+
+    <Field.Separator />
+
+    <Field.Set>
+      <Field.Legend>{$t('settings.profile.personal_information.heading')}</Field.Legend>
+
+      {#if isVerificationSent}
+        <div class="flex items-center gap-2 rounded-md border border-gray-200 p-2 text-green-500">
+          <CircleCheckBig class="size-8" />
+          <p class="text-sm">{$t('settings.profile.personal_information.email_change_verification_sent')}</p>
+        </div>
+      {/if}
+
+      <Field.Group>
+        <Field.Field>
+          <Field.Label>{$t('settings.profile.personal_information.full_name')}</Field.Label>
+          <Input bind:value={fullname} class="" />
+          {#if profileApi.errors.fullname}
+            <Field.Error>{$t(profileApi.errors.fullname)}</Field.Error>
+          {/if}
+        </Field.Field>
+        <Field.Field>
+          <Field.Label>{$t('settings.profile.personal_information.username')}</Field.Label>
+          <Input bind:value={username} />
+          {#if profileApi.errors.username}
+            <Field.Error>{$t(profileApi.errors.username)}</Field.Error>
+          {/if}
+        </Field.Field>
+        <Field.Field>
+          <Field.Label>{$t('settings.profile.personal_information.email')}</Field.Label>
+          <Input
+            bind:value={email}
+            class="w-full"
+            type="email"
+            disabled={profileApi.isLoading}
+            oninput={() => {
+              if (email !== $profile.email) {
+                isChangingEmail = true;
                 emailChangeInitiated = false;
-                profileApi.errors.newEmail = '';
-              }}
-            >
-              {$t('settings.profile.personal_information.cancel')}
-            </Button>
-          </div>
-        {/if}
-        {#if emailChangeInitiated}
-          <div class="mt-2 flex items-center gap-2 rounded-md border border-gray-200 p-2 text-amber-500">
-            <CircleCheckBig class="size-8" />
-            <p class="text-sm">{$t('settings.profile.personal_information.email_change_verification_note')}</p>
-          </div>
-        {/if}
-      </Field.Field>
-      <Field.Field>
-        <LanguagePicker bind:value={locale} className="" />
-      </Field.Field>
-    </Field.Group>
-  </Field.Set>
-</Field.Group>
+              }
+            }}
+          />
+          {#if profileApi.errors.newEmail}
+            <Field.Error>{$t(profileApi.errors.newEmail)}</Field.Error>
+          {/if}
+          {#if isChangingEmail && email !== $profile.email}
+            <div class="mt-2 flex gap-2">
+              <Button
+                variant="default"
+                class="text-sm"
+                loading={profileApi.isLoading}
+                disabled={profileApi.isLoading}
+                onclick={handleEmailChange}
+              >
+                {$t('settings.profile.personal_information.confirm')}
+              </Button>
+              <Button
+                variant="ghost"
+                class="ui:text-primary text-sm"
+                disabled={profileApi.isLoading}
+                onclick={() => {
+                  email = $profile.email || '';
+                  isChangingEmail = false;
+                  emailChangeInitiated = false;
+                  profileApi.errors.newEmail = '';
+                }}
+              >
+                {$t('settings.profile.personal_information.cancel')}
+              </Button>
+            </div>
+          {/if}
+          {#if emailChangeInitiated}
+            <div class="mt-2 flex items-center gap-2 rounded-md border border-gray-200 p-2 text-amber-500">
+              <CircleCheckBig class="size-8" />
+              <p class="text-sm">{$t('settings.profile.personal_information.email_change_verification_note')}</p>
+            </div>
+          {/if}
+        </Field.Field>
+        <Field.Field>
+          <LanguagePicker bind:value={locale} className="" />
+        </Field.Field>
+      </Field.Group>
+    </Field.Set>
+  </Field.Group>
+{/if}

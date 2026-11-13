@@ -15,6 +15,30 @@ export function readQuestionTitle(value: unknown): string {
   return title;
 }
 
+/** Title persisted on insert or update. A composite row is stored as its question text. */
+export function questionTitleForStorage(value: unknown): string {
+  return readQuestionTitle(value);
+}
+
+export function mapQuestionsForGrading<T extends { title: unknown }>(
+  questions: T[]
+): Array<Omit<T, 'title'> & { title: string }> {
+  return questions.map((question) => ({
+    ...question,
+    title: readQuestionTitle(question.title)
+  }));
+}
+
+/** Rows whose stored title is a composite, and the title that should replace it. Idempotent. */
+export function questionTitleRepairs(rows: Array<{ id: number; title: string }>): Array<{ id: number; title: string }> {
+  return rows.flatMap((row) => {
+    const title = readQuestionTitle(row.title);
+    if (!title || title === row.title) return [];
+
+    return [{ id: row.id, title }];
+  });
+}
+
 export function parsePostgresComposite(value: string): string[] | null {
   if (value.length < 2 || value[0] !== '(' || value[value.length - 1] !== ')') return null;
 

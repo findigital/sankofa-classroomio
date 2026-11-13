@@ -8,6 +8,17 @@
  */
 
 const PROXY_PREFIX = '/proxy';
+// Must match the API headers. Railway overwrites x-real-ip on a public hop, so the
+// dashboard sends the client IP it saw at its own edge and proves the hop with the server key.
+const DASHBOARD_CLIENT_IP_HEADER = 'x-cio-client-ip';
+const DASHBOARD_PROXY_KEY_HEADER = 'x-cio-proxy-key';
+const FORWARDED_IP_HEADERS = [
+  'cf-connecting-ip',
+  'x-real-ip',
+  'x-forwarded-for',
+  DASHBOARD_CLIENT_IP_HEADER,
+  DASHBOARD_PROXY_KEY_HEADER
+] as const;
 const AUTH_PREFIX = '/api/auth';
 const OAUTH_DISCOVERY_PREFIX = '/.well-known/oauth-';
 const OIDC_DISCOVERY_PREFIX = '/.well-known/openid-configuration';
@@ -79,6 +90,27 @@ function resolveBrowserForwardedHost(request: Request, url: URL): string {
   return raw;
 }
 
+function normalizeForwardedIp(value: string | null): string | null {
+  const ip = value?.trim();
+  if (!ip || ip.length > 64 || /[\s,]/.test(ip)) return null;
+
+  return ip.startsWith('::ffff:') ? ip.slice('::ffff:'.length) : ip;
+}
+
+/** Client address Railway (or Cloudflare) already wrote onto the dashboard request. */
+export function clientIpSeenByDashboard(request: Request): string | null {
+  const realIp = normalizeForwardedIp(request.headers.get('x-real-ip'));
+  if (realIp) return realIp;
+
+  const cloudflareIp = normalizeForwardedIp(request.headers.get('cf-connecting-ip'));
+  if (cloudflareIp) return cloudflareIp;
+
+  const forwardedFor = request.headers.get('x-forwarded-for');
+  if (!forwardedFor) return null;
+
+  return normalizeForwardedIp(forwardedFor.split(',')[0] ?? null);
+}
+
 function isStrippedResponseHeader(name: string): boolean {
   return (RESPONSE_HEADERS_TO_STRIP as readonly string[]).includes(name);
 }
@@ -144,9 +176,17 @@ export async function proxyRequestToApi(request: Request): Promise<Response> {
   // can leave Content-Encoding set, which breaks the browser.
   upstreamHeaders.set('accept-encoding', 'identity');
 
-  const forwardedFor = request.headers.get('cf-connecting-ip') ?? request.headers.get('x-forwarded-for');
-  if (forwardedFor) {
-    upstreamHeaders.set('x-forwarded-for', forwardedFor);
+  for (const name of FORWARDED_IP_HEADERS) {
+    upstreamHeaders.delete(name);
+  }
+
+  const clientIp = clientIpSeenByDashboard(request);
+  const proxyKey = process.env.PRIVATE_SERVER_KEY;
+  if (clientIp && proxyKey) {
+    upstreamHeaders.set(DASHBOARD_CLIENT_IP_HEADER, clientIp);
+    upstreamHeaders.set(DASHBOARD_PROXY_KEY_HEADER, proxyKey);
+    upstreamHeaders.set('x-forwarded-for', clientIp);
+    upstreamHeaders.set('x-real-ip', clientIp);
   }
 
   const init: RequestInit = {

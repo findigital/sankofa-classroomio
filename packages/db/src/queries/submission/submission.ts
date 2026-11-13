@@ -2,6 +2,7 @@ import * as schema from '@db/schema';
 
 import type { TNewQuestionAnswer, TNewSubmission, TQuestionAnswer, TSubmission } from '@db/types';
 import { and, count, db, desc, eq, inArray, sql, type DbOrTxClient } from '@db/drizzle';
+import { mapQuestionsForGrading } from '@db/queries/exercise/question-title';
 
 /**
  * Gets a submission by ID
@@ -220,7 +221,7 @@ export async function getSubmissionsForGrading(courseId: string) {
     const result = submissions.map((row) => {
       const submissionAnswers = questionAnswers.filter((qa) => qa.submissionId === row.submission.id);
       const exerciseQuestions = questions.filter((q) => q.exerciseId === row.exercise.id);
-      const questionsWithOptions = exerciseQuestions.map((q) => ({
+      const questionsWithOptions = mapQuestionsForGrading(exerciseQuestions).map((q) => ({
         ...q,
         options: options.filter((o) => o.questionId === q.id)
       }));

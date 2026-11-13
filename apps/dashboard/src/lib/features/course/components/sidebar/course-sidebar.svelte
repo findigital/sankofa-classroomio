@@ -9,6 +9,8 @@
   import CourseSidebarLogo from './course-sidebar-logo.svelte';
   import Navigation from './course-sidebar-navigation.svelte';
   import SidebarSkeleton from '$features/ui/sidebar/sidebar-skeleton.svelte';
+  import AccountLoadNotice from '$features/app/account-load-notice.svelte';
+  import { appInitApi } from '$features/app/init.svelte';
   import SourceOffer from '$features/ui/source-offer.svelte';
   import { courseApi } from '$features/course/api';
   import { getCourseProgress } from '$features/course/utils/content';
@@ -115,7 +117,13 @@
 </script>
 
 {#if !isOrgLoaded}
-  <SidebarSkeleton />
+  {#if appInitApi.error}
+    <div class="ui:bg-sidebar flex h-[calc(100vh-48px)] w-64 flex-col border-r p-4">
+      <AccountLoadNotice />
+    </div>
+  {:else}
+    <SidebarSkeleton />
+  {/if}
 {:else}
   <Sidebar.Root collapsible="icon" class="ui:z-app-bar-elevated" mobileOverlayClass="ui:z-app-bar-elevated">
     <Sidebar.Header>

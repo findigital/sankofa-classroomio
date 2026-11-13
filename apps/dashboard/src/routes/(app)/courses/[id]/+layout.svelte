@@ -8,6 +8,8 @@
   import { CourseHeader } from '$features/course/components';
   import type { Course } from '$features/course/types';
   import CourseLoadFailureView from '$features/course/components/course-load-failure.svelte';
+  import AccountLoadNotice from '$features/app/account-load-notice.svelte';
+  import { appInitApi } from '$features/app/init.svelte';
   import type { CourseLoadFailure } from '$lib/utils/services/api/load-failure';
   import * as Dialog from '@cio/ui/base/dialog';
   import { Button } from '@cio/ui/base/button';
@@ -264,6 +266,10 @@
 
     {#if data.loadFailure}
       <CourseLoadFailureView failure={data.loadFailure} />
+    {:else if !isCourseReady && appInitApi.error}
+      <div class="mx-auto flex h-[calc(100vh-56px)] w-full items-center justify-center px-6">
+        <AccountLoadNotice class="max-w-md text-center" />
+      </div>
     {:else if !isCourseReady}
       <div class="mx-auto flex h-[calc(100vh-56px)] w-full items-center justify-center">
         <Block.Loader

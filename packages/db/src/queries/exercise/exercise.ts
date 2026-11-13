@@ -12,7 +12,13 @@ import { and, asc, db, eq, inArray, isNull, or, sql } from '@db/drizzle';
 
 import type { DbOrTxClient } from '@db/drizzle';
 import { contentWriteBumpsTimestamp, stampContentUpdatedAt } from '@db/queries/course/content-timestamp';
-import { readQuestionTitle } from './question-title';
+import { questionTitleForStorage, readQuestionTitle } from './question-title';
+
+function questionWrite<T extends { title?: unknown }>(data: T): T {
+  if (typeof data.title !== 'string') return data;
+
+  return { ...data, title: questionTitleForStorage(data.title) };
+}
 
 export async function touchExercisesUpdatedAt(exerciseIds: string[], dbClient: DbOrTxClient = db) {
   const ids = [...new Set(exerciseIds.filter(Boolean))];
@@ -250,7 +256,8 @@ export async function createQuestions(values: TNewQuestion[], dbClient: DbOrTxCl
     // Keep the identity sequence aligned before bulk inserts so restored data
     // or manual imports cannot reuse an existing question id.
     await syncQuestionIdSequence(dbClient);
-    const created = await dbClient.insert(schema.question).values(values).returning();
+    const rows = values.map((value) => ({ ...value, title: questionTitleForStorage(value.title) }));
+    const created = await dbClient.insert(schema.question).values(rows).returning();
     await touchExercisesUpdatedAt(
       created.map((question) => question.exerciseId),
       dbClient
@@ -287,7 +294,7 @@ export async function updateQuestion(questionId: number, data: Partial<TNewQuest
   try {
     const [updated] = await dbClient
       .update(schema.question)
-      .set(stampContentUpdatedAt(data))
+      .set(stampContentUpdatedAt(questionWrite(data)))
       .where(eq(schema.question.id, questionId))
       .returning();
     if (updated) {
@@ -492,7 +499,7 @@ export async function updateQuestions(
         updates.map(({ id, data }) =>
           client
             .update(schema.question)
-            .set(stampContentUpdatedAt(data))
+            .set(stampContentUpdatedAt(questionWrite(data)))
             .where(eq(schema.question.id, id))
             .returning()
             .then((rows) => rows[0])

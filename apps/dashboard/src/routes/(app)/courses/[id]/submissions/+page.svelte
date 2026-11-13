@@ -10,7 +10,7 @@
 </script>
 
 {#if data.gradingAccess === 'denied'}
-  <Page.Root class="mx-auto flex w-[calc(95vw-var(--sidebar-width))]!">
+  <Page.Root class="mx-auto flex w-[90%] px-4 md:max-w-3xl">
     <Page.Header>
       <Page.HeaderContent>
         <Page.Title>

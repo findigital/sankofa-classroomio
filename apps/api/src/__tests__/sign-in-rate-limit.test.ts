@@ -3,7 +3,9 @@ import { Hono } from 'hono';
 
 const buckets = new Map<string, number>();
 
-vi.mock('@cio/core/config/env', () => ({ env: { NODE_ENV: 'production' } }));
+vi.mock('@cio/core/config/env', () => ({
+  env: { NODE_ENV: 'production', PRIVATE_SERVER_KEY: 'proxy-key' }
+}));
 
 vi.mock('@hono/node-server/conninfo', () => ({
   getConnInfo: () => ({ remote: { address: '203.0.113.8' } })
@@ -47,12 +49,13 @@ function signInApp() {
   });
 }
 
-function signIn(email: string, ip = '203.0.113.8') {
+function signIn(email: string, ip = '203.0.113.8', extraHeaders: Record<string, string> = {}) {
   return signInApp().request('/api/auth/sign-in/email', {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
-      'x-real-ip': ip
+      'x-real-ip': ip,
+      ...extraHeaders
     },
     body: JSON.stringify({ email, password: 'secret' })
   });
@@ -86,5 +89,33 @@ describe('email sign-in rate limit', () => {
 
     expect(responses.slice(0, 30).every((response) => response.status === 200)).toBe(true);
     expect(responses[30]?.status).toBe(429);
+  });
+
+  it('counts the dashboard-forwarded client IP instead of the shared API hop', async () => {
+    const forwarded = [];
+    for (let index = 1; index <= 31; index += 1) {
+      forwarded.push(
+        await signIn(`venue-${index}@example.com`, '10.0.0.8', {
+          'x-cio-client-ip': `198.51.100.${index}`,
+          'x-cio-proxy-key': 'proxy-key'
+        })
+      );
+    }
+
+    expect(forwarded.every((response) => response.status === 200)).toBe(true);
+
+    buckets.clear();
+    const spoofed = [];
+    for (let index = 1; index <= 31; index += 1) {
+      spoofed.push(
+        await signIn(`spoof-${index}@example.com`, '10.0.0.8', {
+          'x-cio-client-ip': `198.51.100.${index}`,
+          'x-cio-proxy-key': 'not-the-key'
+        })
+      );
+    }
+
+    expect(spoofed.slice(0, 30).every((response) => response.status === 200)).toBe(true);
+    expect(spoofed[30]?.status).toBe(429);
   });
 });
