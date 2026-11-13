@@ -59,7 +59,10 @@
       { learnerAccount }
     );
 
-    return withCatalogLockedLabels(props, data.catalogLocked);
+    return {
+      ...withCatalogLockedLabels(props, data.catalogLocked),
+      showCourses: false
+    };
   });
 
   onMount(() => {

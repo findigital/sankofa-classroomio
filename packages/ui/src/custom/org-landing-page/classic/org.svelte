@@ -23,6 +23,7 @@
     courses,
     hasMoreCourses = false,
     coursesLoaded = true,
+    showCourses = true,
     disableCourseLinks = false,
     learningPaths,
     hasMoreLearningPaths = false,
@@ -71,40 +72,42 @@
       </section>
     {/if}
 
-    <EditableLandingSection sectionKey="courses">
-      <section class="ui:py-10 ui:px-6 ui:lg:px-8 ui:max-w-7xl ui:mx-auto">
-        <div class="ui:text-center ui:mb-8">
-          <h2 class="ui:text-3xl ui:font-bold ui:text-[var(--landing-fg)]">
-            {labels?.catalogHeading ?? 'Featured Courses'}
-          </h2>
-          <div class="ui:mt-6 ui:h-px ui:w-24 ui:bg-[var(--landing-border)] ui:mx-auto"></div>
-        </div>
-
-        {#if coursesLoaded && courses.length === 0}
-          <OrgLandingPageCoursesEmpty {labels} />
-        {:else}
-          <div class="ui:grid ui:grid-cols-1 ui:sm:grid-cols-2 ui:lg:grid-cols-3 ui:gap-8 ui:justify-items-center">
-            {#each courses as course, index (course.id)}
-              <ClassicCourseCard {course} {disableCourseLinks} {labels} />
-            {/each}
+    {#if showCourses}
+      <EditableLandingSection sectionKey="courses">
+        <section class="ui:py-10 ui:px-6 ui:lg:px-8 ui:max-w-7xl ui:mx-auto">
+          <div class="ui:text-center ui:mb-8">
+            <h2 class="ui:text-3xl ui:font-bold ui:text-[var(--landing-fg)]">
+              {labels?.catalogHeading ?? 'Featured Courses'}
+            </h2>
+            <div class="ui:mt-6 ui:h-px ui:w-24 ui:bg-[var(--landing-border)] ui:mx-auto"></div>
           </div>
 
-          {#if hasMoreCourses}
-            <div class="ui:mt-12 ui:flex ui:justify-center">
-              <Button
-                href={disableCourseLinks ? undefined : '/courses'}
-                variant="outline"
-                size="lg"
-                class="ui:px-8"
-                disabled={disableCourseLinks}
-              >
-                {labels?.browseCoursesLabel ?? 'View more courses'}
-              </Button>
+          {#if coursesLoaded && courses.length === 0}
+            <OrgLandingPageCoursesEmpty {labels} />
+          {:else}
+            <div class="ui:grid ui:grid-cols-1 ui:sm:grid-cols-2 ui:lg:grid-cols-3 ui:gap-8 ui:justify-items-center">
+              {#each courses as course, index (course.id)}
+                <ClassicCourseCard {course} {disableCourseLinks} {labels} />
+              {/each}
             </div>
+
+            {#if hasMoreCourses}
+              <div class="ui:mt-12 ui:flex ui:justify-center">
+                <Button
+                  href={disableCourseLinks ? undefined : '/courses'}
+                  variant="outline"
+                  size="lg"
+                  class="ui:px-8"
+                  disabled={disableCourseLinks}
+                >
+                  {labels?.browseCoursesLabel ?? 'View more courses'}
+                </Button>
+              </div>
+            {/if}
           {/if}
-        {/if}
-      </section>
-    </EditableLandingSection>
+        </section>
+      </EditableLandingSection>
+    {/if}
   </main>
 
   <OrgLandingPageLinks {links} {labels} variant="classic" />

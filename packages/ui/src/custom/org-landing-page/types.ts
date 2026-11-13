@@ -460,6 +460,8 @@ export interface OrgLandingPageProps {
   hasMoreCourses?: boolean;
   /** When false, templates suppress the empty catalog state while courses are still loading. */
   coursesLoaded?: boolean;
+  /** When false, templates omit the catalog section. Omitted means the catalog is shown. */
+  showCourses?: boolean;
   disableCourseLinks?: boolean;
   /**
    * Optional — no `learning_path` API exists yet, so this is undefined on the real,
