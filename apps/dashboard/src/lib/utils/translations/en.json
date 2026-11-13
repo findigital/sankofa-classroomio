@@ -1,4 +1,8 @@
 {
+  "app_init": {
+    "account_rate_limited": "Too many requests. You are still signed in, and we will try again.",
+    "account_unavailable": "We could not load your account. You are still signed in, and we will try again."
+  },
   "landing": {
     "learner_menu": {
       "trigger_label": "Account menu, signed in as {email}",
@@ -4539,6 +4543,17 @@
       },
       "analytics": {
         "title": "Analytics"
+      },
+      "staff_only": {
+        "denied_title": "This page is for course staff",
+        "denied_description": "Ask an admin to add you as a course tutor if you need to manage this course."
+      },
+      "load_failure": {
+        "rate_limited_title": "This course is busy right now",
+        "rate_limited_description": "Too many requests landed at once. Wait a moment and try again. You are still signed in.",
+        "unavailable_title": "We could not load this course",
+        "unavailable_description": "Something went wrong while loading the course. You are still signed in.",
+        "retry": "Try again"
       },
       "settings": {
         "heading": "Settings",

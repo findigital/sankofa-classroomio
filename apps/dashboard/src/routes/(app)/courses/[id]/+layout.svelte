@@ -7,6 +7,11 @@
   import { CourseSidebar } from '$features/course/components/sidebar';
   import { CourseHeader } from '$features/course/components';
   import type { Course } from '$features/course/types';
+  import CourseLoadFailureView from '$features/course/components/course-load-failure.svelte';
+  import AccountLoadNotice from '$features/app/account-load-notice.svelte';
+  import AccountLoadBanner from '$features/app/account-load-banner.svelte';
+  import { appInitApi } from '$features/app/init.svelte';
+  import type { CourseLoadFailure } from '$lib/utils/services/api/load-failure';
   import * as Dialog from '@cio/ui/base/dialog';
   import { Button } from '@cio/ui/base/button';
   import { Confetti } from '$features/ui';
@@ -51,9 +56,10 @@
   interface Props {
     children?: import('svelte').Snippet;
     data: {
-      course?: Course;
+      course?: Course | null;
       courseId: string;
       exerciseId?: string;
+      loadFailure?: CourseLoadFailure | null;
     };
   }
 
@@ -69,7 +75,7 @@
 
   $effect(() => {
     const profileId = $profile.id;
-    if (!courseId || !profileId) return;
+    if (!courseId || !profileId || data.loadFailure) return;
     if (loadedCourseId === courseId) return;
 
     if (data.course) {
@@ -255,11 +261,18 @@
   />
 
   <Sidebar.Inset class="min-w-0 flex-1 {showMobileBottomNav ? 'pb-24' : ''}">
+    <AccountLoadBanner />
     <CourseHeader />
     <ContentCreateModal />
     <CourseCompletionModal />
 
-    {#if !isCourseReady}
+    {#if data.loadFailure}
+      <CourseLoadFailureView failure={data.loadFailure} />
+    {:else if !isCourseReady && appInitApi.error}
+      <div class="mx-auto flex h-[calc(100vh-56px)] w-full items-center justify-center px-6">
+        <AccountLoadNotice class="max-w-md text-center" />
+      </div>
+    {:else if !isCourseReady}
       <div class="mx-auto flex h-[calc(100vh-56px)] w-full items-center justify-center">
         <Block.Loader
           blockText={false}

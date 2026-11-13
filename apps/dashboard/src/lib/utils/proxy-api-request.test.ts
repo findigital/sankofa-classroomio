@@ -1,6 +1,11 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { buildProxiedApiResponse, proxyRequestToApi, shouldForwardToApi } from './proxy-api-request';
+import {
+  buildProxiedApiResponse,
+  clientIpSeenByDashboard,
+  proxyRequestToApi,
+  shouldForwardToApi
+} from './proxy-api-request';
 
 describe('shouldForwardToApi', () => {
   it('forwards /proxy and /api/auth paths', () => {
@@ -99,8 +104,22 @@ describe('buildProxiedApiResponse', () => {
   });
 });
 
+describe('clientIpSeenByDashboard', () => {
+  it('uses the edge x-real-ip ahead of a caller-supplied forwarding chain', () => {
+    const request = new Request('https://dashboard.example/api/auth/sign-in/email', {
+      headers: {
+        'x-real-ip': '198.51.100.20',
+        'x-forwarded-for': '203.0.113.9, 10.0.0.8'
+      }
+    });
+
+    expect(clientIpSeenByDashboard(request)).toBe('198.51.100.20');
+  });
+});
+
 describe('proxyRequestToApi', () => {
   const originalPrivateServerUrl = process.env.PRIVATE_SERVER_URL;
+  const originalPrivateServerKey = process.env.PRIVATE_SERVER_KEY;
   const originalFetch = global.fetch;
 
   afterEach(() => {
@@ -108,6 +127,12 @@ describe('proxyRequestToApi', () => {
       delete process.env.PRIVATE_SERVER_URL;
     } else {
       process.env.PRIVATE_SERVER_URL = originalPrivateServerUrl;
+    }
+
+    if (originalPrivateServerKey === undefined) {
+      delete process.env.PRIVATE_SERVER_KEY;
+    } else {
+      process.env.PRIVATE_SERVER_KEY = originalPrivateServerKey;
     }
 
     global.fetch = originalFetch;
@@ -163,5 +188,34 @@ describe('proxyRequestToApi', () => {
     expect(response.headers.get('content-encoding')).toBeNull();
     expect(response.headers.get('content-length')).toBeNull();
     expect(await response.text()).toBe('{"session":null}');
+  });
+
+  it('forwards the edge client IP and drops a spoofed forwarding header', async () => {
+    process.env.PRIVATE_SERVER_URL = 'http://api.internal:3081';
+    process.env.PRIVATE_SERVER_KEY = 'proxy-key';
+
+    const fetchMock = vi.fn().mockResolvedValue(new Response('{"ok":true}', { status: 200 }));
+    global.fetch = fetchMock as typeof fetch;
+
+    await proxyRequestToApi(
+      new Request('https://dashboard.example/api/auth/sign-in/email', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'x-real-ip': '198.51.100.20',
+          'x-forwarded-for': '203.0.113.9',
+          'x-cio-client-ip': '192.0.2.1',
+          'x-cio-proxy-key': 'spoofed'
+        },
+        body: JSON.stringify({ email: 'fellow@example.com', password: 'secret' })
+      })
+    );
+
+    const [, init] = fetchMock.mock.calls[0] as [URL, RequestInit];
+    const upstreamHeaders = new Headers(init.headers);
+    expect(upstreamHeaders.get('x-cio-client-ip')).toBe('198.51.100.20');
+    expect(upstreamHeaders.get('x-cio-proxy-key')).toBe('proxy-key');
+    expect(upstreamHeaders.get('x-real-ip')).toBe('198.51.100.20');
+    expect(upstreamHeaders.get('x-forwarded-for')).toBe('198.51.100.20');
   });
 });

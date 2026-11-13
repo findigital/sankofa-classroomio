@@ -20,6 +20,7 @@
   import { t } from '$lib/utils/functions/translations';
 
   import { CourseLandingPage } from '$features/ui';
+  import CourseStaffGate from '$features/course/components/course-staff-gate.svelte';
   import Editor from '$features/ui/course-landing-page/components/editor/editor.svelte';
   import * as Sidebar from '@cio/ui/base/sidebar';
 
@@ -68,28 +69,30 @@
   }
 </script>
 
-{#if courseApi.course}
-  <div
-    class="fixed inset-0 z-250 h-screen w-screen bg-white"
-    in:fly={{ y: 500, duration: 500 }}
-    out:fly={{ y: 500, duration: 500 }}
-  >
-    <Sidebar.Provider bind:open={sidebarOpen} style="--sidebar-width: 360px; --sidebar-width-icon: 4rem">
-      <Sidebar.Root side="left" collapsible="offcanvas" class="h-full">
-        <Editor
-          {courseId}
-          bind:course={courseApi.course}
-          bind:selectedSectionKey
-          {syncCourseStore}
-          onClose={handleClose}
-        />
-      </Sidebar.Root>
-      <Sidebar.Inset class="relative h-screen! min-w-0 overflow-y-auto">
-        <div class="absolute top-2 left-2 z-60">
-          <Sidebar.Trigger variant="secondary" />
-        </div>
-        <CourseLandingPage bind:courseData={courseApi.course} editMode={true} />
-      </Sidebar.Inset>
-    </Sidebar.Provider>
-  </div>
-{/if}
+<CourseStaffGate title={$t('course.navItems.nav_landing_page')}>
+  {#if courseApi.course}
+    <div
+      class="fixed inset-0 z-250 h-screen w-screen bg-white"
+      in:fly={{ y: 500, duration: 500 }}
+      out:fly={{ y: 500, duration: 500 }}
+    >
+      <Sidebar.Provider bind:open={sidebarOpen} style="--sidebar-width: 360px; --sidebar-width-icon: 4rem">
+        <Sidebar.Root side="left" collapsible="offcanvas" class="h-full">
+          <Editor
+            {courseId}
+            bind:course={courseApi.course}
+            bind:selectedSectionKey
+            {syncCourseStore}
+            onClose={handleClose}
+          />
+        </Sidebar.Root>
+        <Sidebar.Inset class="relative h-screen! min-w-0 overflow-y-auto">
+          <div class="absolute top-2 left-2 z-60">
+            <Sidebar.Trigger variant="secondary" />
+          </div>
+          <CourseLandingPage bind:courseData={courseApi.course} editMode={true} />
+        </Sidebar.Inset>
+      </Sidebar.Provider>
+    </div>
+  {/if}
+</CourseStaffGate>

@@ -3076,6 +3076,17 @@
           "description": "Eleven tæller efter status for dette kursus."
         },
         "empty_overview_description": "Hold dine medarbejdere kompatible og hold øje med, hvem der står bag."
+      },
+      "staff_only": {
+        "denied_title": "Denne side er for kursusteamet",
+        "denied_description": "Bed en administrator om at tilføje dig som kursusvejleder, hvis du skal administrere kurset."
+      },
+      "load_failure": {
+        "rate_limited_title": "Dette kursus er optaget lige nu",
+        "rate_limited_description": "Der kom for mange forespørgsler på én gang. Vent et øjeblik, og prøv igen. Du er stadig logget ind.",
+        "unavailable_title": "Vi kunne ikke indlæse dette kursus",
+        "unavailable_description": "Noget gik galt under indlæsningen af kurset. Du er stadig logget ind.",
+        "retry": "Prøv igen"
       }
     },
     "search": {
@@ -6881,5 +6892,9 @@
       "save": "Save staff",
       "empty": "No administrators can be added, so these conversations stay closed."
     }
+  },
+  "app_init": {
+    "account_rate_limited": "For mange forespørgsler. Du er stadig logget ind, og vi prøver igen.",
+    "account_unavailable": "Vi kunne ikke indlæse din konto. Du er stadig logget ind, og vi prøver igen."
   }
 }

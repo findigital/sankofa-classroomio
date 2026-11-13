@@ -3076,6 +3076,17 @@
           "description": "L'étudiant compte par statut pour ce cours."
         },
         "empty_overview_description": "Gardez vos employés conformes et suivez qui est derrière."
+      },
+      "staff_only": {
+        "denied_title": "Cette page est réservée à l'équipe du cours",
+        "denied_description": "Demandez à un administrateur de vous ajouter comme tuteur du cours si vous devez le gérer."
+      },
+      "load_failure": {
+        "rate_limited_title": "Ce cours est très sollicité pour le moment",
+        "rate_limited_description": "Trop de requêtes sont arrivées en même temps. Patientez un instant et réessayez. Vous êtes toujours connecté.",
+        "unavailable_title": "Nous n'avons pas pu charger ce cours",
+        "unavailable_description": "Un problème est survenu pendant le chargement du cours. Vous êtes toujours connecté.",
+        "retry": "Réessayer"
       }
     },
     "search": {
@@ -6881,5 +6892,9 @@
       "save": "Save staff",
       "empty": "No administrators can be added, so these conversations stay closed."
     }
+  },
+  "app_init": {
+    "account_rate_limited": "Trop de requêtes. Vous êtes toujours connecté, et nous réessayerons.",
+    "account_unavailable": "Nous n'avons pas pu charger votre compte. Vous êtes toujours connecté, et nous réessayerons."
   }
 }

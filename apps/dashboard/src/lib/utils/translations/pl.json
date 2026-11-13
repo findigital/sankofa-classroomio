@@ -3076,6 +3076,17 @@
           "description": "Studenci liczą się według statusu tego kursu."
         },
         "empty_overview_description": "Dbaj o przestrzeganie zasad przez swoich pracowników i śledź, kto ma zaległości."
+      },
+      "staff_only": {
+        "denied_title": "Ta strona jest dla zespołu kursu",
+        "denied_description": "Poproś administratora, aby dodał Cię jako tutora kursu, jeśli musisz nim zarządzać."
+      },
+      "load_failure": {
+        "rate_limited_title": "Ten kurs jest teraz mocno obciążony",
+        "rate_limited_description": "Przyszło zbyt wiele żądań naraz. Odczekaj chwilę i spróbuj ponownie. Nadal jesteś zalogowany.",
+        "unavailable_title": "Nie udało się wczytać tego kursu",
+        "unavailable_description": "Coś poszło nie tak podczas wczytywania kursu. Nadal jesteś zalogowany.",
+        "retry": "Spróbuj ponownie"
       }
     },
     "search": {
@@ -6881,5 +6892,9 @@
       "save": "Save staff",
       "empty": "No administrators can be added, so these conversations stay closed."
     }
+  },
+  "app_init": {
+    "account_rate_limited": "Zbyt wiele żądań. Nadal jesteś zalogowany i spróbujemy ponownie.",
+    "account_unavailable": "Nie udało się wczytać konta. Nadal jesteś zalogowany i spróbujemy ponownie."
   }
 }

@@ -3076,6 +3076,17 @@
           "description": "Contagens de alunos por status para este curso."
         },
         "empty_overview_description": "Mantenha seus funcionários em conformidade e monitore quem está por trás."
+      },
+      "staff_only": {
+        "denied_title": "Esta página é para a equipe do curso",
+        "denied_description": "Peça a um administrador para adicionar você como tutor do curso se precisar gerenciá-lo."
+      },
+      "load_failure": {
+        "rate_limited_title": "Este curso está ocupado agora",
+        "rate_limited_description": "Chegaram pedidos demais de uma vez. Espere um momento e tente de novo. Você continua conectado.",
+        "unavailable_title": "Não foi possível carregar este curso",
+        "unavailable_description": "Algo deu errado ao carregar o curso. Você continua conectado.",
+        "retry": "Tentar de novo"
       }
     },
     "search": {
@@ -6881,5 +6892,9 @@
       "save": "Save staff",
       "empty": "No administrators can be added, so these conversations stay closed."
     }
+  },
+  "app_init": {
+    "account_rate_limited": "Pedidos demais. Você continua conectado e vamos tentar de novo.",
+    "account_unavailable": "Não foi possível carregar sua conta. Você continua conectado e vamos tentar de novo."
   }
 }

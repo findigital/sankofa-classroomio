@@ -1,4 +1,5 @@
 import { getExercise } from '@cio/core/services/exercise/exercise';
+import { readQuestionTitle } from '@cio/db/queries/exercise/question-title';
 import { verifyExerciseBelongsToCourse } from '@cio/core/services/agent/chat-context';
 import { getGroupMemberIdByCourseAndProfile } from '@cio/db/queries/group';
 import { getSubmissionsByCourseIdWithDetails } from '@cio/db/queries/submission';
@@ -100,7 +101,7 @@ export async function getStudentSubmissionReview({
 
     return {
       id: question.id,
-      question: question.title,
+      question: readQuestionTitle(question.title),
       submittedAnswer: formatStudentAnswer(answer?.answerData, question.options ?? []),
       earnedPoints,
       maxPoints: isGraded ? maxPoints : null,

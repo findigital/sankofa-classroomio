@@ -3,8 +3,16 @@
  * These functions help create consistent and secure rate limit keys
  */
 
+import { timingSafeEqual } from 'node:crypto';
+
 import { getConnInfo } from '@hono/node-server/conninfo';
 import type { Context } from 'hono';
+import { env } from '@cio/core/config/env';
+
+// Railway's public edge overwrites x-real-ip. The dashboard-to-API hop is private
+// (or a second public hop) and would replace that header with the dashboard address.
+export const DASHBOARD_CLIENT_IP_HEADER = 'x-cio-client-ip';
+export const DASHBOARD_PROXY_KEY_HEADER = 'x-cio-proxy-key';
 
 function normalizeIp(value: string | null | undefined): string | null {
   const ip = value?.trim();
@@ -14,15 +22,43 @@ function normalizeIp(value: string | null | undefined): string | null {
   return ip.startsWith('::ffff:') ? ip.slice('::ffff:'.length) : ip;
 }
 
+function isForwardedClientIp(value: string): boolean {
+  if (value.length > 64 || /[\s,]/.test(value)) return false;
+  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(value)) {
+    return value.split('.').every((part) => Number(part) <= 255);
+  }
+
+  return value.includes(':') && /^[0-9a-fA-F:]+$/.test(value);
+}
+
+function proxyKeysMatch(expectedKey: string, providedKey: string): boolean {
+  const expected = Buffer.from(expectedKey);
+  const provided = Buffer.from(providedKey);
+  if (expected.length !== provided.length) return false;
+
+  return timingSafeEqual(expected, provided);
+}
+
+function trustedDashboardClientIp(c: Context): string | null {
+  const expectedKey = env.PRIVATE_SERVER_KEY;
+  const providedKey = c.req.header(DASHBOARD_PROXY_KEY_HEADER);
+  if (!expectedKey || !providedKey || !proxyKeysMatch(expectedKey, providedKey)) return null;
+
+  const clientIp = normalizeIp(c.req.header(DASHBOARD_CLIENT_IP_HEADER));
+  if (!clientIp || !isForwardedClientIp(clientIp)) return null;
+
+  return clientIp;
+}
+
 /**
  * Extract real client IP address considering various proxy headers
  */
 export const extractClientIp = (c: Context): string => {
-  // Priority order (most trusted first):
-  // 1. CF-Connecting-IP (Cloudflare)
-  // 2. X-Real-IP (nginx)
-  // 3. X-Forwarded-For (standard, but can be spoofed)
-  // 4. Connection IP (least reliable)
+  // Dashboard hop first (authenticated client IP). Then the public edge:
+  // CF-Connecting-IP, X-Real-IP, X-Forwarded-For, then the socket.
+
+  const dashboardClientIp = trustedDashboardClientIp(c);
+  if (dashboardClientIp) return dashboardClientIp;
 
   const cfConnectingIp = normalizeIp(c.req.header('cf-connecting-ip'));
   const realIp = normalizeIp(c.req.header('x-real-ip'));

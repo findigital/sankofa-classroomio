@@ -3076,6 +3076,17 @@
           "description": "Số lượng sinh viên theo trạng thái cho khóa học này."
         },
         "empty_overview_description": "Giúp nhân viên của bạn luôn tuân thủ và theo dõi xem ai đứng sau."
+      },
+      "staff_only": {
+        "denied_title": "Trang này dành cho đội ngũ khóa học",
+        "denied_description": "Hãy nhờ quản trị viên thêm bạn làm trợ giảng nếu bạn cần quản lý khóa học này."
+      },
+      "load_failure": {
+        "rate_limited_title": "Khóa học này đang quá tải",
+        "rate_limited_description": "Có quá nhiều yêu cầu cùng lúc. Hãy đợi một lát rồi thử lại. Bạn vẫn đang đăng nhập.",
+        "unavailable_title": "Chúng tôi không tải được khóa học này",
+        "unavailable_description": "Đã xảy ra lỗi khi tải khóa học. Bạn vẫn đang đăng nhập.",
+        "retry": "Thử lại"
       }
     },
     "search": {
@@ -6881,5 +6892,9 @@
       "save": "Save staff",
       "empty": "No administrators can be added, so these conversations stay closed."
     }
+  },
+  "app_init": {
+    "account_rate_limited": "Quá nhiều yêu cầu. Bạn vẫn đang đăng nhập và chúng tôi sẽ thử lại.",
+    "account_unavailable": "Chúng tôi không tải được tài khoản của bạn. Bạn vẫn đang đăng nhập và chúng tôi sẽ thử lại."
   }
 }

@@ -3,6 +3,13 @@ export const DEFAULT_WINDOW_MS = 60 * 1000;
 
 export const DEFAULT_MAX_REQUESTS = 100;
 
+export const AUTHENTICATED_MAX_REQUESTS = 600;
+
+export const SIGN_IN_EMAIL_WINDOW_MS = 10 * 1000;
+export const SIGN_IN_EMAIL_MAX = 3;
+export const SIGN_IN_IP_WINDOW_MS = 60 * 1000;
+export const SIGN_IN_IP_MAX = 30;
+
 export const PUBLIC_API_FAILED_AUTH_MAX_REQUESTS = 1000;
 
 export const RATE_LIMIT_KEY_PREFIX = 'rate_limit:';

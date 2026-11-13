@@ -4633,6 +4633,17 @@
             "unenrolled": "Lo studente non è più iscritto."
           }
         }
+      },
+      "staff_only": {
+        "denied_title": "Questa pagina è per lo staff del corso",
+        "denied_description": "Chiedi a un amministratore di aggiungerti come tutor del corso se devi gestirlo."
+      },
+      "load_failure": {
+        "rate_limited_title": "Questo corso è molto richiesto in questo momento",
+        "rate_limited_description": "Sono arrivate troppe richieste insieme. Attendi un momento e riprova. Sei ancora connesso.",
+        "unavailable_title": "Non siamo riusciti a caricare questo corso",
+        "unavailable_description": "Qualcosa è andato storto durante il caricamento del corso. Sei ancora connesso.",
+        "retry": "Riprova"
       }
     },
     "not_permitted": {
@@ -6851,5 +6862,9 @@
       "save": "Save staff",
       "empty": "No administrators can be added, so these conversations stay closed."
     }
+  },
+  "app_init": {
+    "account_rate_limited": "Troppe richieste. Sei ancora connesso e riproveremo.",
+    "account_unavailable": "Non siamo riusciti a caricare il tuo account. Sei ancora connesso e riproveremo."
   }
 }

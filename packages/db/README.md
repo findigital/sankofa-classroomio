@@ -86,6 +86,24 @@ pnpm db:backfill-profile-email-verification -- --execute
 
 The script prints how many profiles were updated and verifies zero mismatches remain.
 
+#### db:repair-question-titles
+
+Repairs `question.title` values that were saved as a Postgres composite row, such as `(2,3,"Write a 3-paragraph…",…)`, back to the question text. The write path now stores that text, so this is only for rows already saved. It is idempotent: a second run finds nothing to change.
+
+Dry run (prints the count and a sample; makes no changes):
+
+```bash
+pnpm --filter @cio/db db:repair-question-titles
+```
+
+Apply updates:
+
+```bash
+pnpm --filter @cio/db db:repair-question-titles -- --execute
+```
+
+Requires `DATABASE_URL` or `PRIVATE_DATABASE_URL` in `packages/db/.env`.
+
 ## Seeding
 
 The seed script populates the database with demo data for local development. It is idempotent — running it multiple times is safe; existing records are skipped.

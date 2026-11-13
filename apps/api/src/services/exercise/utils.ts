@@ -8,6 +8,7 @@ import {
   getOptionsByQuestionIds,
   getQuestionTypesByIds,
   getQuestionsByExerciseIds,
+  readQuestionTitle,
   updateOptions,
   updateQuestions
 } from '@cio/db/queries/exercise';
@@ -443,6 +444,7 @@ export function transformQuestion(
 ): QuestionWithRelations {
   const questionType = questionTypeMap.get(question.questionTypeId);
   const questionTypeId = question.questionTypeId;
+  const title = readQuestionTitle(question.title);
   const questionOptions = options
     .filter((opt) => opt.questionId === question.id)
     .map((opt) => ({
@@ -456,9 +458,9 @@ export function transformQuestion(
   return {
     id: question.id!,
     exerciseSectionId: question.exerciseSectionId ?? null,
-    value: question.title || '', // value field defaults to title
+    value: title,
     name: question.name || '',
-    title: question.title,
+    title,
     type: questionTypeId, // type field (same as questionTypeId)
     points: question.points || 0,
     order: question.order || 0,

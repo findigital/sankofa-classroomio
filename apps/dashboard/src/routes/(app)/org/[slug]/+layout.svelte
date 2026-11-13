@@ -12,6 +12,7 @@
   import { PUBLIC_IS_SELFHOSTED } from '$env/static/public';
 
   import { OrgSidebar } from '$features/ui/sidebar/org-sidebar';
+  import AccountLoadBanner from '$features/app/account-load-banner.svelte';
   import MessagingPresence from '$features/messaging/components/messaging-presence.svelte';
   import SettingsSidebar from '$features/ui/sidebar/settings-sidebar.svelte';
   import { AddOrgModal } from '$features/org';
@@ -77,6 +78,7 @@
   {/if}
 
   <Sidebar.Inset>
+    <AccountLoadBanner />
     {#if isSettingsRoute}
       <div class="flex h-10 items-center px-3 md:hidden">
         <Sidebar.Trigger testId="settings-sidebar-trigger-mobile" />

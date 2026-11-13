@@ -3076,6 +3076,17 @@
           "description": "El estudiante cuenta por estado para este curso."
         },
         "empty_overview_description": "Haga que sus empleados cumplan y realice un seguimiento de quién está detrás."
+      },
+      "staff_only": {
+        "denied_title": "Esta página es para el equipo del curso",
+        "denied_description": "Pide a un administrador que te añada como tutor del curso si necesitas gestionarlo."
+      },
+      "load_failure": {
+        "rate_limited_title": "Este curso está ocupado ahora mismo",
+        "rate_limited_description": "Llegaron demasiadas solicitudes a la vez. Espera un momento e inténtalo de nuevo. Sigues con la sesión iniciada.",
+        "unavailable_title": "No pudimos cargar este curso",
+        "unavailable_description": "Algo salió mal al cargar el curso. Sigues con la sesión iniciada.",
+        "retry": "Intentar de nuevo"
       }
     },
     "search": {
@@ -6881,5 +6892,9 @@
       "save": "Save staff",
       "empty": "No administrators can be added, so these conversations stay closed."
     }
+  },
+  "app_init": {
+    "account_rate_limited": "Demasiadas solicitudes. Sigues con la sesión iniciada e intentaremos de nuevo.",
+    "account_unavailable": "No pudimos cargar tu cuenta. Sigues con la sesión iniciada e intentaremos de nuevo."
   }
 }
