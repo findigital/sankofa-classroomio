@@ -918,7 +918,7 @@
         },
         "members_only_catalog": {
           "label": "Members-only catalog",
-          "description": "When enabled, only members of this organization see courses on the course list. Everyone else sees an empty catalog. The academy homepage does not list courses. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
+          "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
         },
         "auto_enroll_members": {
           "label": "Enroll members in every published course",
@@ -1092,15 +1092,15 @@
           "navigation": "Navigation",
           "navigation_desc": "Links shown in the landing page header.",
           "callout": "Callout",
-          "callout_desc": "Optional promotional banner on the academy homepage.",
+          "callout_desc": "Optional promotional banner shown after courses.",
           "embed": "Embed",
-          "embed_desc": "Optional iframe section on the academy homepage.",
+          "embed_desc": "Optional iframe section shown after courses.",
           "links": "Links",
-          "links_desc": "Optional block of external links (help center, community, webinars) on the academy homepage.",
+          "links_desc": "Optional block of external links (help center, community, webinars) shown after courses.",
           "footer": "Footer",
           "footer_desc": "Brand line, socials, multi-column links, and bottom legal row.",
           "courses": "Courses",
-          "courses_desc": "Choose published courses and their order for the public course list. The academy homepage does not show this section."
+          "courses_desc": "Drag to set the order of published courses on the landing page."
         },
         "hero": {
           "eyebrow": "Eyebrow",
@@ -1250,7 +1250,7 @@
           }
         },
         "courses": {
-          "drag_hint": "Drag to reorder courses on the public course list. The academy homepage does not show this section.",
+          "drag_hint": "Drag to reorder the courses shown on your landing page.",
           "empty": "No courses selected.",
           "load_failed": "Failed to load courses.",
           "add_button": "Add",
@@ -2453,7 +2453,7 @@
     "catalog_order": {
       "action": "Reorder courses",
       "title": "Course order",
-      "description": "Drag courses into the order people should see. The public course list uses this order, then the date the course was created. Saving featured courses replaces this order. The academy homepage does not list courses.",
+      "description": "Drag courses into the order people should see. The catalog and home page use this order, then the date the course was created. Saving featured courses on the landing page replaces this order.",
       "saved": "Course order saved",
       "save_failed": "Could not save course order",
       "unpublished": "Unpublished",
@@ -4609,7 +4609,7 @@
         "access": "When off, students can only join through an invite link or by being added from {people}.",
         "access_people": "People",
         "publish": "Publish Course",
-        "determines": "Published courses appear on the public course list and on their course page. The academy homepage does not list courses.",
+        "determines": "This determines if your course displays on your landing page",
         "published": "Published",
         "unpublished": "Unpublished",
         "certificate_deadline_required": "Set Certificate Deadline First",

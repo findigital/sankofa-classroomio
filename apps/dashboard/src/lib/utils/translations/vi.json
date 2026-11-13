@@ -1066,7 +1066,7 @@
         "access": "Khi tắt, học viên chỉ có thể tham gia qua liên kết mời hoặc khi được thêm từ mục {people}.",
         "access_people": "Mọi người",
         "publish": "Xuất bản khóa học",
-        "determines": "Các khóa học đã xuất bản xuất hiện trên danh sách khóa học công khai và trang khóa học của chúng. Trang chủ học viện không liệt kê khóa học.",
+        "determines": "Điều này xác định xem khóa học của bạn có hiển thị trên trang đích hay không",
         "published": "Đã xuất bản",
         "unpublished": "Chưa được xuất bản",
         "type": "Loại khóa học",
@@ -3348,7 +3348,7 @@
     "catalog_order": {
       "action": "Reorder courses",
       "title": "Course order",
-      "description": "Drag courses into the order people should see. The public course list uses this order, then the date the course was created. Saving featured courses replaces this order. The academy homepage does not list courses.",
+      "description": "Drag courses into the order people should see. The catalog and home page use this order, then the date the course was created. Saving featured courses on the landing page replaces this order.",
       "saved": "Course order saved",
       "save_failed": "Could not save course order",
       "unpublished": "Unpublished",
@@ -4165,15 +4165,15 @@
           "navigation": "Điều hướng",
           "navigation_desc": "Các liên kết được hiển thị trong tiêu đề trang đích.",
           "callout": "Chú thích",
-          "callout_desc": "Biểu ngữ quảng cáo tùy chọn trên trang chủ học viện.",
+          "callout_desc": "Biểu ngữ quảng cáo tùy chọn hiển thị sau các khóa học.",
           "embed": "Nhúng",
-          "embed_desc": "Phần iframe tùy chọn trên trang chủ học viện.",
+          "embed_desc": "Phần iframe tùy chọn hiển thị sau các khóa học.",
           "footer": "Chân trang",
           "footer_desc": "Dòng thương hiệu, mạng xã hội, liên kết nhiều cột và hàng pháp lý phía dưới.",
           "links": "Liên kết",
-          "links_desc": "Khối liên kết bên ngoài tùy chọn (trung tâm trợ giúp, cộng đồng, hội thảo trên web) trên trang chủ học viện.",
+          "links_desc": "Khối liên kết bên ngoài tùy chọn (trung tâm trợ giúp, cộng đồng, hội thảo trên web) được hiển thị sau các khóa học.",
           "courses": "Các khóa học",
-          "courses_desc": "Chọn các khóa học đã xuất bản và thứ tự của chúng trên danh sách khóa học công khai. Trang chủ học viện không hiển thị phần này."
+          "courses_desc": "Kéo để thiết lập thứ tự các khóa học đã xuất bản trên trang chủ."
         },
         "links": {
           "toggle": "Hiển thị phần liên kết",
@@ -4213,7 +4213,7 @@
           }
         },
         "courses": {
-          "drag_hint": "Kéo các khóa học để sắp xếp lại thứ tự trên danh sách khóa học công khai. Trang chủ học viện không hiển thị phần này.",
+          "drag_hint": "Kéo các khóa học để sắp xếp lại thứ tự trên trang chủ.",
           "empty": "Chưa có khóa học nào được xuất bản — hãy xuất bản một khóa học để xem trước tại đây.",
           "load_failed": "Không thể tải các khóa học đã xuất bản.",
           "add_button": "Thêm",
@@ -4473,7 +4473,7 @@
         },
         "members_only_catalog": {
           "label": "Members-only catalog",
-          "description": "When enabled, only members of this organization see courses on the course list. Everyone else sees an empty catalog. The academy homepage does not list courses. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
+          "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
         },
         "hide_course_pricing": {
           "label": "Hide course prices",

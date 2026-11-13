@@ -914,7 +914,7 @@
         },
         "members_only_catalog": {
           "label": "Members-only catalog",
-          "description": "When enabled, only members of this organization see courses on the course list. Everyone else sees an empty catalog. The academy homepage does not list courses. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
+          "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
         },
         "hide_course_pricing": {
           "label": "Hide course prices",
@@ -1088,15 +1088,15 @@
           "navigation": "Navigazione",
           "navigation_desc": "Collegamenti mostrati nell'intestazione della pagina di destinazione.",
           "callout": "Richiamo",
-          "callout_desc": "Banner promozionale facoltativo nella homepage dell'accademia.",
+          "callout_desc": "Banner promozionale opzionale mostrato dopo i corsi.",
           "embed": "Incorpora",
-          "embed_desc": "Sezione iframe facoltativa nella homepage dell'accademia.",
+          "embed_desc": "Sezione iframe opzionale mostrata dopo i corsi.",
           "links": "Collegamenti",
-          "links_desc": "Blocco facoltativo di link esterni (centro assistenza, community, webinar) nella homepage dell'accademia.",
+          "links_desc": "Blocco facoltativo dei link esterni (centro assistenza, community, webinar) mostrati dopo i corsi.",
           "footer": "Piè di pagina",
           "footer_desc": "Linea del marchio, social, collegamenti a più colonne e riga legale inferiore.",
           "courses": "Corsi",
-          "courses_desc": "Scegli i corsi pubblicati e il loro ordine nell'elenco pubblico dei corsi. La homepage dell'accademia non mostra questa sezione."
+          "courses_desc": "Trascina per impostare l'ordine dei corsi pubblicati nella pagina di destinazione."
         },
         "hero": {
           "eyebrow": "Sopracciglio",
@@ -1246,7 +1246,7 @@
           }
         },
         "courses": {
-          "drag_hint": "Trascina per riordinare i corsi nell'elenco pubblico dei corsi. La homepage dell'accademia non mostra questa sezione.",
+          "drag_hint": "Trascina per riordinare i corsi mostrati sulla tua pagina di destinazione.",
           "empty": "Nessun corso selezionato.",
           "load_failed": "Impossibile caricare i corsi.",
           "add_button": "Aggiungere",
@@ -2425,7 +2425,7 @@
     "catalog_order": {
       "action": "Reorder courses",
       "title": "Course order",
-      "description": "Drag courses into the order people should see. The public course list uses this order, then the date the course was created. Saving featured courses replaces this order. The academy homepage does not list courses.",
+      "description": "Drag courses into the order people should see. The catalog and home page use this order, then the date the course was created. Saving featured courses on the landing page replaces this order.",
       "saved": "Course order saved",
       "save_failed": "Could not save course order",
       "unpublished": "Unpublished",
@@ -4474,7 +4474,7 @@
         "access": "Quando questa opzione è disattivata, gli studenti possono partecipare solo tramite un collegamento di invito o essendo aggiunti da {people}.",
         "access_people": "Persone",
         "publish": "Pubblica corso",
-        "determines": "I corsi pubblicati compaiono nell'elenco pubblico dei corsi e nella loro pagina del corso. La homepage dell'accademia non elenca i corsi.",
+        "determines": "Ciò determina se il tuo corso viene visualizzato sulla tua pagina di destinazione",
         "published": "Pubblicato",
         "unpublished": "Inedito",
         "certificate_deadline_required": "Imposta prima la scadenza del certificato",

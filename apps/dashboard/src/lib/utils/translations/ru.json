@@ -1066,7 +1066,7 @@
         "access": "Если отключено, студенты могут присоединиться только по ссылке-приглашению или если их добавят в разделе «{people}».",
         "access_people": "Люди",
         "publish": "Опубликовать курс",
-        "determines": "Опубликованные курсы появляются в публичном списке курсов и на своей странице курса. Главная страница академии не показывает курсы.",
+        "determines": "Это определяет, будет ли ваш курс отображаться на вашей целевой странице.",
         "published": "Опубликовано",
         "unpublished": "Неопубликовано",
         "type": "Тип курса",
@@ -3348,7 +3348,7 @@
     "catalog_order": {
       "action": "Reorder courses",
       "title": "Course order",
-      "description": "Drag courses into the order people should see. The public course list uses this order, then the date the course was created. Saving featured courses replaces this order. The academy homepage does not list courses.",
+      "description": "Drag courses into the order people should see. The catalog and home page use this order, then the date the course was created. Saving featured courses on the landing page replaces this order.",
       "saved": "Course order saved",
       "save_failed": "Could not save course order",
       "unpublished": "Unpublished",
@@ -4165,15 +4165,15 @@
           "navigation": "Навигация",
           "navigation_desc": "Ссылки показаны в заголовке целевой страницы.",
           "callout": "Выноска",
-          "callout_desc": "Дополнительный рекламный баннер на главной странице академии.",
+          "callout_desc": "Дополнительный рекламный баннер, демонстрируемый после курсов.",
           "embed": "Встроить",
-          "embed_desc": "Дополнительный раздел iframe на главной странице академии.",
+          "embed_desc": "Дополнительный раздел iframe, отображаемый после курсов.",
           "footer": "Нижний колонтитул",
           "footer_desc": "Строка бренда, соцсети, много колоночные ссылки и нижняя юридическая строка.",
           "links": "Ссылки",
-          "links_desc": "Дополнительный блок внешних ссылок (справочный центр, сообщество, вебинары) на главной странице академии.",
+          "links_desc": "Дополнительный блок внешних ссылок (справочный центр, сообщество, вебинары), отображаемых после курсов.",
           "courses": "Курсы",
-          "courses_desc": "Выберите опубликованные курсы и их порядок в публичном списке курсов. Главная страница академии не показывает этот раздел."
+          "courses_desc": "Перетащите, чтобы установить порядок опубликованных курсов на целевой странице."
         },
         "links": {
           "toggle": "Показать раздел ссылок",
@@ -4213,7 +4213,7 @@
           }
         },
         "courses": {
-          "drag_hint": "Перетащите курсы, чтобы изменить их порядок в публичном списке курсов. Главная страница академии не показывает этот раздел.",
+          "drag_hint": "Перетащите курсы, чтобы изменить их порядок на целевой странице.",
           "empty": "Пока нет опубликованных курсов — опубликуйте курс, чтобы просмотреть его здесь.",
           "load_failed": "Не удалось загрузить опубликованные курсы.",
           "add_button": "Добавить",
@@ -4473,7 +4473,7 @@
         },
         "members_only_catalog": {
           "label": "Members-only catalog",
-          "description": "When enabled, only members of this organization see courses on the course list. Everyone else sees an empty catalog. The academy homepage does not list courses. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
+          "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
         },
         "hide_course_pricing": {
           "label": "Hide course prices",

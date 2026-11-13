@@ -10,7 +10,7 @@ import { LANDING_PAGE_TAG, ORG_ADMIN_RULE, organizationForbiddenResponse } from 
 export const v1LandingPageRouter = new Hono().put(
   '/featured-courses',
   describeRoute({
-    description: `Set the published courses shown first, in order, on the public course list. The academy homepage does not list courses; ${ORG_ADMIN_RULE}.`,
+    description: `Set the published courses shown first, in order, on the organization landing page and public course list; ${ORG_ADMIN_RULE}.`,
     tags: [LANDING_PAGE_TAG],
     responses: {
       200: jsonResponse('Featured courses set successfully', itemResponse(ZPublicApiFeaturedCoursesResponse)),

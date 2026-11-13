@@ -1066,7 +1066,7 @@
         "access": "Når det er slået fra, kan studerende kun deltage via et invitationslink eller ved at blive tilføjet under {people}.",
         "access_people": "Personer",
         "publish": "Udgiv kursus",
-        "determines": "Udgivne kurser vises på den offentlige kursusliste og på deres kursusside. Akademiets forside viser ikke kurser.",
+        "determines": "Dette afgør, om dit kursus vises på din landingsside",
         "published": "Udgivet",
         "unpublished": "Upubliceret",
         "type": "Kursustype",
@@ -3348,7 +3348,7 @@
     "catalog_order": {
       "action": "Reorder courses",
       "title": "Course order",
-      "description": "Drag courses into the order people should see. The public course list uses this order, then the date the course was created. Saving featured courses replaces this order. The academy homepage does not list courses.",
+      "description": "Drag courses into the order people should see. The catalog and home page use this order, then the date the course was created. Saving featured courses on the landing page replaces this order.",
       "saved": "Course order saved",
       "save_failed": "Could not save course order",
       "unpublished": "Unpublished",
@@ -4165,15 +4165,15 @@
           "navigation": "Navigation",
           "navigation_desc": "Links vist i landingssidehovedet.",
           "callout": "Billedforklaring",
-          "callout_desc": "Valgfrit reklamebanner på akademiets forside.",
+          "callout_desc": "Valgfrit reklamebanner vises efter kurser.",
           "embed": "Integrer",
-          "embed_desc": "Valgfri iframe-sektion på akademiets forside.",
+          "embed_desc": "Valgfri iframe-sektion vist efter kurser.",
           "footer": "Sidefod",
           "footer_desc": "Brandlinje, sociale medier, linkkolonner og juridisk bundrække.",
           "links": "Links",
-          "links_desc": "Valgfri blok af eksterne links (hjælpecenter, fællesskab, webinarer) på akademiets forside.",
+          "links_desc": "Valgfri blok af eksterne links (hjælpecenter, fællesskab, webinarer) vist efter kurser.",
           "courses": "Kurser",
-          "courses_desc": "Vælg udgivne kurser og deres rækkefølge på den offentlige kursusliste. Akademiets forside viser ikke dette afsnit."
+          "courses_desc": "Træk for at indstille rækkefølgen af ​​offentliggjorte kurser på landingssiden."
         },
         "links": {
           "toggle": "Vis linksafsnittet",
@@ -4213,7 +4213,7 @@
           }
         },
         "courses": {
-          "drag_hint": "Træk for at ændre rækkefølgen af kurser på den offentlige kursusliste. Akademiets forside viser ikke dette afsnit.",
+          "drag_hint": "Træk kurser for at ændre deres rækkefølge på landingssiden.",
           "empty": "Ingen kurser valgt.",
           "load_failed": "Kunne ikke indlæse offentliggjorte kurser.",
           "add_button": "Tilføj",
@@ -4473,7 +4473,7 @@
         },
         "members_only_catalog": {
           "label": "Members-only catalog",
-          "description": "When enabled, only members of this organization see courses on the course list. Everyone else sees an empty catalog. The academy homepage does not list courses. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
+          "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
         },
         "hide_course_pricing": {
           "label": "Hide course prices",
