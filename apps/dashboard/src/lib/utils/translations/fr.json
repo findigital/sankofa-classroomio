@@ -1066,7 +1066,7 @@
         "access": "Lorsque cette option est désactivée, les étudiants ne peuvent rejoindre le cours que via un lien d'invitation ou en étant ajoutés depuis {people}.",
         "access_people": "Personnes",
         "publish": "Publier un cours",
-        "determines": "Cela détermine si votre cours s'affiche sur votre page de destination",
+        "determines": "Les cours publiés apparaissent dans la liste publique des cours et sur leur page de cours. La page d'accueil de l'académie n'affiche pas de cours.",
         "published": "Publié",
         "unpublished": "Inédit",
         "type": "Type de cours",
@@ -3348,7 +3348,7 @@
     "catalog_order": {
       "action": "Reorder courses",
       "title": "Course order",
-      "description": "Drag courses into the order people should see. The catalog and home page use this order, then the date the course was created. Saving featured courses on the landing page replaces this order.",
+      "description": "Drag courses into the order people should see. The public course list uses this order, then the date the course was created. Saving featured courses replaces this order. The academy homepage does not list courses.",
       "saved": "Course order saved",
       "save_failed": "Could not save course order",
       "unpublished": "Unpublished",
@@ -4165,15 +4165,15 @@
           "navigation": "Navigation",
           "navigation_desc": "Liens affichés dans l’en-tête de la page de destination.",
           "callout": "Légende",
-          "callout_desc": "Bannière promotionnelle facultative affichée après les cours.",
+          "callout_desc": "Bannière promotionnelle facultative sur la page d'accueil de l'académie.",
           "embed": "Intégrer",
-          "embed_desc": "Section iframe facultative affichée après les cours.",
+          "embed_desc": "Section iframe facultative sur la page d'accueil de l'académie.",
           "footer": "Pied de page",
           "footer_desc": "Ligne de marque, réseaux sociaux, liens multi-colonnes et ligne légale en bas.",
           "links": "Liens",
-          "links_desc": "Bloc optionnel de liens externes (centre d'aide, communauté, webinaires) affichés après les cours.",
+          "links_desc": "Bloc facultatif de liens externes (centre d'aide, communauté, webinaires) sur la page d'accueil de l'académie.",
           "courses": "Cours",
-          "courses_desc": "Faites glisser pour définir l'ordre des cours publiés sur la page d'accueil."
+          "courses_desc": "Choisissez les cours publiés et leur ordre dans la liste publique des cours. La page d'accueil de l'académie n'affiche pas cette section."
         },
         "links": {
           "toggle": "Afficher la section des liens",
@@ -4213,7 +4213,7 @@
           }
         },
         "courses": {
-          "drag_hint": "Faites glisser les cours pour les réorganiser sur la page d'accueil.",
+          "drag_hint": "Faites glisser les cours pour les réorganiser dans la liste publique des cours. La page d'accueil de l'académie n'affiche pas cette section.",
           "empty": "Aucun cours publié pour le moment. Publiez un cours pour le prévisualiser ici.",
           "load_failed": "Échec du chargement des cours publiés.",
           "add_button": "Ajouter",
@@ -4473,7 +4473,7 @@
         },
         "members_only_catalog": {
           "label": "Members-only catalog",
-          "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
+          "description": "When enabled, only members of this organization see courses on the course list. Everyone else sees an empty catalog. The academy homepage does not list courses. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
         },
         "hide_course_pricing": {
           "label": "Hide course prices",

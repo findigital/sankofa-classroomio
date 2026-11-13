@@ -1066,7 +1066,7 @@
         "access": "बंद होने पर, छात्र केवल आमंत्रण लिंक से या {people} अनुभाग से जोड़े जाने पर ही शामिल हो सकते हैं।",
         "access_people": "लोग",
         "publish": "पाठ्यक्रम प्रकाशित करें",
-        "determines": "यह निर्धारित करता है कि आपका पाठ्यक्रम आपके लैंडिंग पृष्ठ पर प्रदर्शित होता है या नहीं",
+        "determines": "प्रकाशित पाठ्यक्रम सार्वजनिक पाठ्यक्रम सूची और अपने पाठ्यक्रम पृष्ठ पर दिखते हैं। अकादमी होमपेज पाठ्यक्रम नहीं दिखाता।",
         "published": "प्रकाशित",
         "unpublished": "अप्रकाशित",
         "type": "कोर्स का प्रकार",
@@ -3348,7 +3348,7 @@
     "catalog_order": {
       "action": "Reorder courses",
       "title": "Course order",
-      "description": "Drag courses into the order people should see. The catalog and home page use this order, then the date the course was created. Saving featured courses on the landing page replaces this order.",
+      "description": "Drag courses into the order people should see. The public course list uses this order, then the date the course was created. Saving featured courses replaces this order. The academy homepage does not list courses.",
       "saved": "Course order saved",
       "save_failed": "Could not save course order",
       "unpublished": "Unpublished",
@@ -4165,15 +4165,15 @@
           "navigation": "नेविगेशन",
           "navigation_desc": "लैंडिंग पृष्ठ शीर्षलेख में लिंक दिखाए गए हैं.",
           "callout": "कॉलआउट",
-          "callout_desc": "पाठ्यक्रमों के बाद दिखाया गया वैकल्पिक प्रचार बैनर।",
+          "callout_desc": "अकादमी होमपेज पर वैकल्पिक प्रचार बैनर।",
           "embed": "एम्बेड करें",
-          "embed_desc": "पाठ्यक्रमों के बाद वैकल्पिक आईफ्रेम अनुभाग दिखाया गया है।",
+          "embed_desc": "अकादमी होमपेज पर वैकल्पिक iframe अनुभाग।",
           "footer": "फ़ुटर",
           "footer_desc": "ब्रांड पंक्ति, सोशल, बहु-कॉलम लिंक और नीचे की कानूनी पंक्ति।",
           "links": "कड़ियाँ",
-          "links_desc": "पाठ्यक्रमों के बाद दिखाए गए बाहरी लिंक (सहायता केंद्र, समुदाय, वेबिनार) का वैकल्पिक ब्लॉक।",
+          "links_desc": "अकादमी होमपेज पर बाहरी लिंक (सहायता केंद्र, समुदाय, वेबिनार) का वैकल्पिक ब्लॉक।",
           "courses": "कोर्स",
-          "courses_desc": "लैंडिंग पेज पर प्रकाशित कोर्सों का क्रम निर्धारित करने के लिए ड्रैग करें।"
+          "courses_desc": "सार्वजनिक पाठ्यक्रम सूची के लिए प्रकाशित पाठ्यक्रम और उनका क्रम चुनें। अकादमी होमपेज यह अनुभाग नहीं दिखाता।"
         },
         "links": {
           "toggle": "लिंक अनुभाग दिखाएँ",
@@ -4213,7 +4213,7 @@
           }
         },
         "courses": {
-          "drag_hint": "लैंडिंग पेज पर कोर्सों का क्रम बदलने के लिए उन्हें ड्रैग करें।",
+          "drag_hint": "सार्वजनिक पाठ्यक्रम सूची में पाठ्यक्रमों का क्रम बदलने के लिए उन्हें ड्रैग करें। अकादमी होमपेज यह अनुभाग नहीं दिखाता।",
           "empty": "अभी तक कोई कोर्स प्रकाशित नहीं हुआ है — यहाँ पूर्वावलोकन करने के लिए एक कोर्स प्रकाशित करें।",
           "load_failed": "प्रकाशित कोर्स लोड करने में विफल।",
           "add_button": "जोड़ें",
@@ -4473,7 +4473,7 @@
         },
         "members_only_catalog": {
           "label": "Members-only catalog",
-          "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
+          "description": "When enabled, only members of this organization see courses on the course list. Everyone else sees an empty catalog. The academy homepage does not list courses. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
         },
         "hide_course_pricing": {
           "label": "Hide course prices",

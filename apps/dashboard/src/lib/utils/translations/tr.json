@@ -829,7 +829,7 @@
         },
         "members_only_catalog": {
           "label": "Members-only catalog",
-          "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
+          "description": "When enabled, only members of this organization see courses on the course list. Everyone else sees an empty catalog. The academy homepage does not list courses. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
         },
         "hide_course_pricing": {
           "label": "Hide course prices",
@@ -1003,15 +1003,15 @@
           "navigation": "Navigation",
           "navigation_desc": "Açılış sayfası başlığında gösterilen bağlantılar.",
           "callout": "Callout",
-          "callout_desc": "Kurslardan sonra gösterilen isteğe bağlı tanıtım banner'ı.",
+          "callout_desc": "Akademi ana sayfasında isteğe bağlı tanıtım banner'ı.",
           "embed": "Embed",
-          "embed_desc": "Kurslardan sonra gösterilen isteğe bağlı iframe bölümü.",
+          "embed_desc": "Akademi ana sayfasında isteğe bağlı iframe bölümü.",
           "links": "Bağlantılar",
-          "links_desc": "Kurslardan sonra gösterilen isteğe bağlı harici bağlantı bloğu (yardım merkezi, topluluk, web seminerleri).",
+          "links_desc": "Akademi ana sayfasında isteğe bağlı harici bağlantı bloğu (yardım merkezi, topluluk, web seminerleri).",
           "footer": "Altbilgi",
           "footer_desc": "Marka çizgisi, sosyal medya, çok sütunlu bağlantılar ve alt yasal satır.",
           "courses": "Kurslar",
-          "courses_desc": "Açılış sayfasında yayınlanan kursların sırasını ayarlamak için sürükleyin."
+          "courses_desc": "Yayınlanan kursları ve bunların genel kurs listesindeki sırasını seçin. Akademi ana sayfası bu bölümü göstermez."
         },
         "hero": {
           "eyebrow": "Eyebrow",
@@ -1161,7 +1161,7 @@
           }
         },
         "courses": {
-          "drag_hint": "Açılış sayfanızda gösterilen kursları yeniden sıralamak için sürükleyin.",
+          "drag_hint": "Genel kurs listesindeki kursları yeniden sıralamak için sürükleyin. Akademi ana sayfası bu bölümü göstermez.",
           "empty": "Seçilen kurs yok.",
           "load_failed": "Kurslar yüklenemedi.",
           "add_button": "Ekle",
@@ -2435,7 +2435,7 @@
     "catalog_order": {
       "action": "Reorder courses",
       "title": "Course order",
-      "description": "Drag courses into the order people should see. The catalog and home page use this order, then the date the course was created. Saving featured courses on the landing page replaces this order.",
+      "description": "Drag courses into the order people should see. The public course list uses this order, then the date the course was created. Saving featured courses replaces this order. The academy homepage does not list courses.",
       "saved": "Course order saved",
       "save_failed": "Could not save course order",
       "unpublished": "Unpublished",
@@ -4484,7 +4484,7 @@
         "access": "Kapalıyken, öğrenciler yalnızca bir davet bağlantısı aracılığıyla veya {people}'ten eklenerek katılabilirler.",
         "access_people": "People",
         "publish": "Kursu Yayınla",
-        "determines": "Bu, kursunuzun açılış sayfanızda görüntülenip görüntülenmeyeceğini belirler",
+        "determines": "Yayınlanan kurslar genel kurs listesinde ve kendi kurs sayfasında görünür. Akademi ana sayfası kursları listelemez.",
         "published": "Published",
         "unpublished": "Unpublished",
         "certificate_deadline_required": "Önce Sertifika Son Tarihini Ayarla",

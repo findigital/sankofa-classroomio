@@ -1066,7 +1066,7 @@
         "access": "Quando desativado, os alunos só podem entrar por um link de convite ou sendo adicionados em {people}.",
         "access_people": "Pessoas",
         "publish": "Publicar curso",
-        "determines": "Isso determina se o seu curso será exibido na sua página de destino",
+        "determines": "Cursos publicados aparecem na lista pública de cursos e na página do curso. A página inicial da academia não lista cursos.",
         "published": "Publicado",
         "unpublished": "Não publicado",
         "type": "Tipo de curso",
@@ -3348,7 +3348,7 @@
     "catalog_order": {
       "action": "Reorder courses",
       "title": "Course order",
-      "description": "Drag courses into the order people should see. The catalog and home page use this order, then the date the course was created. Saving featured courses on the landing page replaces this order.",
+      "description": "Drag courses into the order people should see. The public course list uses this order, then the date the course was created. Saving featured courses replaces this order. The academy homepage does not list courses.",
       "saved": "Course order saved",
       "save_failed": "Could not save course order",
       "unpublished": "Unpublished",
@@ -4165,15 +4165,15 @@
           "navigation": "Navegação",
           "navigation_desc": "Links mostrados no cabeçalho da página de destino.",
           "callout": "Chamada",
-          "callout_desc": "Banner promocional opcional exibido após os cursos.",
+          "callout_desc": "Banner promocional opcional na página inicial da academia.",
           "embed": "Incorporar",
-          "embed_desc": "Seção iframe opcional mostrada após os cursos.",
+          "embed_desc": "Seção iframe opcional na página inicial da academia.",
           "footer": "Rodapé",
           "footer_desc": "Linha da marca, redes sociais, links em várias colunas e linha legal inferior.",
           "links": "Links",
-          "links_desc": "Bloco opcional de links externos (central de ajuda, comunidade, webinars) exibidos após os cursos.",
+          "links_desc": "Bloco opcional de links externos (central de ajuda, comunidade, webinars) na página inicial da academia.",
           "courses": "Cursos",
-          "courses_desc": "Arraste para definir a ordem dos cursos publicados na página inicial."
+          "courses_desc": "Escolha os cursos publicados e a ordem na lista pública de cursos. A página inicial da academia não mostra esta seção."
         },
         "links": {
           "toggle": "Mostrar seção de links",
@@ -4213,7 +4213,7 @@
           }
         },
         "courses": {
-          "drag_hint": "Arraste os cursos para reordená-los na página inicial.",
+          "drag_hint": "Arraste os cursos para reordená-los na lista pública de cursos. A página inicial da academia não mostra esta seção.",
           "empty": "Ainda não há cursos publicados — publique um curso para visualizá-lo aqui.",
           "load_failed": "Falha ao carregar os cursos publicados.",
           "add_button": "Adicionar",
@@ -4473,7 +4473,7 @@
         },
         "members_only_catalog": {
           "label": "Members-only catalog",
-          "description": "When enabled, only members of this organization see courses on the landing page and course list. Everyone else sees an empty catalog. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
+          "description": "When enabled, only members of this organization see courses on the course list. Everyone else sees an empty catalog. The academy homepage does not list courses. Visitors who are not signed in can sign in. Signed-in users who are not members still cannot see the courses."
         },
         "hide_course_pricing": {
           "label": "Hide course prices",
