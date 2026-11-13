@@ -16,6 +16,7 @@ import type { TLocale } from '@db/types';
 import { b64EnvelopeRewrite } from '@api/middlewares/b64-envelope';
 import { authMiddleware } from '@api/middlewares/auth';
 import { courseMemberMiddleware } from '@api/middlewares/course-member';
+import { courseTeamMemberMiddleware } from '@api/middlewares/course-team-member';
 import { handleError } from '@api/utils/errors';
 import { zValidator } from '@hono/zod-validator';
 
@@ -82,12 +83,12 @@ export const lessonLanguageRouter = new Hono()
   /**
    * POST /course/:courseId/lesson/:lessonId/language
    * Creates or updates a lesson language translation (upsert)
-   * Requires authentication and course membership
+   * Requires authentication and a course staff role
    */
   .post(
     '/',
     authMiddleware,
-    courseMemberMiddleware,
+    courseTeamMemberMiddleware,
     zValidator('param', ZLessonLanguageGetParam),
     zValidator('json', ZLessonLanguageCreate),
     async (c) => {
@@ -117,12 +118,12 @@ export const lessonLanguageRouter = new Hono()
   /**
    * PUT /course/:courseId/lesson/:lessonId/language/:locale
    * Updates a lesson language translation
-   * Requires authentication and course membership
+   * Requires authentication and a course staff role
    */
   .put(
     '/:locale',
     authMiddleware,
-    courseMemberMiddleware,
+    courseTeamMemberMiddleware,
     zValidator('param', ZLessonLanguageGetByLocaleParam),
     zValidator('json', ZLessonLanguageUpdate),
     async (c) => {

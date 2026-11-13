@@ -26,6 +26,7 @@ import { ErrorCodes, handlePublicApiError } from '@api/utils/errors';
 import { accountRouter } from '@api/routes/account';
 import { agentRouter } from '@api/routes/agent';
 import { auth } from '@cio/db/auth';
+import { enforceEmailSignInRateLimit } from '@api/middlewares/sign-in-rate-limit';
 import { communityRouter } from '@api/routes/community';
 import { courseRouter } from '@api/routes/course';
 import { dashAnalyticsRouter } from '@api/routes/dash';
@@ -192,6 +193,11 @@ export const app = new Hono()
           400
         );
       }
+    }
+
+    if (c.req.method === 'POST' && c.req.path === '/api/auth/sign-in/email') {
+      const rateLimited = await enforceEmailSignInRateLimit(c, request);
+      if (rateLimited) return rateLimited;
     }
 
     const response = await auth.handler(restoreAuthorizeNavigationMode(request));

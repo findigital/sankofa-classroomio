@@ -25,6 +25,8 @@ import { isPublicRoute } from '$lib/utils/functions/routes/isPublicRoute';
 import { isOnboardingIncomplete } from '$features/onboarding/utils/completeness';
 import { licenseApi } from '$features/license/api/license.svelte';
 import { logout } from '$lib/utils/functions/logout';
+import { t } from '$lib/utils/functions/translations';
+import { ACCOUNT_CACHE_TTL_MS, accountRetryDelayMs, decideAccountFetch } from './account-fetch';
 import { page } from '$app/state';
 import { resolve } from '$app/paths';
 import { setSentryUser } from '$lib/utils/services/sentry';
@@ -57,7 +59,13 @@ class AppInitApi extends BaseApi {
   session = $state<App.Locals | null>(null);
   pendingOrgInvite = $state<PendingOrgInvite | null>(null);
   showPendingInviteModal = $state(false);
+  accountRetryEpoch = $state(0);
   private syncedTenantKey: string | null = null;
+  private accountInFlight: Promise<AccountSuccess | undefined> | null = null;
+  private accountCached: { at: number; data: AccountSuccess } | null = null;
+  private accountRetryNotBefore = 0;
+  private accountRetryTimer: ReturnType<typeof setTimeout> | null = null;
+  private accountAttempt = 0;
 
   get loading() {
     return this.isLoading;
@@ -65,6 +73,11 @@ class AppInitApi extends BaseApi {
 
   async setupApp(locals: App.Locals, params: AppSetupParams): Promise<boolean | undefined> {
     if (this.isLoading || this.isInitializedAndReady) {
+      return;
+    }
+
+    if (Date.now() < this.accountRetryNotBefore && !this.accountInFlight) {
+      this.armAccountRetry(Math.max(0, this.accountRetryNotBefore - Date.now()));
       return;
     }
 
@@ -143,23 +156,89 @@ class AppInitApi extends BaseApi {
   }
 
   private async fetchAccountData(): Promise<AccountSuccess | undefined> {
-    try {
-      const response = await classroomio.account.$get();
-      const result = (await response.json()) as AccountResponse;
+    if (this.accountCached && Date.now() - this.accountCached.at < ACCOUNT_CACHE_TTL_MS) {
+      return this.accountCached.data;
+    }
 
+    if (Date.now() < this.accountRetryNotBefore) {
+      return undefined;
+    }
+
+    if (this.accountInFlight) return this.accountInFlight;
+
+    const request = this.requestAccount();
+    this.accountInFlight = request;
+
+    try {
+      return await request;
+    } finally {
+      if (this.accountInFlight === request) {
+        this.accountInFlight = null;
+      }
+    }
+  }
+
+  private async requestAccount(): Promise<AccountSuccess | undefined> {
+    let response: Response;
+
+    try {
+      response = await classroomio.account.$get();
+    } catch (error) {
+      console.error('Error fetching account:', error);
+      this.rememberAccountFailure('unavailable');
+      return undefined;
+    }
+
+    const decision = decideAccountFetch(response.status);
+    if (decision === 'signed_out') {
+      this.accountCached = null;
+      void logout();
+      return undefined;
+    }
+
+    if (decision === 'retry' || decision === 'keep_session') {
+      const kind = decision === 'retry' && response.status === 429 ? 'rate_limited' : 'unavailable';
+      this.rememberAccountFailure(kind, response.headers.get('Retry-After'));
+      return undefined;
+    }
+
+    try {
+      const result = (await response.json()) as AccountResponse;
       if (!result?.success) {
-        this.error = JSON.stringify(result);
-        logout();
+        this.rememberAccountFailure('unavailable');
         return undefined;
       }
 
+      this.accountCached = { at: Date.now(), data: result };
+      this.accountAttempt = 0;
+      this.accountRetryNotBefore = 0;
+      this.error = null;
       return result;
     } catch (error) {
       console.error('Error fetching account:', error);
-      this.error = error instanceof Error ? error.message : 'Error fetching account';
-      logout();
+      this.rememberAccountFailure('unavailable');
       return undefined;
     }
+  }
+
+  private rememberAccountFailure(kind: 'rate_limited' | 'unavailable', retryAfterHeader: string | null = null) {
+    const delayMs = accountRetryDelayMs(this.accountAttempt, retryAfterHeader);
+    this.accountAttempt += 1;
+    this.accountRetryNotBefore = Date.now() + delayMs;
+    this.armAccountRetry(delayMs);
+
+    if (this.data) return;
+
+    this.error = accountFailureMessage(kind);
+  }
+
+  private armAccountRetry(delayMs: number) {
+    if (this.accountRetryTimer) return;
+
+    this.accountRetryTimer = setTimeout(() => {
+      this.accountRetryTimer = null;
+      this.accountRetryEpoch += 1;
+    }, delayMs);
   }
 
   private showPendingOrgInvite(pendingInvite: PendingOrgInvite) {
@@ -516,6 +595,14 @@ class AppInitApi extends BaseApi {
   reset() {
     super.reset();
     this.data = null;
+    this.accountCached = null;
+    this.accountRetryNotBefore = 0;
+    this.accountAttempt = 0;
+    this.accountInFlight = null;
+    if (this.accountRetryTimer) {
+      clearTimeout(this.accountRetryTimer);
+      this.accountRetryTimer = null;
+    }
     this.syncedTenantKey = null;
     this.pendingOrgInvite = null;
     this.showPendingInviteModal = false;
@@ -528,6 +615,23 @@ class AppInitApi extends BaseApi {
   get isInitializedAndReady() {
     return !this.isLoading && !this.error && this.data !== null;
   }
+}
+
+function accountFailureMessage(kind: 'rate_limited' | 'unavailable'): string {
+  const key = kind === 'rate_limited' ? 'app_init.account_rate_limited' : 'app_init.account_unavailable';
+
+  try {
+    const message = t.get(key);
+    if (message && message !== key) return message;
+  } catch {
+    // Translations are not loaded for the first account fetch on a cold page.
+  }
+
+  if (kind === 'rate_limited') {
+    return 'Too many requests. You are still signed in, and we will try again.';
+  }
+
+  return 'We could not load your account. You are still signed in, and we will try again.';
 }
 
 export const appInitApi = new AppInitApi();

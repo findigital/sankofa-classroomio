@@ -96,6 +96,8 @@
     syncOrgContext re-pins currentOrg from the URL + cached account data.
   */
   $effect(() => {
+    void appInitApi.accountRetryEpoch;
+
     if (!isSessionReady || appInitApi.loading) {
       return;
     }

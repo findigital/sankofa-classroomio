@@ -101,6 +101,13 @@ const authInstance = betterAuth({
       maxAge: 60 * 60 // 1 hour
     }
   },
+  rateLimit: {
+    customRules: {
+      // Better Auth keys this limiter by IP and path. customRules cannot change that key,
+      // so email sign-in is limited in the API instead (per email, plus a per-IP ceiling).
+      '/sign-in/email': false
+    }
+  },
   databaseHooks: {
     user: {
       create: {

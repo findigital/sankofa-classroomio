@@ -12,6 +12,7 @@ import { and, asc, db, eq, inArray, isNull, or, sql } from '@db/drizzle';
 
 import type { DbOrTxClient } from '@db/drizzle';
 import { contentWriteBumpsTimestamp, stampContentUpdatedAt } from '@db/queries/course/content-timestamp';
+import { readQuestionTitle } from './question-title';
 
 export async function touchExercisesUpdatedAt(exerciseIds: string[], dbClient: DbOrTxClient = db) {
   const ids = [...new Set(exerciseIds.filter(Boolean))];
@@ -272,7 +273,8 @@ export async function getQuestionsByExerciseIds(
 ): Promise<TNewQuestion[]> {
   if (exerciseIds.length === 0) return [];
   try {
-    return dbClient.select().from(schema.question).where(inArray(schema.question.exerciseId, exerciseIds));
+    const rows = await dbClient.select().from(schema.question).where(inArray(schema.question.exerciseId, exerciseIds));
+    return rows.map((row) => ({ ...row, title: readQuestionTitle(row.title) }));
   } catch (error) {
     console.error('getQuestionsByExerciseIds error:', error);
     throw new Error(
@@ -528,7 +530,7 @@ export async function getQuestionTypesByIds(ids: number[], dbClient: DbOrTxClien
 }
 
 /**
- * Optimized: Fetches exercise with questions and question types in a single query using JOINs
+ * Loads an exercise with its questions, question types, and options.
  * @param exerciseId Exercise ID
  * @returns Exercise with questions (including questionType) and options separately
  */
@@ -540,64 +542,57 @@ export async function getExerciseWithRelationsOptimized(
   questions: (TNewQuestion & { questionType: TQuestionType; options: TNewOption[] })[];
 }> {
   try {
-    const result = await dbClient
-      .select({
-        exercise: schema.exercise,
-        question: schema.question,
-        questionType: schema.questionType,
-        option: schema.option
-      })
-      .from(schema.exercise)
-      .leftJoin(schema.question, eq(schema.question.exerciseId, schema.exercise.id))
-      .leftJoin(schema.questionType, eq(schema.question.questionTypeId, schema.questionType.id))
-      .leftJoin(schema.option, eq(schema.option.questionId, schema.question.id))
-      .where(eq(schema.exercise.id, exerciseId));
-
-    if (result.length === 0 || !result[0].exercise) {
+    const exercise = await getExerciseById(exerciseId, dbClient);
+    if (!exercise) {
       throw new Error(`Exercise not found: ${exerciseId}`);
     }
 
-    const exercise = result[0].exercise;
+    const questionRows = await getQuestionsByExerciseIds([exerciseId], dbClient);
+    const questionIds = questionRows.map((question) => question.id).filter((id): id is number => id != null);
+    const optionRows = questionIds.length > 0 ? await getOptionsByQuestionIds(questionIds, dbClient) : [];
+    const questionTypeIds = [
+      ...new Set(questionRows.map((question) => question.questionTypeId).filter((id): id is number => id != null))
+    ];
+    const questionTypes = await getQuestionTypesByIds(questionTypeIds, dbClient);
+    const questionTypeById = new Map(questionTypes.map((questionType) => [questionType.id, questionType]));
+    const optionsByQuestionId = new Map<number, TNewOption[]>();
 
-    // Group questions with their question types and options (deduplicate by question ID, collect options)
-    const questionsMap = new Map<number, TNewQuestion & { questionType: TQuestionType; options: TNewOption[] }>();
-    for (const row of result) {
-      if (row.question && row.questionType) {
-        if (!questionsMap.has(row.question.id)) {
-          questionsMap.set(row.question.id, {
-            ...row.question,
-            questionType: row.questionType,
-            options: []
-          });
-        }
-        // Add option if it exists and hasn't been added yet
-        if (row.option && row.option.id) {
-          const question = questionsMap.get(row.question.id)!;
-          const optionId = row.option.id;
-          // Check if option already added (avoid duplicates from JOIN)
-          if (!question.options.some((opt) => opt.id === optionId)) {
-            question.options.push(row.option);
+    for (const option of optionRows) {
+      if (option.questionId == null) continue;
+
+      const options = optionsByQuestionId.get(option.questionId) ?? [];
+      options.push(option);
+      optionsByQuestionId.set(option.questionId, options);
+    }
+
+    const questions = questionRows
+      .flatMap((question) => {
+        if (question.id == null) return [];
+
+        const questionType = questionTypeById.get(question.questionTypeId);
+        if (!questionType) return [];
+
+        const options = [...(optionsByQuestionId.get(question.id) ?? [])];
+        options.sort((left, right) => (left.id ?? 0) - (right.id ?? 0));
+
+        return [
+          {
+            ...question,
+            title: readQuestionTitle(question.title),
+            questionType,
+            options
           }
-        }
-      }
-    }
+        ];
+      })
+      .sort((left, right) => {
+        const orderA = left.order ?? 0;
+        const orderB = right.order ?? 0;
+        if (orderA !== orderB) return orderA - orderB;
 
-    // Sort options by id so order matches insertion order (order sent from client)
-    for (const question of questionsMap.values()) {
-      question.options.sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
-    }
+        return (left.id ?? 0) - (right.id ?? 0);
+      });
 
-    const questions = Array.from(questionsMap.values()).sort((a, b) => {
-      const orderA = a.order ?? 0;
-      const orderB = b.order ?? 0;
-      if (orderA !== orderB) return orderA - orderB;
-      return (a.id ?? 0) - (b.id ?? 0);
-    });
-
-    return {
-      exercise,
-      questions
-    };
+    return { exercise, questions };
   } catch (error) {
     console.error('getExerciseWithRelations error:', error);
     throw new Error(

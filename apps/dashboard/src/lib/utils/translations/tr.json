@@ -4643,6 +4643,17 @@
             "unenrolled": "Öğrenci artık kayıtlı değil."
           }
         }
+      },
+      "staff_only": {
+        "denied_title": "Bu sayfa kurs ekibi içindir",
+        "denied_description": "Bu kursu yönetmeniz gerekiyorsa bir yöneticiden sizi kurs eğitmeni olarak eklemesini isteyin."
+      },
+      "load_failure": {
+        "rate_limited_title": "Bu kurs şu anda meşgul",
+        "rate_limited_description": "Aynı anda çok fazla istek geldi. Biraz bekleyip yeniden deneyin. Oturumunuz açık.",
+        "unavailable_title": "Bu kursu yükleyemedik",
+        "unavailable_description": "Kurs yüklenirken bir şeyler ters gitti. Oturumunuz açık.",
+        "retry": "Yeniden dene"
       }
     },
     "not_permitted": {
@@ -6861,5 +6872,9 @@
       "save": "Save staff",
       "empty": "No administrators can be added, so these conversations stay closed."
     }
+  },
+  "app_init": {
+    "account_rate_limited": "Çok fazla istek. Oturumunuz açık ve yeniden deneyeceğiz.",
+    "account_unavailable": "Hesabınızı yükleyemedik. Oturumunuz açık ve yeniden deneyeceğiz."
   }
 }

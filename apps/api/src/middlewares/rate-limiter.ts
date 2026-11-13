@@ -1,4 +1,5 @@
 import {
+  AUTHENTICATED_MAX_REQUESTS,
   DEFAULT_RATE_LIMITER_OPTIONS,
   ERROR_MESSAGES,
   HTTP_STATUS,
@@ -164,7 +165,9 @@ export const createAuthenticationFailureRateLimiter = (options: RateLimiterOptio
 };
 
 function defaultMaxRequests(c: Context): number {
-  // Org lookup runs on every SSR layout load; keep it out of the tight global bucket.
+  const user = c.get('user');
+  if (user?.id) return AUTHENTICATED_MAX_REQUESTS;
+
   if (c.req.method === 'GET' && c.req.path === '/organization') return 500;
 
   return DEFAULT_RATE_LIMITER_OPTIONS.maxRequests;

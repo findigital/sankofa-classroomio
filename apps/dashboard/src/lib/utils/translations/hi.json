@@ -3076,6 +3076,17 @@
           "description": "इस पाठ्यक्रम के लिए विद्यार्थी की गणना स्थिति के आधार पर की जाती है।"
         },
         "empty_overview_description": "अपने कर्मचारियों को आज्ञाकारी रखें और ट्रैक करें कि पीछे कौन है।"
+      },
+      "staff_only": {
+        "denied_title": "यह पेज कोर्स स्टाफ के लिए है",
+        "denied_description": "अगर आपको यह कोर्स प्रबंधित करना है, तो व्यवस्थापक से कहें कि आपको कोर्स ट्यूटर के रूप में जोड़ें।"
+      },
+      "load_failure": {
+        "rate_limited_title": "यह कोर्स अभी व्यस्त है",
+        "rate_limited_description": "एक साथ बहुत अधिक अनुरोध आ गए। थोड़ी देर रुककर फिर कोशिश करें। आप अब भी साइन इन हैं।",
+        "unavailable_title": "हम यह कोर्स लोड नहीं कर सके",
+        "unavailable_description": "कोर्स लोड करते समय कुछ गलत हो गया। आप अब भी साइन इन हैं।",
+        "retry": "फिर कोशिश करें"
       }
     },
     "search": {
@@ -6881,5 +6892,9 @@
       "save": "Save staff",
       "empty": "No administrators can be added, so these conversations stay closed."
     }
+  },
+  "app_init": {
+    "account_rate_limited": "बहुत अधिक अनुरोध। आप अब भी साइन इन हैं, और हम फिर कोशिश करेंगे।",
+    "account_unavailable": "हम आपका खाता लोड नहीं कर सके। आप अब भी साइन इन हैं, और हम फिर कोशिश करेंगे।"
   }
 }

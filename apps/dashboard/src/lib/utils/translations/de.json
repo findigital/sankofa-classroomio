@@ -3076,6 +3076,17 @@
           "description": "Die Anzahl der Studierenden für diesen Kurs richtet sich nach dem Status."
         },
         "empty_overview_description": "Halten Sie Ihre Mitarbeiter konform und verfolgen Sie, wer im Rückstand ist."
+      },
+      "staff_only": {
+        "denied_title": "Diese Seite ist für das Kursteam",
+        "denied_description": "Bitte eine Admin-Person, dich als Kurstutor hinzuzufügen, wenn du diesen Kurs verwalten musst."
+      },
+      "load_failure": {
+        "rate_limited_title": "Dieser Kurs ist gerade stark ausgelastet",
+        "rate_limited_description": "Es sind zu viele Anfragen auf einmal eingegangen. Warte einen Moment und versuche es erneut. Du bist weiter angemeldet.",
+        "unavailable_title": "Wir konnten diesen Kurs nicht laden",
+        "unavailable_description": "Beim Laden des Kurses ist etwas schiefgelaufen. Du bist weiter angemeldet.",
+        "retry": "Erneut versuchen"
       }
     },
     "search": {
@@ -6881,5 +6892,9 @@
       "save": "Save staff",
       "empty": "No administrators can be added, so these conversations stay closed."
     }
+  },
+  "app_init": {
+    "account_rate_limited": "Zu viele Anfragen. Du bist weiter angemeldet, und wir versuchen es erneut.",
+    "account_unavailable": "Wir konnten dein Konto nicht laden. Du bist weiter angemeldet, und wir versuchen es erneut."
   }
 }

@@ -111,7 +111,7 @@ export const lessonRouter = new Hono()
       }
     }
   )
-  .post('/', authMiddleware, courseMemberMiddleware, zValidator('json', ZLessonCreate), async (c) => {
+  .post('/', authMiddleware, courseTeamMemberMiddleware, zValidator('json', ZLessonCreate), async (c) => {
     try {
       const user = c.get('user')!;
       const courseId = c.req.param('courseId')!;
@@ -132,7 +132,7 @@ export const lessonRouter = new Hono()
   .put(
     '/:lessonId',
     authMiddleware,
-    courseMemberMiddleware,
+    courseTeamMemberMiddleware,
     zValidator('param', ZLessonGetParam),
     zValidator('json', ZLessonUpdate),
     async (c) => {
@@ -168,7 +168,7 @@ export const lessonRouter = new Hono()
       }
     }
   )
-  .delete('/:lessonId', authMiddleware, courseMemberMiddleware, zValidator('param', ZLessonGetParam), async (c) => {
+  .delete('/:lessonId', authMiddleware, courseTeamMemberMiddleware, zValidator('param', ZLessonGetParam), async (c) => {
     try {
       const { lessonId } = c.req.valid('param');
       const lesson = await deleteLessonService(lessonId);
