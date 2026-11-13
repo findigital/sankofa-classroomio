@@ -10,6 +10,7 @@
   import { currentOrg } from '$lib/utils/store/org';
   import LmsHeader from '$features/ui/navigation/lms-header.svelte';
   import { LMSSidebar } from '$features/ui/sidebar/lms-sidebar';
+  import AccountLoadBanner from '$features/app/account-load-banner.svelte';
   import MessagingPresence from '$features/messaging/components/messaging-presence.svelte';
 
   interface Props {
@@ -38,6 +39,7 @@
   <LMSSidebar />
 
   <Sidebar.Inset>
+    <AccountLoadBanner />
     <LmsHeader />
 
     <div class="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 px-4">

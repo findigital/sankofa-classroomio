@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { accountRetryDelayMs, decideAccountFetch } from './account-fetch';
+import { ApiError } from '$lib/utils/services/api/types';
+import { accountFailureFromError, accountRetryDelayMs, decideAccountFetch } from './account-fetch';
 
 describe('decideAccountFetch', () => {
   it('keeps the session when the account API is rate limited', () => {
@@ -15,6 +16,38 @@ describe('decideAccountFetch', () => {
     expect(decideAccountFetch(200)).toBe('ok');
   });
 });
+
+describe('accountFailureFromError', () => {
+  it('reads status and Retry-After from a thrown ApiError', () => {
+    const thrown = captureThrown(
+      () =>
+        new ApiError(
+          'Too many requests',
+          429,
+          'Too Many Requests',
+          new Response('slow down', { status: 429, headers: { 'Retry-After': '12' } })
+        )
+    );
+
+    const failure = accountFailureFromError(thrown);
+    expect(failure).toEqual({ kind: 'rate_limited', retryAfter: '12' });
+    expect(accountRetryDelayMs(0, failure.retryAfter)).toBe(12_000);
+  });
+
+  it('keeps a thrown non-429 error on the unavailable retry', () => {
+    const thrown = captureThrown(() => new Error('network down'));
+
+    expect(accountFailureFromError(thrown)).toEqual({ kind: 'unavailable', retryAfter: null });
+  });
+});
+
+function captureThrown(raise: () => Error): unknown {
+  try {
+    throw raise();
+  } catch (error) {
+    return error;
+  }
+}
 
 describe('accountRetryDelayMs', () => {
   it('honors Retry-After seconds and HTTP dates', () => {

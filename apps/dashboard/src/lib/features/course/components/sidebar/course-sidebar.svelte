@@ -118,7 +118,7 @@
 
 {#if !isOrgLoaded}
   {#if appInitApi.error}
-    <div class="ui:bg-sidebar flex h-[calc(100vh-48px)] w-64 flex-col border-r p-4">
+    <div class="ui:bg-sidebar hidden h-[calc(100vh-48px)] w-64 flex-col border-r p-4 md:flex">
       <AccountLoadNotice />
     </div>
   {:else}

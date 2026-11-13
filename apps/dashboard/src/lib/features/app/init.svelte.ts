@@ -26,7 +26,12 @@ import { isOnboardingIncomplete } from '$features/onboarding/utils/completeness'
 import { licenseApi } from '$features/license/api/license.svelte';
 import { logout } from '$lib/utils/functions/logout';
 import { t } from '$lib/utils/functions/translations';
-import { ACCOUNT_CACHE_TTL_MS, accountRetryDelayMs, decideAccountFetch } from './account-fetch';
+import {
+  ACCOUNT_CACHE_TTL_MS,
+  accountFailureFromError,
+  accountRetryDelayMs,
+  decideAccountFetch
+} from './account-fetch';
 import { page } from '$app/state';
 import { resolve } from '$app/paths';
 import { setSentryUser } from '$lib/utils/services/sentry';
@@ -185,7 +190,8 @@ class AppInitApi extends BaseApi {
       response = await classroomio.account.$get();
     } catch (error) {
       console.error('Error fetching account:', error);
-      this.rememberAccountFailure('unavailable');
+      const failure = accountFailureFromError(error);
+      this.rememberAccountFailure(failure.kind, failure.retryAfter);
       return undefined;
     }
 

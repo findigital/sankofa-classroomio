@@ -1,3 +1,5 @@
+import { ApiError } from '$lib/utils/services/api/types';
+
 export const ACCOUNT_CACHE_TTL_MS = 20_000;
 
 const MIN_RETRY_DELAY_MS = 1_000;
@@ -23,6 +25,21 @@ export function accountRetryDelayMs(attempt: number, retryAfterHeader: string | 
 
   const exponent = Math.min(Math.max(attempt, 0), 5);
   return Math.min(MIN_RETRY_DELAY_MS * 2 ** exponent, 30_000);
+}
+
+/** Retry kind for a thrown account fetch. A 429 ApiError keeps its Retry-After header. */
+export function accountFailureFromError(error: unknown): {
+  kind: 'rate_limited' | 'unavailable';
+  retryAfter: string | null;
+} {
+  if (error instanceof ApiError && error.status === 429) {
+    return {
+      kind: 'rate_limited',
+      retryAfter: error.response?.headers.get('Retry-After') ?? null
+    };
+  }
+
+  return { kind: 'unavailable', retryAfter: null };
 }
 
 function retryAfterDelayMs(header: string | null, now: number): number | null {
