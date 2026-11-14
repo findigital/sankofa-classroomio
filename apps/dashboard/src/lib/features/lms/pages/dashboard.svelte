@@ -270,7 +270,7 @@
   </BlurFade>
 
   <section class="mb-10 flex flex-wrap items-start">
-    <div class="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div class="grid w-full min-w-0 grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       <BlurFade delay={0.1} once>
         <ActivityCard
           activity={{
@@ -282,8 +282,13 @@
         />
       </BlurFade>
 
-      <BlurFade delay={0.15} once>
+      <BlurFade delay={0.15} once class="min-w-0">
         <ActivityCard
+          className="h-full overflow-hidden [&>div:nth-child(2)]:min-w-0"
+          classes={{
+            title: 'text-balance break-words',
+            description: 'break-words'
+          }}
           activity={{
             icon: ClipboardCheckIcon,
             title: $t('dashboard.compliance'),
@@ -420,8 +425,10 @@
       </div>
     </section>
 
-    <section class="flex h-full flex-col space-y-4">
-      <h2 class="ui:text-muted-foreground text-sm font-semibold tracking-[0.14em] uppercase">
+    <section class="flex h-full min-w-0 flex-col space-y-4">
+      <h2
+        class="ui:text-muted-foreground max-w-full text-sm font-semibold tracking-[0.14em] text-balance break-words uppercase"
+      >
         {$t('dashboard.compliance')}
       </h2>
 
@@ -437,8 +444,8 @@
                 <ClipboardCheckIcon class="ui:text-primary size-5" />
               </div>
               <div class="min-w-0">
-                <h3 class="font-semibold">{$t('dashboard.compliance_score')}</h3>
-                <p class="ui:text-muted-foreground mt-1 text-sm">
+                <h3 class="font-semibold text-balance break-words">{$t('dashboard.compliance_score')}</h3>
+                <p class="ui:text-muted-foreground mt-1 text-sm break-words">
                   {#if complianceCourses.length > 0}
                     {$t('dashboard.required_courses_completed', {
                       completed: completedComplianceCourses.length,
