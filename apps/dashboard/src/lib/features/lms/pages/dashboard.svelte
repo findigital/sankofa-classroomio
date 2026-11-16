@@ -270,9 +270,10 @@
   </BlurFade>
 
   <section class="mb-10 flex flex-wrap items-start">
-    <div class="grid w-full min-w-0 grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-      <BlurFade delay={0.1} once>
+    <div class="grid w-full min-w-0 grid-cols-1 items-stretch gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <BlurFade delay={0.1} once class="flex h-full min-w-0">
         <ActivityCard
+          className="h-full"
           activity={{
             icon: TargetIcon,
             title: $t('dashboard.progress'),
@@ -282,7 +283,7 @@
         />
       </BlurFade>
 
-      <BlurFade delay={0.15} once class="min-w-0">
+      <BlurFade delay={0.15} once class="flex h-full min-w-0">
         <ActivityCard
           className="h-full overflow-hidden [&>div:nth-child(2)]:min-w-0"
           classes={{
@@ -302,8 +303,9 @@
         />
       </BlurFade>
 
-      <BlurFade delay={0.2} once>
+      <BlurFade delay={0.2} once class="flex h-full min-w-0">
         <ActivityCard
+          className="h-full"
           activity={{
             icon: FlameIcon,
             title: $t('dashboard.streak'),
